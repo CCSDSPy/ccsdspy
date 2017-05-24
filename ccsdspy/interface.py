@@ -40,8 +40,8 @@ class PacketField(object):
         self._bit_length = bit_length
 
         
-class FixedLengthPacket(object):
-    """An Fixed-Length packet definition used for decoding byte-streams.   
+class PacketDefinition(object):
+    """A packet definition used for decoding byte-streams.   
     """
     
     def __init__(self, fields):
@@ -60,7 +60,7 @@ class FixedLengthPacket(object):
         self._fields = fields[:]
 
         
-class FixedLengthFile(object):
+class FixedLength(object):
     """Represents a Fixed-Length CCSDS file on the file-system."""
 
     def __init__(self, file_, packet_def):

@@ -3,7 +3,7 @@
 __author__ = 'Daniel da Silva'
 
 import pytest
-from ..interface import PacketField, FixedLengthPacket
+from ..interface import PacketField, PacketDefinition
 
 
 def test_PacketField_initializer_raises_ValueError_on_bad_types():
@@ -23,6 +23,6 @@ def test_FixedLengthPacket_initializer_copies_field_list():
     provided fields list.
     """
     fields = [PacketField(name='mnemonic', data_type='uint', bit_length=8)]
-    pkt = FixedLengthPacket(fields)
+    pkt = PacketDefinition(fields)
     assert pkt._fields is not fields
         

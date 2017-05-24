@@ -48,7 +48,7 @@ Decoding a single field can be more efficient. To do this, provide only the fiel
     >>> pkt = pyccsds.PacketDefinition([
         PacketField(name='IDPU_LAST_OPMODE', data_type='uint', bit_length=3, bit_offset=119),
     ])
-    >>> ccsds = pyccsds.CCSDS('MyCCSDS.pkt', pkt)
+    >>> ccsds = pyccsds.FixedLength('MyCCSDS.pkt', pkt)
     >>> data = ccsds['IDPU_LAST_OPMODEE']
     >>> ccsds.keys()
     ['IDPU_LAST_OPMODE']
