@@ -14,7 +14,7 @@ This package provides a Python interface for reading tightly packed bits in the 
 QuickStart
 ----------
 This example presents defining an APID format and decoding a file containing packets of this APID.
-.. code-block:: python
+
    >>> from spacepy import pyccsds
    >>> from spacepy.pyccsds import PacketField
    >>> 
@@ -41,22 +41,6 @@ This example presents defining an APID format and decoding a file containing pac
     'IDPU_RUN_OPTIONS', 'IDPU_LAST_OPMODE', 'IDPU_FAIL_CNT', 'IDPU_FAILCODE', 'SPACER'
     'VOLTAGE_SENSOR' ]
 
-Decoding a Single Field
------------------------
-Decoding a single field can be more efficient. To do this, provide only the field you wish to decode in the packet definition and be sure to use a `bit_offset`. Normally, these offsets are computed automatically.
-
-.. code-block:: python
-    >>> from spacepy import pyccsds
-    >>> from spacepy.pyccsds import PacketField
-
-    >>> pkt = pyccsds.PacketDefinition([
-        PacketField(name='IDPU_LAST_OPMODE', data_type='uint', bit_length=3, bit_offset=119),
-    ])
-    >>> ccsds = pyccsds.FixedLength('MyCCSDS.pkt', pkt)
-    >>> data = ccsds['IDPU_LAST_OPMODEE']
-    >>> ccsds.keys()
-    ['IDPU_LAST_OPMODE']
-
 Supported Data Types
 --------------------
 The following data types will be supported:
@@ -65,7 +49,8 @@ The following data types will be supported:
 * int
 * float
 * fill
-
+* string
+ 
 Licensed
 --------
 This project is Copyright (c) Daniel da Silva and licensed under the terms of the Apache Software Licence 2.0 license. See the licenses folder for more information.
