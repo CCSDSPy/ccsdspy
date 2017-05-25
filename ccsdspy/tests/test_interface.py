@@ -6,6 +6,14 @@ import pytest
 from ..interface import PacketField, FixedLength
 
 
+def test_PacketField_initializer_raises_ValueError_on_bad_data_type():
+    """Asserts that the PacketField class raises a ValueError when an invalid
+    data_type is provided.
+    """
+    with pytest.raises(ValueError):
+        PacketField(name='mnemonic', data_type='fizz', bit_length=1)
+
+        
 def test_PacketField_initializer_raises_TypeError_on_bad_types():
     """Asserts that the PacketField class raises a TypeError
     when arguments are of the wrong type.

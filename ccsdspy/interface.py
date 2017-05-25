@@ -8,7 +8,7 @@ from .decode import _decode_fixed_length
 
 
 class PacketField(object):
-    """A mnemonic contained inside a packet.    
+    """A field contained in a packet.
     """
     
     def __init__(self, name, data_type, bit_length, bit_offset=None):
@@ -17,19 +17,23 @@ class PacketField(object):
         Parameters
         ----------
         name : str
-            String identifier for the field. This field species how you may
-            call upon it later.
+            String identifier for the field. The name specified how you may
+            call upon this data later.
         data_type : {'uint', 'int', 'float', 'str', 'fill'}
             Data type of the field.
         bit_length : int
-            Number of bits contained in the field
-        bit_offset : int
-            Bit offset into packet, including primary header.
+            Number of bits contained in the field.
+        bit_offset : int, optional
+            Bit offset into packet, including primary header. If this is not
+            specified, than the bit offset will the be calculated automatically
+            from its position inside the packet definition.
 
         Raises
         ------
         TypeError
              If one of the arguments is not of the correct type.
+        ValueError
+             data type is invalid
         """
         if not isinstance(name, str):
             raise TypeError('name parameter must be a str')
@@ -39,7 +43,12 @@ class PacketField(object):
             raise TypeError('bit_length parameter must be an int')
         if not (bit_offset is None or isinstance(bit_offset, int)):
             raise TypeError('bit_offset parameter must be an int')
-        
+
+        valid_data_types = ('uint', 'int', 'float', 'str', 'fill')
+        if not data_type in valid_data_types:
+            raise ValueError('data_type must be one of {valids}'.format(
+                valids=repr(valid_data_types)))
+            
         self._name = name
         self._data_type = data_type
         self._bit_length = bit_length
@@ -47,32 +56,37 @@ class PacketField(object):
 
         
 class FixedLength(object):
-    """A packet definition used for decoding fixed-length byte-streams.   
-    """
-    
+    """Define a fixed length packet to decode byte sequences.
+
+    In the context of engineering and science, fixed length packets correspond
+    to data that is of the same layout every time. Examples of this include
+    sensor time series, status codes, or error messages.
+    """    
     def __init__(self, fields):
-        """Define a fixed length packet.
-        
+        """        
         Parameters
         ----------
-        fields : list of PacketField
-            List of packet fields, holding the contents to decode.
+        fields : list of `ccsdspy.PacketField`
+            Layout of packet fields contained in the definition.
         """
         self._fields = fields[:]
 
     def load(self, file):
-        """Load a file containing this packet from disk.
+        """Decode a file-like object containing a sequence of these packets.
 
         Parameters
         ----------
         file: str, file-like
-           Path to file on the local file system, or file-like object to read from.
+           Path to file on the local file system, or file-like object (such
+           as `StringIO.StringIO`)
 
         Returns
         -------
-        
+        `astropy.table.Table` containing one column for each field
         """
         file_bytes = np.fromfile(file, 'u1')
         field_arrays = _decode_fixed_length(file_bytes, self._fields)
 
-        return Table(field_arrays.values(), names=field_arrays.keys())
+        table = Table(field_arrays.values(), names=field_arrays.keys())
+
+        return table

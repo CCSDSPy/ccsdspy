@@ -114,15 +114,15 @@ release = package.__version__
 
 # Please update these texts to match the name of your package.
 html_theme_options = {
-    'logotext1': 'package',  # white,  semi-bold
-    'logotext2': '-template',  # orange, light
+    'logotext1': 'ccsds',  # white,  semi-bold
+    'logotext2': 'py',  # orange, light
     'logotext3': ':docs'   # white,  light
     }
 
 
 
 # Custom sidebar templates, maps document names to template names.
-#html_sidebars = {}
+html_sidebars = {}
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
