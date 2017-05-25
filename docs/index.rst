@@ -30,7 +30,7 @@ The result is returned as an `astropy.table.Table`.
    import ccsdspy
    from ccsdspy import PacketField
    
-   pkt = pyccsds.FixedLength([
+   pkt = ccsdspy.FixedLength([
         PacketField(name='SHCOARSE',       data_type='uint', bit_length=32),
         PacketField(name='SHFINE',         data_type='uint', bit_length=20),
         PacketField(name='OPMODE',         data_type='int',  bit_length=3),
