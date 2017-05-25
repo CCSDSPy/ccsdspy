@@ -1,13 +1,26 @@
 """Internal decoding routines."""
 from __future__ import division
-from collections import namedtuple
+from collections import namedtuple, OrderedDict
 import numpy as np
 
 __author__ = 'Daniel da Silva <Daniel.e.daSilva@nasa.gov>'
 
 
 def _decode_fixed_length(file_bytes, fields):
-    """Decode a fixed length APID."""
+    """Decode a fixed length APID.
+    
+    Parameters
+    ----------
+    file_bytes : array 
+       A NumPy array of uint8 type, holding the bytes of the file to decode.
+    fields : list of ccsdspy.interface.PacketField
+       A list of fields, including the secondary header but excluding the
+       primary header.
+
+    Returns
+    -------
+    Ordered dictionary mapping field names to NumPy arrays.
+    """
     # Setup a dictionary mapping a bit offset to each field. It is assumed
     # that the `fields` array contains entries for the secondary header.
     packet_nbytes = file_bytes[4] * 256 + file_bytes[5] + 7
@@ -17,12 +30,17 @@ def _decode_fixed_length(file_bytes, fields):
     bit_offset = {}
 
     for field in fields:
-        bit_offset[field._name] = counter
-        counter += field._bit_length
-        
-    assert counter == packet_nbytes * 8, \
-        'Missing {n} bits in packet definition!'.format(n=counter-packet_nbytes*8)
-    
+
+        if bit_offset is None:                   
+            bit_offset[field._name] = counter
+            counter += field._bit_length
+        else:
+            bit_offset[field._name] = field._bit_offset
+
+    if all(field._bit_offset is None for field in fields):
+        assert counter <= packet_nbytes * 8, \
+            'Field definition exceeds packet length'.format(n=counter-packet_nbytes*8)
+
     # Setup metadata for each field, consiting of where to look for the field in
     # the file and how to parse it.
     FieldMeta = namedtuple('Meta', ['nbytes_file', 'start_byte_file',
@@ -75,7 +93,7 @@ def _decode_fixed_length(file_bytes, fields):
 
     # Switch dtype of byte arrays to the final dtype, and apply masks and shifts
     # to interpret the correct bits.
-    field_arrays = {}
+    field_arrays = OrderedDict()
 
     for field in fields:
         meta = field_meta[field]
