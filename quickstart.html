@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>QuickStart - Decoding Fixed Length Packets &#8212; ccsdspy v0.0.dev7</title>
+    
+    <link rel="stylesheet" href="_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.dev7',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="_static/astropy_logo.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
+<script type="text/javascript" src="_static/copybutton.js"></script>
+
+
+  </head>
+  <body role="document">
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="index.html"><span id="logotext1">ccsds</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="genindex.html">Index</a></li>
+    <li><a title="Module Index" href="py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li>
+	<a href="index.html">ccsdspy v0.0.dev7</a>
+	 &#187;
+      </li>
+      
+       
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="quickstart-decoding-fixed-length-packets">
+<h1>QuickStart - Decoding Fixed Length Packets<a class="headerlink" href="#quickstart-decoding-fixed-length-packets" title="Permalink to this headline">¶</a></h1>
+<p>This example presents defining a packet format and decoding a file containing packets of this type.</p>
+<div class="highlight-python3"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">spacepy</span> <span class="k">import</span> <span class="n">pyccsds</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">spacepy.pyccsds</span> <span class="k">import</span> <span class="n">PacketField</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pkt</span> <span class="o">=</span> <span class="n">pyccsds</span><span class="o">.</span><span class="n">FixedLength</span><span class="p">([</span>
+<span class="go">     PacketField(name=&#39;SHCOARSE&#39;,          data_type=&#39;uint&#39;, bit_length=32),</span>
+<span class="go">     PacketField(name=&#39;SHFINE&#39;,            data_type=&#39;uint&#39;, bit_length=20),</span>
+<span class="go">     PacketField(name=&#39;OPMODE&#39;,            data_type=&#39;int&#39;,  bit_length=3),</span>
+<span class="go">     PacketField(name=&#39;SPACER&#39;,            data_type=&#39;fill&#39;, bit_length=1),</span>
+<span class="go">     PacketField(name=&#39;VOLTAGE_SENSOR&#39;,    data_type=&#39;int&#39;,  bit_length=8),</span>
+<span class="go">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">pkt</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;MyCCSDS.bin&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="p">[</span><span class="s1">&#39;VOLTAGE_SENSOR&#39;</span><span class="p">]</span>
+<span class="go">    &lt;Column name=&#39;VOLTAGE_SENSOR&#39; dtype=&#39;uint16&#39; length=17280&gt;</span>
+<span class="go">       26540</span>
+<span class="go">       25929</span>
+<span class="go">       26905</span>
+<span class="go">       26408</span>
+<span class="go">       26388</span>
+<span class="go">       26923</span>
+<span class="go">       26475</span>
+<span class="go">       26425</span>
+<span class="go">         ...</span>
+<span class="go">       26799</span>
+<span class="go">       26792</span>
+<span class="go">       27190</span>
+<span class="go">       26286</span>
+<span class="go">       26989</span>
+<span class="go">       26577</span>
+<span class="go">       26459</span>
+<span class="go">       26826</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">QuickStart - Decoding Fixed Length Packets</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="_sources/quickstart.rst.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2017, Daniel da Silva.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.5.1. &nbsp;
+    Last built 24 May 2017. <br/>
+  </p>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,29 @@
+
+
+PacketField
+===================
+
+.. currentmodule:: ccsdspy
+
+.. autoclass:: PacketField
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   

@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>PacketField &#8212; ccsdspy v0.0.dev7</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.0.dev7',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="FixedLength" href="ccsdspy.FixedLength.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body role="document">
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">ccsds</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="ccsdspy.FixedLength.html" title="FixedLength">
+	  &laquo; previous
+	</a>
+	
+      </li>
+      <li>
+	<a href="../index.html">ccsdspy v0.0.dev7</a>
+	 &#187;
+      </li>
+      <li><a href="../ccsdspy/index.html" accesskey="U">Reference/API</a> &#187;</li>
+      
+      <li>PacketField</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="packetfield">
+<h1>PacketField<a class="headerlink" href="#packetfield" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="ccsdspy.PacketField">
+<em class="property">class </em><code class="descclassname">ccsdspy.</code><code class="descname">PacketField</code><span class="sig-paren">(</span><em>name</em>, <em>data_type</em>, <em>bit_length</em>, <em>bit_offset=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ccsdspy/interface.html#PacketField"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ccsdspy.PacketField" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>A field contained in a packet.</p>
+<p>Define a new PacketField.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>name</strong> : str</p>
+<blockquote>
+<div><p>String identifier for the field. The name specified how you may
+call upon this data later.</p>
+</div></blockquote>
+<p><strong>data_type</strong> : {&#8216;uint&#8217;, &#8216;int&#8217;, &#8216;float&#8217;, &#8216;str&#8217;, &#8216;fill&#8217;}</p>
+<blockquote>
+<div><p>Data type of the field.</p>
+</div></blockquote>
+<p><strong>bit_length</strong> : int</p>
+<blockquote>
+<div><p>Number of bits contained in the field.</p>
+</div></blockquote>
+<p><strong>bit_offset</strong> : int, optional</p>
+<blockquote>
+<div><p>Bit offset into packet, including primary header. If this is not
+specified, than the bit offset will the be calculated automatically
+from its position inside the packet definition.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>TypeError</strong></p>
+<blockquote>
+<div><p>If one of the arguments is not of the correct type.</p>
+</div></blockquote>
+<p><strong>ValueError</strong></p>
+<blockquote class="last">
+<div><p>data type is invalid</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">PacketField</a></li>
+</ul>
+
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="ccsdspy.FixedLength.html"
+                        title="previous chapter">FixedLength</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/ccsdspy.PacketField.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="../_sources/api/ccsdspy.PacketField.rst.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2017, Daniel da Silva.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.5.1. &nbsp;
+    Last built 24 May 2017. <br/>
+  </p>
+</footer>
+  </body>
+</html>

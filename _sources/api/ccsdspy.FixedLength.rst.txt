@@ -1,0 +1,44 @@
+
+
+FixedLength
+===================
+
+.. currentmodule:: ccsdspy
+
+.. autoclass:: FixedLength
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~FixedLength.load
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: load
+
+   
+   

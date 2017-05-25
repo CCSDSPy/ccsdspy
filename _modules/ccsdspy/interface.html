@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>ccsdspy.interface &#8212; ccsdspy v0.0.dev7</title>
+    
+    <link rel="stylesheet" href="../../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.0.dev7',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../_static/astropy_logo.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
+<script type="text/javascript" src="../../_static/copybutton.js"></script>
+
+
+  </head>
+  <body role="document">
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../index.html"><span id="logotext1">ccsds</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li>
+	<a href="../../index.html">ccsdspy v0.0.dev7</a>
+	 &#187;
+      </li>
+      <li><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+      
+       
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for ccsdspy.interface</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;High level Object-Oriented interface methods for the package.&quot;&quot;&quot;</span>
+
+<span class="n">_author__</span> <span class="o">=</span> <span class="s2">&quot;Daniel da Silva &lt;mail@danieldasilva.org&gt;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="k">import</span> <span class="n">Table</span>
+<span class="kn">from</span> <span class="nn">.decode</span> <span class="k">import</span> <span class="n">_decode_fixed_length</span>
+
+
+<div class="viewcode-block" id="PacketField"><a class="viewcode-back" href="../../api/ccsdspy.PacketField.html#ccsdspy.PacketField">[docs]</a><span class="k">class</span> <span class="nc">PacketField</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A field contained in a packet.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">bit_length</span><span class="p">,</span> <span class="n">bit_offset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Define a new PacketField.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name : str</span>
+<span class="sd">            String identifier for the field. The name specified how you may</span>
+<span class="sd">            call upon this data later.</span>
+<span class="sd">        data_type : {&#39;uint&#39;, &#39;int&#39;, &#39;float&#39;, &#39;str&#39;, &#39;fill&#39;}</span>
+<span class="sd">            Data type of the field.</span>
+<span class="sd">        bit_length : int</span>
+<span class="sd">            Number of bits contained in the field.</span>
+<span class="sd">        bit_offset : int, optional</span>
+<span class="sd">            Bit offset into packet, including primary header. If this is not</span>
+<span class="sd">            specified, than the bit offset will the be calculated automatically</span>
+<span class="sd">            from its position inside the packet definition.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">             If one of the arguments is not of the correct type.</span>
+<span class="sd">        ValueError</span>
+<span class="sd">             data type is invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;name parameter must be a str&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;data_type parameter must be a str&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bit_length</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;bit_length parameter must be an int&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">bit_offset</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bit_offset</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;bit_offset parameter must be an int&#39;</span><span class="p">)</span>
+
+        <span class="n">valid_data_types</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;uint&#39;</span><span class="p">,</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span> <span class="s1">&#39;float&#39;</span><span class="p">,</span> <span class="s1">&#39;str&#39;</span><span class="p">,</span> <span class="s1">&#39;fill&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">data_type</span> <span class="ow">in</span> <span class="n">valid_data_types</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;data_type must be one of </span><span class="si">{valids}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">valids</span><span class="o">=</span><span class="nb">repr</span><span class="p">(</span><span class="n">valid_data_types</span><span class="p">)))</span>
+            
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_type</span> <span class="o">=</span> <span class="n">data_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bit_length</span> <span class="o">=</span> <span class="n">bit_length</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bit_offset</span> <span class="o">=</span> <span class="n">bit_offset</span></div>
+
+        
+<div class="viewcode-block" id="FixedLength"><a class="viewcode-back" href="../../api/ccsdspy.FixedLength.html#ccsdspy.FixedLength">[docs]</a><span class="k">class</span> <span class="nc">FixedLength</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Define a fixed length packet to decode byte sequences.</span>
+
+<span class="sd">    In the context of engineering and science, fixed length packets correspond</span>
+<span class="sd">    to data that is of the same layout every time. Examples of this include</span>
+<span class="sd">    sensor time series, status codes, or error messages.</span>
+<span class="sd">    &quot;&quot;&quot;</span>    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fields</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        fields : list of `ccsdspy.PacketField`</span>
+<span class="sd">            Layout of packet fields contained in the definition.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fields</span> <span class="o">=</span> <span class="n">fields</span><span class="p">[:]</span>
+
+<div class="viewcode-block" id="FixedLength.load"><a class="viewcode-back" href="../../api/ccsdspy.FixedLength.html#ccsdspy.FixedLength.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Decode a file-like object containing a sequence of these packets.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        file: str, file-like</span>
+<span class="sd">           Path to file on the local file system, or file-like object (such</span>
+<span class="sd">           as `StringIO.StringIO`)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        `astropy.table.Table` containing one column for each field</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">file_bytes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromfile</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;u1&#39;</span><span class="p">)</span>
+        <span class="n">field_arrays</span> <span class="o">=</span> <span class="n">_decode_fixed_length</span><span class="p">(</span><span class="n">file_bytes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fields</span><span class="p">)</span>
+
+        <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">field_arrays</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">names</span><span class="o">=</span><span class="n">field_arrays</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="k">return</span> <span class="n">table</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+
+
+      
+<form action="../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right"> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2017, Daniel da Silva.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.5.1. &nbsp;
+    Last built 24 May 2017. <br/>
+  </p>
+</footer>
+  </body>
+</html>

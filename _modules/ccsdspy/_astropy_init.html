@@ -1,0 +1,249 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>ccsdspy._astropy_init &#8212; ccsdspy v0.0.dev7</title>
+    
+    <link rel="stylesheet" href="../../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.0.dev7',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../_static/astropy_logo.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
+<script type="text/javascript" src="../../_static/copybutton.js"></script>
+
+
+  </head>
+  <body role="document">
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../index.html"><span id="logotext1">ccsds</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li>
+	<a href="../../index.html">ccsdspy v0.0.dev7</a>
+	 &#187;
+      </li>
+      <li><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+      
+       
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for ccsdspy._astropy_init</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Licensed under a 3-clause BSD style license - see LICENSE.rst</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;__version__&#39;</span><span class="p">,</span> <span class="s1">&#39;__githash__&#39;</span><span class="p">,</span> <span class="s1">&#39;test&#39;</span><span class="p">]</span>
+
+<span class="c1"># this indicates whether or not we are in the package&#39;s setup.py</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">_ASTROPY_SETUP_</span>
+<span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">sys</span> <span class="k">import</span> <span class="n">version_info</span>
+    <span class="k">if</span> <span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">builtins</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">__builtin__</span> <span class="k">as</span> <span class="nn">builtins</span>
+    <span class="n">builtins</span><span class="o">.</span><span class="n">_ASTROPY_SETUP_</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">.version</span> <span class="k">import</span> <span class="n">version</span> <span class="k">as</span> <span class="n">__version__</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">.version</span> <span class="k">import</span> <span class="n">githash</span> <span class="k">as</span> <span class="n">__githash__</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">__githash__</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+
+<span class="c1"># set up the test command</span>
+<span class="k">def</span> <span class="nf">_get_test_runner</span><span class="p">():</span>
+    <span class="kn">import</span> <span class="nn">os</span>
+    <span class="kn">from</span> <span class="nn">astropy.tests.helper</span> <span class="k">import</span> <span class="n">TestRunner</span>
+    <span class="k">return</span> <span class="n">TestRunner</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="test"><a class="viewcode-back" href="../../api/ccsdspy.test.html#ccsdspy.test">[docs]</a><span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="n">package</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">test_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plugins</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+         <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">pastebin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">remote_data</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">pep8</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+         <span class="n">pdb</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">coverage</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">open_files</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run the tests using `py.test &lt;http://pytest.org/latest&gt;`__. A proper set</span>
+<span class="sd">    of arguments is constructed and passed to `pytest.main`_.</span>
+
+<span class="sd">    .. _py.test: http://pytest.org/latest/</span>
+<span class="sd">    .. _pytest.main: http://pytest.org/latest/builtin.html#pytest.main</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    package : str, optional</span>
+<span class="sd">        The name of a specific package to test, e.g. &#39;io.fits&#39; or &#39;utils&#39;.</span>
+<span class="sd">        If nothing is specified all default tests are run.</span>
+
+<span class="sd">    test_path : str, optional</span>
+<span class="sd">        Specify location to test by path. May be a single file or</span>
+<span class="sd">        directory. Must be specified absolutely or relative to the</span>
+<span class="sd">        calling directory.</span>
+
+<span class="sd">    args : str, optional</span>
+<span class="sd">        Additional arguments to be passed to pytest.main_ in the ``args``</span>
+<span class="sd">        keyword argument.</span>
+
+<span class="sd">    plugins : list, optional</span>
+<span class="sd">        Plugins to be passed to pytest.main_ in the ``plugins`` keyword</span>
+<span class="sd">        argument.</span>
+
+<span class="sd">    verbose : bool, optional</span>
+<span class="sd">        Convenience option to turn on verbose output from py.test_. Passing</span>
+<span class="sd">        True is the same as specifying ``&#39;-v&#39;`` in ``args``.</span>
+
+<span class="sd">    pastebin : {&#39;failed&#39;,&#39;all&#39;,None}, optional</span>
+<span class="sd">        Convenience option for turning on py.test_ pastebin output. Set to</span>
+<span class="sd">        ``&#39;failed&#39;`` to upload info for failed tests, or ``&#39;all&#39;`` to upload</span>
+<span class="sd">        info for all tests.</span>
+
+<span class="sd">    remote_data : bool, optional</span>
+<span class="sd">        Controls whether to run tests marked with @remote_data. These</span>
+<span class="sd">        tests use online data and are not run by default. Set to True to</span>
+<span class="sd">        run these tests.</span>
+
+<span class="sd">    pep8 : bool, optional</span>
+<span class="sd">        Turn on PEP8 checking via the `pytest-pep8 plugin</span>
+<span class="sd">        &lt;http://pypi.python.org/pypi/pytest-pep8&gt;`_ and disable normal</span>
+<span class="sd">        tests. Same as specifying ``&#39;--pep8 -k pep8&#39;`` in ``args``.</span>
+
+<span class="sd">    pdb : bool, optional</span>
+<span class="sd">        Turn on PDB post-mortem analysis for failing tests. Same as</span>
+<span class="sd">        specifying ``&#39;--pdb&#39;`` in ``args``.</span>
+
+<span class="sd">    coverage : bool, optional</span>
+<span class="sd">        Generate a test coverage report.  The result will be placed in</span>
+<span class="sd">        the directory htmlcov.</span>
+
+<span class="sd">    open_files : bool, optional</span>
+<span class="sd">        Fail when any tests leave files open.  Off by default, because</span>
+<span class="sd">        this adds extra run time to the test suite.  Requires the</span>
+<span class="sd">        `psutil &lt;https://pypi.python.org/pypi/psutil&gt;`_ package.</span>
+
+<span class="sd">    parallel : int, optional</span>
+<span class="sd">        When provided, run the tests in parallel on the specified</span>
+<span class="sd">        number of CPUs.  If parallel is negative, it will use the all</span>
+<span class="sd">        the cores on the machine.  Requires the</span>
+<span class="sd">        `pytest-xdist &lt;https://pypi.python.org/pypi/pytest-xdist&gt;`_ plugin</span>
+<span class="sd">        installed. Only available when using Astropy 0.3 or later.</span>
+
+<span class="sd">    kwargs</span>
+<span class="sd">        Any additional keywords passed into this function will be passed</span>
+<span class="sd">        on to the astropy test runner.  This allows use of test-related</span>
+<span class="sd">        functionality implemented in later versions of astropy without</span>
+<span class="sd">        explicitly updating the package template.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">test_runner</span> <span class="o">=</span> <span class="n">_get_test_runner</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">test_runner</span><span class="o">.</span><span class="n">run_tests</span><span class="p">(</span>
+        <span class="n">package</span><span class="o">=</span><span class="n">package</span><span class="p">,</span> <span class="n">test_path</span><span class="o">=</span><span class="n">test_path</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span>
+        <span class="n">plugins</span><span class="o">=</span><span class="n">plugins</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">pastebin</span><span class="o">=</span><span class="n">pastebin</span><span class="p">,</span>
+        <span class="n">remote_data</span><span class="o">=</span><span class="n">remote_data</span><span class="p">,</span> <span class="n">pep8</span><span class="o">=</span><span class="n">pep8</span><span class="p">,</span> <span class="n">pdb</span><span class="o">=</span><span class="n">pdb</span><span class="p">,</span>
+        <span class="n">coverage</span><span class="o">=</span><span class="n">coverage</span><span class="p">,</span> <span class="n">open_files</span><span class="o">=</span><span class="n">open_files</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">_ASTROPY_SETUP_</span><span class="p">:</span>  <span class="c1"># noqa</span>
+    <span class="kn">import</span> <span class="nn">os</span>
+    <span class="kn">from</span> <span class="nn">warnings</span> <span class="k">import</span> <span class="n">warn</span>
+    <span class="kn">from</span> <span class="nn">astropy.config.configuration</span> <span class="k">import</span> <span class="p">(</span>
+        <span class="n">update_default_config</span><span class="p">,</span>
+        <span class="n">ConfigurationDefaultMissingError</span><span class="p">,</span>
+        <span class="n">ConfigurationDefaultMissingWarning</span><span class="p">)</span>
+
+    <span class="c1"># add these here so we only need to cleanup the namespace at the end</span>
+    <span class="n">config_dir</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ASTROPY_SKIP_CONFIG_UPDATE&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="n">config_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">)</span>
+        <span class="n">config_template</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">config_dir</span><span class="p">,</span> <span class="n">__package__</span> <span class="o">+</span> <span class="s2">&quot;.cfg&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">config_template</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">update_default_config</span><span class="p">(</span>
+                    <span class="n">__package__</span><span class="p">,</span> <span class="n">config_dir</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="n">__version__</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">orig_error</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">update_default_config</span><span class="p">(</span><span class="n">__package__</span><span class="p">,</span> <span class="n">config_dir</span><span class="p">)</span>
+                <span class="k">except</span> <span class="n">ConfigurationDefaultMissingError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">wmsg</span> <span class="o">=</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span>
+                            <span class="s2">&quot; Cannot install default profile. If you are &quot;</span>
+                            <span class="s2">&quot;importing from source, this is expected.&quot;</span><span class="p">)</span>
+                    <span class="n">warn</span><span class="p">(</span><span class="n">ConfigurationDefaultMissingWarning</span><span class="p">(</span><span class="n">wmsg</span><span class="p">))</span>
+                    <span class="k">del</span> <span class="n">e</span>
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">orig_error</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+
+
+      
+<form action="../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right"> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2017, Daniel da Silva.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.5.1. &nbsp;
+    Last built 24 May 2017. <br/>
+  </p>
+</footer>
+  </body>
+</html>

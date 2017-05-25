@@ -1,0 +1,228 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>test &#8212; ccsdspy v0.0.dev7</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.0.dev7',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="FixedLength" href="ccsdspy.FixedLength.html" />
+    <link rel="prev" title="Reference/API" href="../ccsdspy/index.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body role="document">
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">ccsds</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="ccsdspy.FixedLength.html" title="FixedLength">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="../ccsdspy/index.html" title="Reference/API">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">ccsdspy v0.0.dev7</a>
+	 &#187;
+      </li>
+      <li><a href="../ccsdspy/index.html" accesskey="U">Reference/API</a> &#187;</li>
+      
+      <li>test</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="test">
+<h1>test<a class="headerlink" href="#test" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="ccsdspy.test">
+<code class="descclassname">ccsdspy.</code><code class="descname">test</code><span class="sig-paren">(</span><em>package=None</em>, <em>test_path=None</em>, <em>args=None</em>, <em>plugins=None</em>, <em>verbose=False</em>, <em>pastebin=None</em>, <em>remote_data=False</em>, <em>pep8=False</em>, <em>pdb=False</em>, <em>coverage=False</em>, <em>open_files=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ccsdspy/_astropy_init.html#test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ccsdspy.test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the tests using <a class="reference external" href="http://pytest.org/latest">py.test</a>. A proper set
+of arguments is constructed and passed to <a class="reference external" href="http://pytest.org/latest/builtin.html#pytest.main">pytest.main</a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>package</strong> : str, optional</p>
+<blockquote>
+<div><p>The name of a specific package to test, e.g. &#8216;io.fits&#8217; or &#8216;utils&#8217;.
+If nothing is specified all default tests are run.</p>
+</div></blockquote>
+<p><strong>test_path</strong> : str, optional</p>
+<blockquote>
+<div><p>Specify location to test by path. May be a single file or
+directory. Must be specified absolutely or relative to the
+calling directory.</p>
+</div></blockquote>
+<p><strong>args</strong> : str, optional</p>
+<blockquote>
+<div><p>Additional arguments to be passed to <a class="reference external" href="http://pytest.org/latest/builtin.html#pytest.main">pytest.main</a> in the <code class="docutils literal"><span class="pre">args</span></code>
+keyword argument.</p>
+</div></blockquote>
+<p><strong>plugins</strong> : list, optional</p>
+<blockquote>
+<div><p>Plugins to be passed to <a class="reference external" href="http://pytest.org/latest/builtin.html#pytest.main">pytest.main</a> in the <code class="docutils literal"><span class="pre">plugins</span></code> keyword
+argument.</p>
+</div></blockquote>
+<p><strong>verbose</strong> : bool, optional</p>
+<blockquote>
+<div><p>Convenience option to turn on verbose output from <a class="reference external" href="http://pytest.org/latest/">py.test</a>. Passing
+True is the same as specifying <code class="docutils literal"><span class="pre">'-v'</span></code> in <code class="docutils literal"><span class="pre">args</span></code>.</p>
+</div></blockquote>
+<p><strong>pastebin</strong> : {&#8216;failed&#8217;,&#8217;all&#8217;,None}, optional</p>
+<blockquote>
+<div><p>Convenience option for turning on <a class="reference external" href="http://pytest.org/latest/">py.test</a> pastebin output. Set to
+<code class="docutils literal"><span class="pre">'failed'</span></code> to upload info for failed tests, or <code class="docutils literal"><span class="pre">'all'</span></code> to upload
+info for all tests.</p>
+</div></blockquote>
+<p><strong>remote_data</strong> : bool, optional</p>
+<blockquote>
+<div><p>Controls whether to run tests marked with &#64;remote_data. These
+tests use online data and are not run by default. Set to True to
+run these tests.</p>
+</div></blockquote>
+<p><strong>pep8</strong> : bool, optional</p>
+<blockquote>
+<div><p>Turn on PEP8 checking via the <a class="reference external" href="http://pypi.python.org/pypi/pytest-pep8">pytest-pep8 plugin</a> and disable normal
+tests. Same as specifying <code class="docutils literal"><span class="pre">'--pep8</span> <span class="pre">-k</span> <span class="pre">pep8'</span></code> in <code class="docutils literal"><span class="pre">args</span></code>.</p>
+</div></blockquote>
+<p><strong>pdb</strong> : bool, optional</p>
+<blockquote>
+<div><p>Turn on PDB post-mortem analysis for failing tests. Same as
+specifying <code class="docutils literal"><span class="pre">'--pdb'</span></code> in <code class="docutils literal"><span class="pre">args</span></code>.</p>
+</div></blockquote>
+<p><strong>coverage</strong> : bool, optional</p>
+<blockquote>
+<div><p>Generate a test coverage report.  The result will be placed in
+the directory htmlcov.</p>
+</div></blockquote>
+<p><strong>open_files</strong> : bool, optional</p>
+<blockquote>
+<div><p>Fail when any tests leave files open.  Off by default, because
+this adds extra run time to the test suite.  Requires the
+<a class="reference external" href="https://pypi.python.org/pypi/psutil">psutil</a> package.</p>
+</div></blockquote>
+<p><strong>parallel</strong> : int, optional</p>
+<blockquote>
+<div><p>When provided, run the tests in parallel on the specified
+number of CPUs.  If parallel is negative, it will use the all
+the cores on the machine.  Requires the
+<a class="reference external" href="https://pypi.python.org/pypi/pytest-xdist">pytest-xdist</a> plugin
+installed. Only available when using Astropy 0.3 or later.</p>
+</div></blockquote>
+<p><strong>kwargs</strong></p>
+<blockquote class="last">
+<div><p>Any additional keywords passed into this function will be passed
+on to the astropy test runner.  This allows use of test-related
+functionality implemented in later versions of astropy without
+explicitly updating the package template.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">test</a></li>
+</ul>
+
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../ccsdspy/index.html"
+                        title="previous chapter">Reference/API</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="ccsdspy.FixedLength.html"
+                        title="next chapter">FixedLength</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/ccsdspy.test.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="../_sources/api/ccsdspy.test.rst.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2017, Daniel da Silva.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.5.1. &nbsp;
+    Last built 24 May 2017. <br/>
+  </p>
+</footer>
+  </body>
+</html>
