@@ -10,17 +10,6 @@ CCSDSPy - IO Interface for Reading CCSDS Data in Python.
     :alt: Travis Status
           
 This package provides a Python interface for reading tightly packed bits in the CCSDS format used for many NASA and ESA missions.
-
-   
-Supported Data Types
---------------------
-The following data types will be supported:
-
-* uint
-* int
-* float
-* fill
-* string
  
 Licensed
 --------
