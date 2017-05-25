@@ -17,7 +17,7 @@ To install ccsdspy from source, you can use
    
 .. note:: The CCSDS space packet protocol is a not a self-describing data format.
           Context for how to interpret the file's bits must be provided. This 
-          information typically available from the flight software documentation.
+          information is typically available from the flight software documentation.
 
 Fixed Length Packets
 --------------------
