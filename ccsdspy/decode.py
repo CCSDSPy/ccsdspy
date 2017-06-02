@@ -30,8 +30,7 @@ def _decode_fixed_length(file_bytes, fields):
     bit_offset = {}
 
     for field in fields:
-
-        if bit_offset is None:                   
+        if field._bit_offset is None:
             bit_offset[field._name] = counter
             counter += field._bit_length
         else:

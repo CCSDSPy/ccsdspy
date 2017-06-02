@@ -24,7 +24,7 @@ def test_PacketField_initializer_raises_TypeError_on_bad_types():
         PacketField(name='mnemonic', data_type=1, bit_length=1)
     with pytest.raises(TypeError):
         PacketField(name='mnemonic', data_type='uint', bit_length='foobar')
-    
+
 
 def test_FixedLength_initializer_copies_field_list():
     """Tests that the FixedLengthPacket initializer stores a copy of the 
