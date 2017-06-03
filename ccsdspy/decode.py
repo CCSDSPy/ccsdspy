@@ -3,7 +3,7 @@ from __future__ import division
 from collections import namedtuple, OrderedDict
 import numpy as np
 
-__author__ = 'Daniel da Silva <Daniel.e.daSilva@nasa.gov>'
+__author__ = 'Daniel da Silva <mail@danieldasilva.org>'
 
 
 def _decode_fixed_length(file_bytes, fields):
@@ -119,6 +119,9 @@ def _decode_fixed_length(file_bytes, fields):
 
         arr &= bitmask
         arr >>= bitmask_right
+        
+        if field._byte_order == 'little':
+            arr.byteswap(inplace=True)
 
         field_arrays[field._name] = arr
 
