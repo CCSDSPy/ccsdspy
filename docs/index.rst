@@ -33,7 +33,7 @@ The result is returned as an `astropy.table.Table`.
    pkt = ccsdspy.FixedLength([
         PacketField(name='SHCOARSE',       data_type='uint', bit_length=32),
         PacketField(name='SHFINE',         data_type='uint', bit_length=20),
-        PacketField(name='OPMODE',         data_type='int',  bit_length=3),
+        PacketField(name='OPMODE',         data_type='uint', bit_length=3),
         PacketField(name='SPACER',         data_type='fill', bit_length=1),
         PacketField(name='VOLTAGE_SENSOR', data_type='int',  bit_length=8),
    ])
