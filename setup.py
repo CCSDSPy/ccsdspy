@@ -95,7 +95,8 @@ package_info = get_package_info()
 
 # Add the project-global data
 package_info['package_data'].setdefault(PACKAGENAME, [])
-package_info['package_data'][PACKAGENAME].append('data/*')
+package_info['package_data'][PACKAGENAME].append('*.csv')
+package_info['package_data'][PACKAGENAME].append('*.tlm')
 
 # Define entry points for command-line scripts
 entry_points = {'console_scripts': []}
@@ -136,5 +137,6 @@ setup(name=PACKAGENAME,
       zip_safe=False,
       use_2to3=False,
       entry_points=entry_points,
+      include_package_data=True,
       **package_info
 )

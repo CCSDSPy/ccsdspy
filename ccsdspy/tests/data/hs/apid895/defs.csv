@@ -1,0 +1,14 @@
+name,data_type,bit_offset,bit_length,calibration
+pkt895_time_secs,uint,0,32,
+pkt895_time_usecs,uint,32,32,
+pkt895_uint16_cnt,uint,64,16,"{""0"":20,""1"":-0.0002766}"
+pkt895_int16_osc,int,80,16,
+pkt895_uint32_bitfld,uint,96,32,
+pkt895_fld1,uint,96,6,
+pkt895_fld2,uint,102,7,
+pkt895_fld3,uint,109,6,
+pkt895_fld4,uint,115,7,
+pkt895_fld5,uint,122,6,
+pkt895_int32_osc,int,128,32,
+pkt895_int32_sin_2h,int,160,32,
+pkt895_flt_sin_12h,float,192,32,

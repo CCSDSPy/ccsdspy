@@ -1,0 +1,13 @@
+name,data_type,bit_offset,bit_length,calibration
+pkt251_time_secs,uint,0,32,
+pkt251_time_usecs,uint,32,32,
+pkt251_uint32_bitfld,uint,64,32,
+pkt251_fld1,uint,64,6,
+pkt251_fld2,uint,70,7,
+pkt251_fld3,uint,77,6,
+pkt251_fld4,uint,83,7,
+pkt251_fld5,uint,90,6,
+pkt251_flt_sin_1h,float,96,32,"{""0"":20,""1"":-0.0000379,""2"":2.933}"
+pkt251_flt_sin_1d,float,128,32,
+pkt251_dbl_sin_2h,float,160,64,
+pkt251_char_hellow,str,224,64,

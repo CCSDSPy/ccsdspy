@@ -1,0 +1,10 @@
+name,data_type,bit_offset,bit_length,calibration
+pkt130_time_secs,uint,0,32,
+pkt130_time_msecs,uint,32,16,
+pkt130_int16_cnt,int,48,16,
+pkt130_uint32_sin_2h,uint,64,32,
+pkt130_int32_cnt,int,96,32,
+pkt130_int32_sin_1h,int,128,32,"{""0"":2000,""1"":-0.002766,""2"":0.0000535,""3"":-0.00000000162}"
+pkt130_flt_sin_1m,float,160,32,
+pkt130_dbl_sin_2h,float,192,64,
+pkt130_char_lwrcase,str,256,8,

@@ -26,7 +26,7 @@ def _decode_fixed_length(file_bytes, fields):
     packet_nbytes = file_bytes[4] * 256 + file_bytes[5] + 7
     body_nbytes = sum(field._bit_length for field in fields) // 8
     counter = (packet_nbytes - body_nbytes) * 8
-
+    
     bit_offset = {}
 
     for field in fields:
@@ -37,9 +37,9 @@ def _decode_fixed_length(file_bytes, fields):
             bit_offset[field._name] = field._bit_offset
 
     if all(field._bit_offset is None for field in fields):
-        assert counter <= packet_nbytes * 8, \
-            'Field definition exceeds packet length'.format(n=counter-packet_nbytes*8)
-
+        assert counter == packet_nbytes * 8, \
+            'Field definition != packet length'.format(n=counter-packet_nbytes*8)
+        
     # Setup metadata for each field, consiting of where to look for the field in
     # the file and how to parse it.
     FieldMeta = namedtuple('Meta', ['nbytes_file', 'start_byte_file',
@@ -49,7 +49,8 @@ def _decode_fixed_length(file_bytes, fields):
     for field in fields:
         nbytes_file = np.ceil(field._bit_length/8.).astype(int)
 
-        if bit_offset[field._name] % 8:
+        if (bit_offset[field._name] % 8 and
+             bit_offset[field._name] % 8 + field._bit_length > 8):
             nbytes_file += 1
 
         nbytes_final = {3: 4, 5: 8, 6: 8, 7: 8}.get(nbytes_file,  nbytes_file)
@@ -59,6 +60,8 @@ def _decode_fixed_length(file_bytes, fields):
             'uint': '>u%d' % nbytes_final,
             'int':  '>i%d' % nbytes_final,
             'fill': '>u%d' % nbytes_final,
+            'float': 'f%d' % nbytes_final,
+            'str':   'S%d' % nbytes_final,
         }[field._data_type]
         
         field_meta[field] = FieldMeta(
@@ -73,7 +76,7 @@ def _decode_fixed_length(file_bytes, fields):
         file_bytes = file_bytes[:-extra_bytes]
     
     packet_count = file_bytes.size // packet_nbytes
-
+    
     # Create byte arrays for each field. At the end of this method they are left
     # as the numpy uint8 type.
     field_bytes = {}
@@ -84,11 +87,14 @@ def _decode_fixed_length(file_bytes, fields):
         xbytes = meta.nbytes_final - meta.nbytes_file
 
         for i in range(xbytes, meta.nbytes_final):
-            arr[i::meta.nbytes_final] = (
-                file_bytes[meta.start_byte_file + i - xbytes::packet_nbytes]
-            )
-
-        field_bytes[field] = arr
+            try:
+                arr[i::meta.nbytes_final] = (
+                    file_bytes[meta.start_byte_file + i - xbytes::packet_nbytes]
+                )
+            except Exception as e:
+                import IPython
+                IPython.embed()
+            field_bytes[field] = arr
 
     # Switch dtype of byte arrays to the final dtype, and apply masks and shifts
     # to interpret the correct bits.
@@ -97,31 +103,37 @@ def _decode_fixed_length(file_bytes, fields):
     for field in fields:
         meta = field_meta[field]
         arr = field_bytes[field]
-        arr.dtype = meta.np_dtype
-        xbytes = meta.nbytes_final - meta.nbytes_file
+        try:
+            arr.dtype = meta.np_dtype
+        except Exception as e:
+            import IPython
+            IPython.embed()
 
-        bitmask_left = (bit_offset[field._name]
-                        + 8 * xbytes
-                        - 8 * meta.start_byte_file)
+        if field._data_type in ('int', 'uint'):
+            xbytes = meta.nbytes_final - meta.nbytes_file
 
-        bitmask_right = (8 * meta.nbytes_final
-                         - bitmask_left
-                         - field._bit_length)
+            bitmask_left = (bit_offset[field._name]
+                            + 8 * xbytes
+                            - 8 * meta.start_byte_file)
+
+            bitmask_right = (8 * meta.nbytes_final
+                             - bitmask_left
+                             - field._bit_length)
      
-        bitmask_left, bitmask_right = (
-            np.array([bitmask_left, bitmask_right]).astype(meta.np_dtype)
-        )
-
-        bitmask = np.zeros(arr.shape, meta.np_dtype)
-        bitmask |= (1 << int(8 * meta.nbytes_final - bitmask_left)) - 1
-        tmp = np.left_shift([1], bitmask_right)
-        bitmask &= np.bitwise_not(tmp[0] - 1).astype(meta.np_dtype)
-
-        arr &= bitmask
-        arr >>= bitmask_right
+            bitmask_left, bitmask_right = (
+                np.array([bitmask_left, bitmask_right]).astype(meta.np_dtype)
+            )
+            
+            bitmask = np.zeros(arr.shape, meta.np_dtype)
+            bitmask |= (1 << int(8 * meta.nbytes_final - bitmask_left)) - 1
+            tmp = np.left_shift([1], bitmask_right)
+            bitmask &= np.bitwise_not(tmp[0] - 1).astype(meta.np_dtype)
         
-        if field._byte_order == 'little':
-            arr.byteswap(inplace=True)
+            arr &= bitmask
+            arr >>= bitmask_right
+            
+            if field._byte_order == 'little':
+                arr.byteswap(inplace=True)
 
         field_arrays[field._name] = arr
 

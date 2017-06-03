@@ -5,7 +5,7 @@ include ez_setup.py
 include ah_bootstrap.py
 include setup.cfg
 
-recursive-include ccsdspy *.pyx *.c *.pxd
+recursive-include ccsdspy *.pyx *.c *.pxd *.csv *.tlm
 recursive-include docs *
 recursive-include licenses *
 recursive-include cextern *

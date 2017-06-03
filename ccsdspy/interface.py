@@ -11,7 +11,8 @@ class PacketField(object):
     """A field contained in a packet.
     """
     
-    def __init__(self, name, data_type, bit_length, bit_offset=None):
+    def __init__(self, name, data_type, bit_length, bit_offset=None,
+                 byte_order='big'):
         """Define a new PacketField.
         
         Parameters
@@ -27,13 +28,15 @@ class PacketField(object):
             Bit offset into packet, including primary header. If this is not
             specified, than the bit offset will the be calculated automatically
             from its position inside the packet definition.
+        byte_order : {'big', 'little'}, optional
+            Byte order of the field. Defaults to big endian.
 
         Raises
         ------
         TypeError
              If one of the arguments is not of the correct type.
         ValueError
-             data type is invalid
+             data_type or byte_order is invalid
         """
         if not isinstance(name, str):
             raise TypeError('name parameter must be a str')
@@ -43,18 +46,31 @@ class PacketField(object):
             raise TypeError('bit_length parameter must be an int')
         if not (bit_offset is None or isinstance(bit_offset, int)):
             raise TypeError('bit_offset parameter must be an int')
-
+        
         valid_data_types = ('uint', 'int', 'float', 'str', 'fill')
-        if not data_type in valid_data_types:
+        if data_type not in valid_data_types:
             raise ValueError('data_type must be one of {valids}'.format(
                 valids=repr(valid_data_types)))
-            
+
+        valid_byte_orders = ('big', 'little')
+        if byte_order not in valid_byte_orders:
+            raise ValueError('byte_order must be one of {valids}'.format(
+                valids=repr(valid_byte_orders)))        
+        
         self._name = name
         self._data_type = data_type
         self._bit_length = bit_length
         self._bit_offset = bit_offset
+        self._byte_order = byte_order
 
-        
+    def __repr__(self):
+        values = {k: repr(v) for (k, v) in self.__dict__.items()}
+
+        return ('PacketField(name={_name}, data_type={_data_type}, '
+                'bit_length={_bit_length}, bit_offset={_bit_offset}, '
+                'byte_order={_byte_order})'.format(**values))
+
+                
 class FixedLength(object):
     """Define a fixed length packet to decode byte sequences.
 
@@ -70,23 +86,25 @@ class FixedLength(object):
             Layout of packet fields contained in the definition.
         """
         self._fields = fields[:]
-
+       
     def load(self, file):
         """Decode a file-like object containing a sequence of these packets.
 
         Parameters
         ----------
-        file: str, file-like
-           Path to file on the local file system, or file-like object (such
-           as `StringIO.StringIO`)
+        file: str
+           Path to file on the local file system, or file-like object
 
         Returns
         -------
         `astropy.table.Table` containing one column for each field
         """
-        file_bytes = np.fromfile(file, 'u1')
-        field_arrays = _decode_fixed_length(file_bytes, self._fields)
+        if hasattr(file, 'read'):
+            file_bytes = np.fromstring(file.read(), 'u1')
+        else:
+            file_bytes = np.fromfile(file, 'u1')
 
+        field_arrays = _decode_fixed_length(file_bytes, self._fields)
         table = Table(field_arrays.values(), names=field_arrays.keys())
 
         return table
