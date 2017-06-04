@@ -87,13 +87,9 @@ def _decode_fixed_length(file_bytes, fields):
         xbytes = meta.nbytes_final - meta.nbytes_file
 
         for i in range(xbytes, meta.nbytes_final):
-            try:
-                arr[i::meta.nbytes_final] = (
-                    file_bytes[meta.start_byte_file + i - xbytes::packet_nbytes]
-                )
-            except Exception as e:
-                import IPython
-                IPython.embed()
+            arr[i::meta.nbytes_final] = (
+                file_bytes[meta.start_byte_file + i - xbytes::packet_nbytes]
+            )
             field_bytes[field] = arr
 
     # Switch dtype of byte arrays to the final dtype, and apply masks and shifts
@@ -103,11 +99,7 @@ def _decode_fixed_length(file_bytes, fields):
     for field in fields:
         meta = field_meta[field]
         arr = field_bytes[field]
-        try:
-            arr.dtype = meta.np_dtype
-        except Exception as e:
-            import IPython
-            IPython.embed()
+        arr.dtype = meta.np_dtype
 
         if field._data_type in ('int', 'uint'):
             xbytes = meta.nbytes_final - meta.nbytes_file
