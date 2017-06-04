@@ -42,9 +42,9 @@ class PacketField(object):
             raise TypeError('name parameter must be a str')
         if not isinstance(data_type, str):
             raise TypeError('data_type parameter must be a str')
-        if not isinstance(bit_length, int):
+        if not isinstance(bit_length, (int, np.integer)):
             raise TypeError('bit_length parameter must be an int')
-        if not (bit_offset is None or isinstance(bit_offset, int)):
+        if not (bit_offset is None or isinstance(bit_offset, (int, np.integer))):
             raise TypeError('bit_offset parameter must be an int')
         
         valid_data_types = ('uint', 'int', 'float', 'str', 'fill')
@@ -72,7 +72,7 @@ class PacketField(object):
 
                 
 class FixedLength(object):
-    """Define a fixed length packet to decode byte sequences.
+    """Define a fixed length packet to decode binary data.
 
     In the context of engineering and science, fixed length packets correspond
     to data that is of the same layout every time. Examples of this include
@@ -105,6 +105,7 @@ class FixedLength(object):
             file_bytes = np.fromfile(file, 'u1')
 
         field_arrays = _decode_fixed_length(file_bytes, self._fields)
-        table = Table(field_arrays.values(), names=field_arrays.keys())
+        table = Table(list(field_arrays.values()),
+                      names=list(field_arrays.keys()))
 
         return table

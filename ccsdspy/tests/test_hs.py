@@ -129,12 +129,13 @@ def _load_apid_defs(defs_file_path):
                 table_dict[key].append(row_value)
 
     # Change from string to final type.
-    table_dict['name'] = map(str.upper, table_dict['name'])
-    table_dict['bit_offset'] = map(int, table_dict['bit_offset'])
-    table_dict['bit_length'] = map(int, table_dict['bit_length'])
+    table_dict['name'] = [name.upper() for name in table_dict['name']]
+    table_dict['bit_offset'] = [int(n) for n in table_dict['bit_offset']]
+    table_dict['bit_length'] = [int(n) for n in table_dict['bit_length']]
     
     decode_cal = lambda cal: json.loads(cal) if cal else None
-    table_dict['calibration'] = map(decode_cal, table_dict['calibration'])
+    table_dict['calibration'] = [decode_cal(v) for v
+                                 in table_dict['calibration']]
 
     # Create table and return
     return Table(table_dict)
