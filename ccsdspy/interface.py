@@ -96,7 +96,7 @@ class FixedLength(object):
 
         Returns
         -------
-        `dict` containing one column for each field
+        `OrderedDict` mapping field names to NumPy arrays.
         """
         if hasattr(file, 'read'):
             file_bytes = np.fromstring(file.read(), 'u1')
