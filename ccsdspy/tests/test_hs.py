@@ -7,7 +7,6 @@ import json
 import os
 from collections import OrderedDict
 import numpy as np
-from astropy.table import Table
 from .. import FixedLength, PacketField
 
 
@@ -23,10 +22,10 @@ def _run_apid_test(apid):
     
     # Setup paths for the definitions, truth, and CCSDS files
     # in the APID directory.
-    apid_dir = os.path.join('ccsdspy', 'tests', 'data', 'hs',
-                            'apid{:03d}'.format(apid))
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    apid_dir = os.path.join(dir_path, 'data', 'hs', 'apid{:03d}'.format(apid))
     
-    defs_file_path = os.path.join(apid_dir, 'defs.csv')    
+    defs_file_path = os.path.join(apid_dir, 'defs.csv')
     truth_file_path = glob.glob(os.path.join(apid_dir, '*.cvt.csv')).pop()
     ccsds_file_path = glob.glob(os.path.join(apid_dir, '*.tlm')).pop()
 
@@ -50,8 +49,6 @@ def _run_apid_test(apid):
     
 def _load_apid_truth(truth_file_path, defs):
     """Load APID truth CSV and return a Table"""
-    # We load the CSV using the Python CSV module due to a segfault bug in
-    # astropy.asii.read(): See gh #3611.
     with open(truth_file_path) as fh:
         lines = fh.readlines()
 
@@ -80,10 +77,7 @@ def _load_apid_truth(truth_file_path, defs):
             del table_dict[colname]
     
     # Set the correct types using types from defs.
-    for row in defs:
-        key = row['name']
-        data_type = row['data_type']
-        cal = row['calibration']
+    for key, data_type, cal in zip(defs["name"], defs["data_type"], defs["calibration"]):
 
         if cal:
             dtype = np.array(cal.values()).dtype
@@ -99,14 +93,11 @@ def _load_apid_truth(truth_file_path, defs):
         else:
             raise RuntimeError('Type {} implemented'.format(data_type))
         
-    # Create table and return
-    return Table(table_dict)
+    return table_dict
 
     
 def _load_apid_defs(defs_file_path):
     """Load APID definitions (defs.csv) and return a Table"""
-    # We load the CSV using the Python CSV module due to a segfault bug in
-    # astropy.asii.read(): See gh #3611.
     table_dict = OrderedDict([
         ('name', []),
         ('data_type', []),
@@ -137,19 +128,17 @@ def _load_apid_defs(defs_file_path):
     table_dict['calibration'] = [decode_cal(v) for v
                                  in table_dict['calibration']]
 
-    # Create table and return
-    return Table(table_dict)
+    return table_dict
 
 
 def _decode_ccsds_file(ccsds_file_path, defs):
     pkt_fields = []
 
-    for row in defs:
+    for key, data_type, bit_length in zip(defs["name"], defs["data_type"], defs["bit_length"]):
         pkt_fields.append(
-            PacketField(name=row['name'],
-                        data_type=row['data_type'],
-                        bit_length=row['bit_length'],)
-                        #bit_offset=row['bit_offset'])
+            PacketField(name=key,
+                        data_type=data_type,
+                        bit_length=bit_length)
         )
 
     pkt = FixedLength(pkt_fields)
