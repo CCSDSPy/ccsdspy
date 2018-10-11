@@ -1,4 +1,4 @@
-requirements_file: requirements.txt
+requirements_file: docs/requirements.txt
 
 python:
     version: 2.7

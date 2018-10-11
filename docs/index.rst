@@ -23,7 +23,7 @@ Fixed Length Packets
 --------------------
 Fixed length packets are one type of packet defined in CCSDS. When provided with a description of data layout, `ccsdspy.FixedLength` will decode the fields automatically using highly efficient vectorized shifting and masking.
 
-The result is returned as an `astropy.table.Table`.
+The result is returned as an OrderedDict, containing PacketField names as keys and values are each array of the interpreted data from each packet.
 
 .. code-block:: python
                 
@@ -38,7 +38,7 @@ The result is returned as an `astropy.table.Table`.
         PacketField(name='VOLTAGE_SENSOR', data_type='int',  bit_length=8),
    ])
    
-   table = pkt.load('MyCCSDS.bin')
+   result = pkt.load('MyCCSDS.bin')
 
 
 User Documentation
@@ -46,4 +46,4 @@ User Documentation
 .. toctree::
   :maxdepth: 1
              
-  ccsdspy/index.rst
+  ccsdspy.rst
