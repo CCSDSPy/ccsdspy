@@ -18,7 +18,6 @@ setup(
     name=PACKAGENAME,
     version=VERSION,
     description=DESCRIPTION,
-    scripts=scripts,
     install_requires=[
         "numpy"
     ],
@@ -26,6 +25,7 @@ setup(
     author_email=AUTHOR_EMAIL,
     license=LICENSE,
     url=URL,
+    packages=['ccsdspy'],
     long_description=LONG_DESCRIPTION,
     include_package_data=True,
     classifiers=[
