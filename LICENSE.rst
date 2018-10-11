@@ -1,4 +1,4 @@
-Copyright (c) year, Daniel da Silva
+Copyright (c) 2018, Daniel da Silva
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,

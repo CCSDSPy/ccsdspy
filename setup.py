@@ -12,7 +12,7 @@ AUTHOR_EMAIL = ''
 LICENSE = 'unknown'
 URL = 'http://github.com/ddasilva/ccsdspy'
 # VERSION should be PEP440 compatible (http://www.python.org/dev/peps/pep-0440)
-VERSION = '0.0.7'
+VERSION = '0.0.8'
 
 setup(
     name=PACKAGENAME,
