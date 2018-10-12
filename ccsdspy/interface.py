@@ -1,6 +1,6 @@
 """High level Object-Oriented interface methods for the package."""
 
-_author__ = "Daniel da Silva <mail@danieldasilva.org>"
+__author__ = "Daniel da Silva <mail@danieldasilva.org>"
 
 import numpy as np
 from .decode import _decode_fixed_length
