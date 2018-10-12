@@ -12,8 +12,7 @@ class PacketField(object):
     
     def __init__(self, name, data_type, bit_length, bit_offset=None,
                  byte_order='big'):
-        """Define a new PacketField.
-        
+        """
         Parameters
         ----------
         name : str

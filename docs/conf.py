@@ -37,6 +37,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.coverage',
     'sphinx.ext.githubpages',
+    'numpydoc',
 #    'sphinx.ext.inheritance_diagram',
 ]
 
@@ -198,4 +199,6 @@ epub_copyright = copyright
 # A list of files that should not be packed into the epub file.
 epub_exclude_files = ['search.html']
 
-
+autoclass_content = 'both'
+numpydoc_show_class_members = False
+numpydoc_class_members_toctree   = False
