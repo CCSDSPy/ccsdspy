@@ -54,7 +54,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'ccsdspy'
+project = u'CCSDSPy'
 copyright = u'2018, Daniel da Silva'
 author = u'Daniel da Silva'
 
@@ -113,9 +113,11 @@ html_static_path = ['_static']
 # refs: http://alabaster.readthedocs.io/en/latest/installation.html#sidebars
 html_sidebars = {
     '**': [
+        'logo.html',
         'about.html',
+        'github.html',
         'navigation.html',
-        'relations.html',  # needs 'show_related': True theme option to display
+ #       'relations.html',  # needs 'show_related': True theme option to display
         'searchbox.html',
     ]
 }
