@@ -3,7 +3,6 @@
 _author__ = "Daniel da Silva <mail@danieldasilva.org>"
 
 import numpy as np
-from astropy.table import Table
 from .decode import _decode_fixed_length
 
 
@@ -97,7 +96,7 @@ class FixedLength(object):
 
         Returns
         -------
-        `astropy.table.Table` containing one column for each field
+        `OrderedDict` mapping field names to NumPy arrays.
         """
         if hasattr(file, 'read'):
             file_bytes = np.fromstring(file.read(), 'u1')
@@ -105,7 +104,5 @@ class FixedLength(object):
             file_bytes = np.fromfile(file, 'u1')
 
         field_arrays = _decode_fixed_length(file_bytes, self._fields)
-        table = Table(list(field_arrays.values()),
-                      names=list(field_arrays.keys()))
+        return field_arrays
 
-        return table

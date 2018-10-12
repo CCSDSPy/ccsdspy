@@ -1,10 +1,6 @@
 CCSDSPy - IO Interface for Reading CCSDS Data in Python.
 ========================================================
 
-.. image:: http://img.shields.io/badge/powered%20by-AstroPy-orange.svg?style=flat
-    :target: http://www.astropy.org
-    :alt: Powered by Astropy Badge
-
 .. image:: https://api.travis-ci.org/ddasilva/ccsdspy.svg?branch=master
     :target: https://travis-ci.org/ddasilva/ccsdspy
     :alt: Travis Status
