@@ -56,11 +56,16 @@ def _decode_fixed_length(file_bytes, fields):
         nbytes_final = {3: 4, 5: 8, 6: 8, 7: 8}.get(nbytes_file,  nbytes_file)
         start_byte_file = bit_offset[field._name] // 8
 
+        # byte_order_symbol is only used to control float types here.
+        #  - uint and int byte order are handled with byteswap later
+        #  - fill is independent of byte order (all 1's)
+        #  - byte order is not applicable to str types
+        byte_order_symbol = "<" if field._byte_order == "little" else ">"
         np_dtype = {
             'uint': '>u%d' % nbytes_final,
             'int':  '>i%d' % nbytes_final,
             'fill': '>u%d' % nbytes_final,
-            'float': 'f%d' % nbytes_final,
+            'float': '%sf%d' % (byte_order_symbol, nbytes_final),
             'str':   'S%d' % nbytes_final,
         }[field._data_type]
         
