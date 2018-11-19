@@ -29,16 +29,36 @@ def _decode_fixed_length(file_bytes, fields):
     
     bit_offset = {}
 
-    for field in fields:
-        if field._bit_offset is None:
+    for i, field in enumerate(fields):
+        if i == 0 and field._bit_offset is not None:
+            # case: using bit_offset to fix the start position
+            bit_offset[field._name] = field._bit_offset
+            counter = field._bit_offset + field._bit_length
+        elif field._bit_offset is None:
+            # case: floating start position such that packet def fills to
+            # to end of packet. What's missing is assumed to be header at the beginning.
             bit_offset[field._name] = counter
             counter += field._bit_length
-        else:
+        elif field._bit_offset < counter:
+            # case: bit_offset specifying to backtrack. This condition
+            # seems odd and unlikely. Eg. one or more bits of a packet overlap?
             bit_offset[field._name] = field._bit_offset
+            # don't update counter unless the the overlap goes past counter
+            counter = max(field._bit_offset + field._bit_length, counter)
+        elif field._bit_offset >= counter:
+            # case: otherwise, bit_offset is ahead of counter and we're skipping 
+            # definition of 0 or more bits.
+            bit_offset[field._name] = field._bit_offset
+            counter = field._bit_offset + field._bit_length
+        else:
+            assert False, "All cases should be handled above."
 
     if all(field._bit_offset is None for field in fields):
         assert counter == packet_nbytes * 8, \
             'Field definition != packet length'.format(n=counter-packet_nbytes*8)
+    else:
+        assert counter <= packet_nbytes * 8, \
+            'Field definition larger than packet length by {} bits'.format(counter-packet_nbytes*8)
         
     # Setup metadata for each field, consiting of where to look for the field in
     # the file and how to parse it.
