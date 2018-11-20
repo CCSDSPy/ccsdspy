@@ -51,7 +51,9 @@ def _decode_fixed_length(file_bytes, fields):
             bit_offset[field._name] = field._bit_offset
             counter = field._bit_offset + field._bit_length
         else:
-            assert False, "All cases should be handled above."
+            raise RuntimeError(("Unexpected case: could not compare"
+                                " bit_offset {} with counter {} for field {}"
+                                ).format(field._bit_offset, counter, field._name))
 
     if all(field._bit_offset is None for field in fields):
         assert counter == packet_nbytes * 8, \
@@ -155,3 +157,4 @@ def _decode_fixed_length(file_bytes, fields):
         field_arrays[field._name] = arr
 
     return field_arrays
+
