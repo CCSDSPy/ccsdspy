@@ -58,7 +58,7 @@ def _decode_fixed_length(file_bytes, fields):
     if all(field._bit_offset is None for field in fields):
         assert counter == packet_nbytes * 8, \
             'Field definition != packet length'.format(n=counter-packet_nbytes*8)
-    elif counter > packet_nytes * 8:
+    elif counter > packet_nbytes * 8:
         raise RuntimeError(("Packet definition larger than packet length"
                             " by {} bits").format(counter-(packet_nbytes*8)))
         
