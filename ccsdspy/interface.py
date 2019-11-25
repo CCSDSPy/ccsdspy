@@ -3,6 +3,7 @@
 __author__ = "Daniel da Silva <mail@danieldasilva.org>"
 
 import numpy as np
+
 from .decode import _decode_fixed_length
 
 
@@ -68,6 +69,9 @@ class PacketField(object):
                 'bit_length={_bit_length}, bit_offset={_bit_offset}, '
                 'byte_order={_byte_order})'.format(**values))
 
+    def __iter__(self):
+        return iter([('name', self._name), ('dataType', self._data_type), ('bitLength', self._bit_length), ('bitOffset', self._bit_offset), ('byteOrder', self._byte_order)])
+
                 
 class FixedLength(object):
     """Define a fixed length packet to decode binary data.
@@ -104,4 +108,3 @@ class FixedLength(object):
 
         field_arrays = _decode_fixed_length(file_bytes, self._fields)
         return field_arrays
-

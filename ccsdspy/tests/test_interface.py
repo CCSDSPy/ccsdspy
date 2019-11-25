@@ -3,7 +3,8 @@
 __author__ = 'Daniel da Silva'
 
 import pytest
-from ..interface import PacketField, FixedLength
+
+from ..interface import FixedLength, PacketField
 
 
 def test_PacketField_initializer_raises_ValueError_on_bad_data_type():
@@ -16,7 +17,7 @@ def test_PacketField_initializer_raises_ValueError_on_bad_data_type():
         PacketField(name='mnemonic', data_type='uint', bit_length=1,
                     byte_order='bloop')
 
-        
+
 def test_PacketField_initializer_raises_TypeError_on_bad_types():
     """Asserts that the PacketField class raises a TypeError
     when arguments are of the wrong type.
@@ -38,7 +39,13 @@ def test_PacketField_repr():
     assert 'PacketField' in repr(field)
     assert 'MyField' in repr(field)
 
-    
+
+def test_PacketField_iter():
+    field = PacketField(name='MyField', data_type='uint', bit_length=1)
+    assert dict(field)['name'] == 'MyField'
+    assert dict(field)['dataType'] == 'uint'
+
+
 def test_FixedLength_initializer_copies_field_list():
     """Tests that the FixedLengthPacket initializer stores a copy of the 
     provided fields list.
@@ -46,4 +53,3 @@ def test_FixedLength_initializer_copies_field_list():
     fields = [PacketField(name='mnemonic', data_type='uint', bit_length=8)]
     pkt = FixedLength(fields)
     assert pkt._fields is not fields
-        
