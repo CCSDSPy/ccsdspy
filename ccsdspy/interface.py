@@ -99,10 +99,11 @@ class FixedLength(object):
 
         Returns
         -------
-        `OrderedDict` mapping field names to NumPy arrays.
+        dictionary mapping field names to NumPy arrays, with key order matching
+        the order fields in the packet.
         """
         if hasattr(file, 'read'):
-            file_bytes = np.fromstring(file.read(), 'u1')
+            file_bytes = np.frombuffer(file.read(), 'u1')
         else:
             file_bytes = np.fromfile(file, 'u1')
 

@@ -4,10 +4,12 @@ using the test data in the data/hs directory.
 import csv
 import glob
 import json
+import io
 import os
-from collections import OrderedDict
+import random
 import numpy as np
 from .. import FixedLength, PacketField
+from .. import utils
 
 
 def _run_apid_test(apid):
@@ -53,7 +55,7 @@ def _load_apid_truth(truth_file_path, defs):
         lines = fh.readlines()
 
     colnames = lines[0][:-1].split(',')
-    table_dict = OrderedDict([(colname, []) for colname in colnames])
+    table_dict = {colname: [] for colname in colnames}
 
     # Loop through CSV lines, read all as string
     with open(truth_file_path) as fh:
@@ -98,13 +100,13 @@ def _load_apid_truth(truth_file_path, defs):
     
 def _load_apid_defs(defs_file_path):
     """Load APID definitions (defs.csv) and return a Table"""
-    table_dict = OrderedDict([
-        ('name', []),
-        ('data_type', []),
-        ('bit_offset', []),
-        ('bit_length', []),
-        ('calibration', [])
-    ])
+    table_dict = {
+        'name': [],
+        'data_type': [],
+        'bit_offset': [],
+        'bit_length': [],
+        'calibration': []
+    }
 
     # Loop through CSV lines, read all as strings.
     with open(defs_file_path) as fh:
@@ -164,3 +166,5 @@ def test_hs_apid251():
 
 def test_hs_apid895():
     _run_apid_test(895)
+    
+    

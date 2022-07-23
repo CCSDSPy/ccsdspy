@@ -1,0 +1,808 @@
+Mnemonic       ,Description                             ,Type           ,Units,Conversion,Subsystem,Start Byte,Start Bit  ,Data Size,Conversion Formula,States,Limits Defined?,Source
+ENG_BOOT_HDR_VER,Source packet version number,U1,,HEX,ENG_BOOT,0,0,3,,,,
+ENG_BOOT_HDR_TYPE,Source packet type,U1,,HEX,ENG_BOOT,0,3,1,,,,
+ENG_BOOT_HDR_SHDR,Secondary header present flag,U1,,HEX,ENG_BOOT,0,4,1,,,,
+ENG_BOOT_HDR_APID,Application Identifier,U12,,HEX,ENG_BOOT,0,5,11,,,,
+ENG_BOOT_HDR_GRP,Grouping flags,U1,,HEX,ENG_BOOT,2,0,2,,,,
+ENG_BOOT_HDR_SEQ,Source sequence count,U12,,HEX,ENG_BOOT,2,2,14,,,,
+ENG_BOOT_HDR_LEN,Packet length,U12,,HEX,ENG_BOOT,4,0,16,,,,
+ENG_BOOT_HDR_SCID,Spacecraft Identifier,U1,,HEX,ENG_BOOT,6,0,8,,,,
+ENG_BOOT_HDR_FLASH_BLOCK,Flash Block #,U12,,HEX,ENG_BOOT,7,0,14,,,,
+ENG_BOOT_HDR_YEAR,Packet timestamp UTC Year,U12,,HEX,ENG_BOOT,8,6,12,,,,
+ENG_BOOT_HDR_DAY,Packet timestamp UTC Day-In-Year,U12,,HEX,ENG_BOOT,10,2,9,,,,
+ENG_BOOT_HDR_HOUR,Packet timestamp UTC Hour-In-Day,U1,,HEX,ENG_BOOT,11,3,5,,,,
+ENG_BOOT_HDR_MIN,Packet timestamp UTC Minute-In-Hour,U1,,HEX,ENG_BOOT,12,0,6,,,,
+ENG_BOOT_HDR_SEC,Packet timestamp UTC Second-In-Minute,U12,,HEX,ENG_BOOT,12,6,6,,,,
+ENG_BOOT_HDR_USEC,Packet timestamp UTC Microseconds-In-Seconds,U1234,,HEX,ENG_BOOT,13,4,20,,,,
+CDS_FSW_BOOT_CNT,Numer of times the FSW has Booted. This telemetry point is used to determine which entry in the bootstrap log history buffer (ENG_BOOT.ENG_BOOT_HIST*) has the most recent boot.  The log entry index will be equal to this telemetry point modulo 10,U1234,,HEX,ENG_BOOT,16,0,32,,,,
+CDS_FSW_BOOT_IMAGE_BOOTED,Image Index Currently Booted,U1,,HEX,ENG_BOOT,20,0,8,,,,Which Image is currently booted (SAFEHOLD / OPERATIONAL1 / OPERATIONAL 2)
+CDS_FSW_BOOT_SAFEHOLD_ADDR,SAFEHOLD Image MRAM Address,U1234,,HEX,ENG_BOOT,21,0,32,,,,MRAM Address of the base of the FSW Image
+CDS_FSW_BOOT_SAFEHOLD_VERSION,SAFEHOLD Image FSW Version,U1234,,HEX,ENG_BOOT,25,0,32,,,,µsat FSW Release Version Number
+CDS_FSW_SAFEHOLD_DATE,SAFEHOLD Image Compilation Date,U1234,,HEX,ENG_BOOT,29,0,32,,,,Binary Coded Decimal of the Compilation Date (Year / Month / Day)
+CDS_FSW_SAFEHOLD_TIME,SAFEHOLD Image Compilation Time,U1234,,HEX,ENG_BOOT,33,0,32,,,,Binary Coded Decimal of the Compilation Time (Hour / Minute / Second)
+CDS_FSW_SAFEHOLD_EXPCHKSUM,SAFEHOLD Image Expected Checksum,U1234,,HEX,ENG_BOOT,37,0,32,,,,Expected Checksum (calculated during Image Compilation)
+CDS_FSW_SAFEHOLD_COMPCHKSUM,SAFEHOLD image Computed Checksum,U1234,,HEX,ENG_BOOT,41,0,32,,,,Computed Checksum (calculated during Bootstrap Execution)
+CDS_FSW_SAFEHOLD_COMPRESSED,SAFEHOLD Image Compression Flag,U1234,,HEX,ENG_BOOT,45,0,32,,,,Whether or not the FSW Image is Compressed in NVM Storage
+CDS_FSW_BOOT_OPERATIONAL1_ADDR,OPERATIONAL1 Image MRAM Address,U1234,,HEX,ENG_BOOT,49,0,32,,,,MRAM Address of the base of the FSW Image
+CDS_FSW_BOOT_OPERATIONAL1_VERSION,OPERATIONAL1 Image FSW Version,U1234,,HEX,ENG_BOOT,53,0,32,,,,µsat FSW Release Version Number
+CDS_FSW_OPERATIONAL1_DATE,OPERATIONAL1 Image Compilation Date,U1234,,HEX,ENG_BOOT,57,0,32,,,,Binary Coded Decimal of the Compilation Date (Year / Month / Day)
+CDS_FSW_OPERATIONAL1_TIME,OPERATIONAL1 Image Compilation Time,U1234,,HEX,ENG_BOOT,61,0,32,,,,Binary Coded Decimal of the Compilation Time (Hour / Minute / Second)
+CDS_FSW_OPERATIONAL1_EXPCHKSUM,OPERATIONAL1 Image Expected Checksum,U1234,,HEX,ENG_BOOT,65,0,32,,,,Expected Checksum (calculated during Image Compilation)
+CDS_FSW_OPERATIONAL1_COMPCHKSUM,OPERATIONAL1 image Computed Checksum,U1234,,HEX,ENG_BOOT,69,0,32,,,,Computed Checksum (calculated during Bootstrap Execution)
+CDS_FSW_OPERATIONAL1_COMPRESSED,OPERATIONAL1 Image Compression Flag,U1234,,HEX,ENG_BOOT,73,0,32,,,,Whether or not the FSW Image is Compressed in NVM Storage
+CDS_FSW_BOOT_OPERATIONAL2_ADDR,OPERATIONAL2 Image MRAM Address,U1234,,HEX,ENG_BOOT,77,0,32,,,,MRAM Address of the base of the FSW Image
+CDS_FSW_BOOT_OPERATIONAL2_VERSION,OPERATIONAL2 Image FSW Version,U1234,,HEX,ENG_BOOT,81,0,32,,,,µsat FSW Release Version Number
+CDS_FSW_OPERATIONAL2_DATE,OPERATIONAL2 Image Compilation Date,U1234,,HEX,ENG_BOOT,85,0,32,,,,Binary Coded Decimal of the Compilation Date (Year / Month / Day)
+CDS_FSW_OPERATIONAL2_TIME,OPERATIONAL2 Image Compilation Time,U1234,,HEX,ENG_BOOT,89,0,32,,,,Binary Coded Decimal of the Compilation Time (Hour / Minute / Second)
+CDS_FSW_OPERATIONAL2_EXPCHKSUM,OPERATIONAL2 Image Expected Checksum,U1234,,HEX,ENG_BOOT,93,0,32,,,,Expected Checksum (calculated during Image Compilation)
+CDS_FSW_OPERATIONAL2_COMPCHKSUM,OPERATIONAL2 image Computed Checksum,U1234,,HEX,ENG_BOOT,97,0,32,,,,Computed Checksum (calculated during Bootstrap Execution)
+CDS_FSW_OPERATIONAL2_COMPRESSED,OPERATIONAL2 Image Compression Flag,U1234,,HEX,ENG_BOOT,101,0,32,,,,Whether or not the FSW Image is Compressed in NVM Storage
+CDS_FSW_BOOTED_TIME_YEAR,Last Booted  Image Boot Time Year,U1234,,HEX,ENG_BOOT,105,0,12,,,,Timestamp of when this image last booted (captured at end of bootstrap execution).
+CDS_FSW_BOOTED_TIME_DAY,Last Booted  Image Boot Time Day,U1234,,HEX,ENG_BOOT,106,4,9,,,,Timestamp of when this image last booted (captured at end of bootstrap execution).
+CDS_FSW_BOOTED_TIME_HOUR,Last Booted  Image Boot Time Hour,U1234,,HEX,ENG_BOOT,107,5,5,,,,Timestamp of when this image last booted (captured at end of bootstrap execution).
+CDS_FSW_BOOTED_TIME_MIN,Last Booted  Image Boot Time Minute,U1234,,HEX,ENG_BOOT,108,2,6,,,,Timestamp of when this image last booted (captured at end of bootstrap execution).
+CDS_FSW_BOOTED_TIME_SEC,Last Booted  Image Boot Time Seconds,U1234,,HEX,ENG_BOOT,109,0,6,,,,Timestamp of when this image last booted (captured at end of bootstrap execution).
+CDS_FSW_BOOTED_TIME_USEC,Last Booted  Image Boot Time Microseconds,U1234,,HEX,ENG_BOOT,109,6,20,,,,Timestamp of when this image last booted (captured at end of bootstrap execution).
+CDS_FSW_BOOTED_TIME_TIME_SPARE,Last Booted  Image Boot Time Spare Bits,U1234,,HEX,ENG_BOOT,112,2,6,,,,Spare
+CDS_FSW_BOOTSTRAP_ABUS_STATUS,Results of Bootstrap SRAM Address Line Test,U1234,,HEX,ENG_BOOT,113,0,32,,,,Bitmask of CPU address lines that failed validation during bootstrap execution.
+CDS_FSW_FSW_BOOTSTRAP_DBUS_STATUS,Results of Bootstrap SRAM Data Bus Test,U1234,,HEX,ENG_BOOT,117,0,32,,,,"Bitmask of last ""walking 1"" pattern that failed validation during bootstrap execution."
+CDS_FSW_BOOTSTRAP_SRAM_FAIL_ADDR,Results of Bootstrap SRAM Test - Failing Address,U1234,,HEX,ENG_BOOT,121,0,32,,,,Memory address of the a mis-match (if any) during SRAM pattern validation in bootstrap.
+CDS_FSW_BOOTSTRAP_BIT_STATUS,Results of Bootstrap BIT Tests,U1234,,HEX,ENG_BOOT,125,0,32,,,,Bitmask of any erros that occurred during bootstrap execution.
+CDS_FSW_BOOT_RTS1_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,129,0,16,,,,
+CDS_FSW_BOOT_RTS2_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,131,0,16,,,,
+CDS_FSW_BOOT_RTS3_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,133,0,16,,,,
+CDS_FSW_BOOT_RTS4_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,135,0,16,,,,
+CDS_FSW_BOOT_RTS5_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,137,0,16,,,,
+CDS_FSW_BOOT_RTS6_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,139,0,16,,,,
+CDS_FSW_BOOT_RTS7_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,141,0,16,,,,
+CDS_FSW_BOOT_RTS8_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,143,0,16,,,,
+CDS_FSW_BOOT_RTS9_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,145,0,16,,,,
+CDS_FSW_BOOT_RTS10_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,147,0,16,,,,
+CDS_FSW_BOOT_RTS11_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,149,0,16,,,,
+CDS_FSW_BOOT_RTS12_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,151,0,16,,,,
+CDS_FSW_BOOT_RTS13_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,153,0,16,,,,
+CDS_FSW_BOOT_RTS14_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,155,0,16,,,,
+CDS_FSW_BOOT_RTS15_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,157,0,16,,,,
+CDS_FSW_BOOT_RTS16_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,159,0,16,,,,
+CDS_FSW_BOOT_RTS17_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,161,0,16,,,,
+CDS_FSW_BOOT_RTS18_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,163,0,16,,,,
+CDS_FSW_BOOT_RTS19_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,165,0,16,,,,
+CDS_FSW_BOOT_RTS20_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,167,0,16,,,,
+CDS_FSW_BOOT_RTS21_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,169,0,16,,,,
+CDS_FSW_BOOT_RTS22_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,171,0,16,,,,
+CDS_FSW_BOOT_RTS23_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,173,0,16,,,,
+CDS_FSW_BOOT_RTS24_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,175,0,16,,,,
+CDS_FSW_BOOT_RTS25_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,177,0,16,,,,
+CDS_FSW_BOOT_RTS26_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,179,0,16,,,,
+CDS_FSW_BOOT_RTS27_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,181,0,16,,,,
+CDS_FSW_BOOT_RTS28_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,183,0,16,,,,
+CDS_FSW_BOOT_RTS29_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,185,0,16,,,,
+CDS_FSW_BOOT_RTS30_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,187,0,16,,,,
+CDS_FSW_BOOT_RTS31_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,189,0,16,,,,
+CDS_FSW_BOOT_RTS32_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,191,0,16,,,,
+CDS_FSW_BOOT_RTS33_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,193,0,16,,,,
+CDS_FSW_BOOT_RTS34_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,195,0,16,,,,
+CDS_FSW_BOOT_RTS35_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,197,0,16,,,,
+CDS_FSW_BOOT_RTS36_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,199,0,16,,,,
+CDS_FSW_BOOT_RTS37_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,201,0,16,,,,
+CDS_FSW_BOOT_RTS38_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,203,0,16,,,,
+CDS_FSW_BOOT_RTS39_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,205,0,16,,,,
+CDS_FSW_BOOT_RTS40_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,207,0,16,,,,
+CDS_FSW_BOOT_RTS41_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,209,0,16,,,,
+CDS_FSW_BOOT_RTS42_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,211,0,16,,,,
+CDS_FSW_BOOT_RTS43_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,213,0,16,,,,
+CDS_FSW_BOOT_RTS44_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,215,0,16,,,,
+CDS_FSW_BOOT_RTS45_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,217,0,16,,,,
+CDS_FSW_BOOT_RTS46_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,219,0,16,,,,
+CDS_FSW_BOOT_RTS47_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,221,0,16,,,,
+CDS_FSW_BOOT_RTS48_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,223,0,16,,,,
+CDS_FSW_BOOT_RTS49_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,225,0,16,,,,
+CDS_FSW_BOOT_RTS50_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,227,0,16,,,,
+CDS_FSW_BOOT_RTS51_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,229,0,16,,,,
+CDS_FSW_BOOT_RTS52_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,231,0,16,,,,
+CDS_FSW_BOOT_RTS53_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,233,0,16,,,,
+CDS_FSW_BOOT_RTS54_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,235,0,16,,,,
+CDS_FSW_BOOT_RTS55_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,237,0,16,,,,
+CDS_FSW_BOOT_RTS56_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,239,0,16,,,,
+CDS_FSW_BOOT_RTS57_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,241,0,16,,,,
+CDS_FSW_BOOT_RTS58_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,243,0,16,,,,
+CDS_FSW_BOOT_RTS59_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,245,0,16,,,,
+CDS_FSW_BOOT_RTS60_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,247,0,16,,,,
+CDS_FSW_BOOT_RTS61_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,249,0,16,,,,
+CDS_FSW_BOOT_RTS62_CMDCNT,Number of commands in RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,251,0,16,,,,
+CDS_FSW_BOOT_RTS1_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,253,0,32,,,,
+CDS_FSW_BOOT_RTS2_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,257,0,32,,,,
+CDS_FSW_BOOT_RTS3_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,261,0,32,,,,
+CDS_FSW_BOOT_RTS4_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,265,0,32,,,,
+CDS_FSW_BOOT_RTS5_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,269,0,32,,,,
+CDS_FSW_BOOT_RTS6_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,273,0,32,,,,
+CDS_FSW_BOOT_RTS7_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,277,0,32,,,,
+CDS_FSW_BOOT_RTS8_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,281,0,32,,,,
+CDS_FSW_BOOT_RTS9_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,285,0,32,,,,
+CDS_FSW_BOOT_RTS10_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,289,0,32,,,,
+CDS_FSW_BOOT_RTS11_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,293,0,32,,,,
+CDS_FSW_BOOT_RTS12_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,297,0,32,,,,
+CDS_FSW_BOOT_RTS13_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,301,0,32,,,,
+CDS_FSW_BOOT_RTS14_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,305,0,32,,,,
+CDS_FSW_BOOT_RTS15_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,309,0,32,,,,
+CDS_FSW_BOOT_RTS16_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,313,0,32,,,,
+CDS_FSW_BOOT_RTS17_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,317,0,32,,,,
+CDS_FSW_BOOT_RTS18_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,321,0,32,,,,
+CDS_FSW_BOOT_RTS19_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,325,0,32,,,,
+CDS_FSW_BOOT_RTS20_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,329,0,32,,,,
+CDS_FSW_BOOT_RTS21_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,333,0,32,,,,
+CDS_FSW_BOOT_RTS22_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,337,0,32,,,,
+CDS_FSW_BOOT_RTS23_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,341,0,32,,,,
+CDS_FSW_BOOT_RTS24_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,345,0,32,,,,
+CDS_FSW_BOOT_RTS25_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,349,0,32,,,,
+CDS_FSW_BOOT_RTS26_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,353,0,32,,,,
+CDS_FSW_BOOT_RTS27_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,357,0,32,,,,
+CDS_FSW_BOOT_RTS28_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,361,0,32,,,,
+CDS_FSW_BOOT_RTS29_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,365,0,32,,,,
+CDS_FSW_BOOT_RTS30_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,369,0,32,,,,
+CDS_FSW_BOOT_RTS31_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,373,0,32,,,,
+CDS_FSW_BOOT_RTS32_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,377,0,32,,,,
+CDS_FSW_BOOT_RTS33_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,381,0,32,,,,
+CDS_FSW_BOOT_RTS34_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,385,0,32,,,,
+CDS_FSW_BOOT_RTS35_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,389,0,32,,,,
+CDS_FSW_BOOT_RTS36_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,393,0,32,,,,
+CDS_FSW_BOOT_RTS37_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,397,0,32,,,,
+CDS_FSW_BOOT_RTS38_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,401,0,32,,,,
+CDS_FSW_BOOT_RTS39_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,405,0,32,,,,
+CDS_FSW_BOOT_RTS40_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,409,0,32,,,,
+CDS_FSW_BOOT_RTS41_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,413,0,32,,,,
+CDS_FSW_BOOT_RTS42_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,417,0,32,,,,
+CDS_FSW_BOOT_RTS43_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,421,0,32,,,,
+CDS_FSW_BOOT_RTS44_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,425,0,32,,,,
+CDS_FSW_BOOT_RTS45_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,429,0,32,,,,
+CDS_FSW_BOOT_RTS46_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,433,0,32,,,,
+CDS_FSW_BOOT_RTS47_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,437,0,32,,,,
+CDS_FSW_BOOT_RTS48_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,441,0,32,,,,
+CDS_FSW_BOOT_RTS49_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,445,0,32,,,,
+CDS_FSW_BOOT_RTS50_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,449,0,32,,,,
+CDS_FSW_BOOT_RTS51_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,453,0,32,,,,
+CDS_FSW_BOOT_RTS52_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,457,0,32,,,,
+CDS_FSW_BOOT_RTS53_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,461,0,32,,,,
+CDS_FSW_BOOT_RTS54_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,465,0,32,,,,
+CDS_FSW_BOOT_RTS55_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,469,0,32,,,,
+CDS_FSW_BOOT_RTS56_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,473,0,32,,,,
+CDS_FSW_BOOT_RTS57_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,477,0,32,,,,
+CDS_FSW_BOOT_RTS58_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,481,0,32,,,,
+CDS_FSW_BOOT_RTS59_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,485,0,32,,,,
+CDS_FSW_BOOT_RTS60_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,489,0,32,,,,
+CDS_FSW_BOOT_RTS61_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,493,0,32,,,,
+CDS_FSW_BOOT_RTS62_ADDRESS,Address of  RTS N loaded  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,497,0,32,,,,
+CDS_FSW_BOOT_RTS1_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,501,0,16,,,,
+CDS_FSW_BOOT_RTS2_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,503,0,16,,,,
+CDS_FSW_BOOT_RTS3_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,505,0,16,,,,
+CDS_FSW_BOOT_RTS4_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,507,0,16,,,,
+CDS_FSW_BOOT_RTS5_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,509,0,16,,,,
+CDS_FSW_BOOT_RTS6_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,511,0,16,,,,
+CDS_FSW_BOOT_RTS7_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,513,0,16,,,,
+CDS_FSW_BOOT_RTS8_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,515,0,16,,,,
+CDS_FSW_BOOT_RTS9_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,517,0,16,,,,
+CDS_FSW_BOOT_RTS10_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,519,0,16,,,,
+CDS_FSW_BOOT_RTS11_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,521,0,16,,,,
+CDS_FSW_BOOT_RTS12_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,523,0,16,,,,
+CDS_FSW_BOOT_RTS13_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,525,0,16,,,,
+CDS_FSW_BOOT_RTS14_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,527,0,16,,,,
+CDS_FSW_BOOT_RTS15_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,529,0,16,,,,
+CDS_FSW_BOOT_RTS16_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,531,0,16,,,,
+CDS_FSW_BOOT_RTS17_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,533,0,16,,,,
+CDS_FSW_BOOT_RTS18_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,535,0,16,,,,
+CDS_FSW_BOOT_RTS19_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,537,0,16,,,,
+CDS_FSW_BOOT_RTS20_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,539,0,16,,,,
+CDS_FSW_BOOT_RTS21_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,541,0,16,,,,
+CDS_FSW_BOOT_RTS22_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,543,0,16,,,,
+CDS_FSW_BOOT_RTS23_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,545,0,16,,,,
+CDS_FSW_BOOT_RTS24_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,547,0,16,,,,
+CDS_FSW_BOOT_RTS25_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,549,0,16,,,,
+CDS_FSW_BOOT_RTS26_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,551,0,16,,,,
+CDS_FSW_BOOT_RTS27_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,553,0,16,,,,
+CDS_FSW_BOOT_RTS28_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,555,0,16,,,,
+CDS_FSW_BOOT_RTS29_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,557,0,16,,,,
+CDS_FSW_BOOT_RTS30_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,559,0,16,,,,
+CDS_FSW_BOOT_RTS31_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,561,0,16,,,,
+CDS_FSW_BOOT_RTS32_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,563,0,16,,,,
+CDS_FSW_BOOT_RTS33_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,565,0,16,,,,
+CDS_FSW_BOOT_RTS34_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,567,0,16,,,,
+CDS_FSW_BOOT_RTS35_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,569,0,16,,,,
+CDS_FSW_BOOT_RTS36_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,571,0,16,,,,
+CDS_FSW_BOOT_RTS37_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,573,0,16,,,,
+CDS_FSW_BOOT_RTS38_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,575,0,16,,,,
+CDS_FSW_BOOT_RTS39_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,577,0,16,,,,
+CDS_FSW_BOOT_RTS40_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,579,0,16,,,,
+CDS_FSW_BOOT_RTS41_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,581,0,16,,,,
+CDS_FSW_BOOT_RTS42_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,583,0,16,,,,
+CDS_FSW_BOOT_RTS43_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,585,0,16,,,,
+CDS_FSW_BOOT_RTS44_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,587,0,16,,,,
+CDS_FSW_BOOT_RTS45_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,589,0,16,,,,
+CDS_FSW_BOOT_RTS46_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,591,0,16,,,,
+CDS_FSW_BOOT_RTS47_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,593,0,16,,,,
+CDS_FSW_BOOT_RTS48_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,595,0,16,,,,
+CDS_FSW_BOOT_RTS49_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,597,0,16,,,,
+CDS_FSW_BOOT_RTS50_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,599,0,16,,,,
+CDS_FSW_BOOT_RTS51_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,601,0,16,,,,
+CDS_FSW_BOOT_RTS52_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,603,0,16,,,,
+CDS_FSW_BOOT_RTS53_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,605,0,16,,,,
+CDS_FSW_BOOT_RTS54_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,607,0,16,,,,
+CDS_FSW_BOOT_RTS55_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,609,0,16,,,,
+CDS_FSW_BOOT_RTS56_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,611,0,16,,,,
+CDS_FSW_BOOT_RTS57_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,613,0,16,,,,
+CDS_FSW_BOOT_RTS58_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,615,0,16,,,,
+CDS_FSW_BOOT_RTS59_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,617,0,16,,,,
+CDS_FSW_BOOT_RTS60_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,619,0,16,,,,
+CDS_FSW_BOOT_RTS61_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,621,0,16,,,,
+CDS_FSW_BOOT_RTS62_CHECKSUM,Checksum of  RTS N loaded *at boot time* (will not change until a reboot).,U12,,HEX,ENG_BOOT,623,0,16,,,,
+CDS_FSW_TST_ADDRESS,MRAM Address of the Telemetry Steering Table (TST)  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,625,0,32,,,,Only valid when running an OPERATIONAL Image
+CDS_FSW_FPT_ADDRESS,MRAM Address of the FSW Parameter Table (FPT) *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,629,0,32,,,,Only valid when running an OPERATIONAL Image
+CDS_FSW_ACT_ADDRESS,MRAM Address of the ADCS Configuration Table (ACT)  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,633,0,32,,,,Only valid when running an OPERATIONAL Image
+CDS_FSW_FAT_ADDRESS,MRAM Address of the Flash Allocation Table (FAT)  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,637,0,32,,,,
+CDS_FSW_FBT_ADDRESS,MRAM Address of the Flash Block Table (FBT)  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,641,0,32,,,,
+CDS_FSW_TST_VERSION,SVN Version of the Telemetry Steering Table (TST)  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,645,0,32,,,,Only valid when running an OPERATIONAL Image
+CDS_FSW_FPT_VERSION,SVN Version of the FSW Parameter Table (FPT)  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,649,0,32,,,,Only valid when running an OPERATIONAL Image
+CDS_FSW_ACT_VERSION,SVN Version of the ADCS Configuration Table (ACT)  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,653,0,32,,,,Only valid when running an OPERATIONAL Image
+CDS_FSW_UPLOAD_BUF,SRAM Address of the CMDM CSC FSW Upload Buffer  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,657,0,32,,,,
+CDS_FSW_ADCSM_CSC_GLOBAL_ADDR,SRAM Address of the ADCSM CSC Global Address Structure,U1234,,HEX,ENG_BOOT,661,0,32,,,,
+CDS_FSW_AUT_CSC_GLOBAL_ADDR,SRAM Address of the AUT CSC Global Address Structure,U1234,,HEX,ENG_BOOT,665,0,32,,,,
+CDS_FSW_CMDM_CSC_GLOBAL_ADDR,SRAM Address of the CMDM CSC Global Address Structure,U1234,,HEX,ENG_BOOT,669,0,32,,,,
+CDS_FSW_DDMIM_CSC_GLOBAL_ADDR,SRAM Address of the DDMIM CSC Global Address Structure,U1234,,HEX,ENG_BOOT,673,0,32,,,,
+CDS_FSW_DTIME_CSC_GLOBAL_ADDR,SRAM Address of the DTIME CSC Global Address Structure,U1234,,HEX,ENG_BOOT,677,0,32,,,,
+CDS_FSW_EGSE_CSC_GLOBAL_ADDR,SRAM Address of the EGSE CSC Global Address Structure,U1234,,HEX,ENG_BOOT,681,0,32,,,,
+CDS_FSW_PWRM_CSC_GLOBAL_ADDR,SRAM Address of the PWRM CSC Global Address Structure,U1234,,HEX,ENG_BOOT,685,0,32,,,,
+CDS_FSW_SEQ_CSC_GLOBAL_ADDR,SRAM Address of the SEQ CSC Global Address Structure,U1234,,HEX,ENG_BOOT,689,0,32,,,,
+CDS_FSW_STOR_CSC_GLOBAL_ADDR,SRAM Address of the STOR CSC Global Address Structure,U1234,,HEX,ENG_BOOT,693,0,32,,,,
+CDS_FSW_TLMM_CSC_GLOBAL_ADDR,SRAM Address of the TLMM CSC Global Address Structure,U1234,,HEX,ENG_BOOT,697,0,32,,,,
+CDS_FSW_HEAP_AVAILABLE,Amount of SRAM Available after all FSW Initialization Memory Allocation.  May change upon re-request if ADCS tasks started.,U1234,,HEX,ENG_BOOT,701,0,32,,,,"Reported via RTEMS ""Free Heap Amount"" Call after all FSW Init is Complete"
+CDS_FSW_SPARC_REG_CLK_RELOAD, SPARC GR712RC Register - Clock Reload,U1234,,HEX,ENG_BOOT,705,0,32,,,, SPARC GR712RC Register Value at address 0x80000304
+CDS_FSW_SPARC_REG_INT_LEVEL, SPARC GR712RC Register - Interrupt Levels,U1234,,HEX,ENG_BOOT,709,0,32,,,, SPARC GR712RC Register Value at address 0x80000200
+CDS_FSW_SPARC_REG_INT_PENDING, SPARC GR712RC Register - Interrupt Pending,U1234,,HEX,ENG_BOOT,713,0,32,,,, SPARC GR712RC Register Value at address 0x80000204
+CDS_FSW_SPARC_REG_INT_FORCE, SPARC GR712RC Register - Interrupt Force,U1234,,HEX,ENG_BOOT,717,0,32,,,, SPARC GR712RC Register Value at address 0x80000208
+CDS_FSW_SPARC_REG_INT_CLR, SPARC GR712RC Register - Interrupt Clear,U1234,,HEX,ENG_BOOT,721,0,32,,,, SPARC GR712RC Register Value at address 0x8000020C
+CDS_FSW_SPARC_REG_CPU0_INT_MASK, SPARC GR712RC Register - CPU0 Interrupt Mask,U1234,,HEX,ENG_BOOT,725,0,32,,,, SPARC GR712RC Register Value at address 0x80000240
+CDS_FSW_SPARC_REG_CPU1_INT_MASK, SPARC GR712RC Register - CPU1 Interrupt Mask,U1234,,HEX,ENG_BOOT,729,0,32,,,, SPARC GR712RC Register Value at address 0x80000244
+CDS_FSW_SPARC_REG_CPU0_EXT_INT_ID, SPARC GR712RC Register - CPU0 Extended Interrupt ID,U1234,,HEX,ENG_BOOT,733,0,32,,,, SPARC GR712RC Register Value at address 0x800002C0
+CDS_FSW_SPARC_REG_CPU1_EXT_INT_ID, SPARC GR712RC Register - CPU1 Extended Interrupt ID,U1234,,HEX,ENG_BOOT,737,0,32,,,, SPARC GR712RC Register Value at address 0x800002C4
+CDS_FSW_SPARC_REG_MCFG1, SPARC GR712RC Register - Memory Configuration Register #1,U1234,,HEX,ENG_BOOT,741,0,32,,,, SPARC GR712RC Register Value at address 0x80000000
+CDS_FSW_SPARC_REG_MCFG2, SPARC GR712RC Register - Memory Configuration Register #2,U1234,,HEX,ENG_BOOT,745,0,32,,,, SPARC GR712RC Register Value at address 0x80000004
+CDS_FSW_SPARC_REG_MCFG3, SPARC GR712RC Register - Memory Configuration Register #3,U1234,,HEX,ENG_BOOT,749,0,32,,,, SPARC GR712RC Register Value at address 0x80000008
+CDS_FSW_SPARC_REG_MCFG4, SPARC GR712RC Register - Memory Configuration Register #4,U1234,,HEX,ENG_BOOT,753,0,32,,,, SPARC GR712RC Register Value at address 0x8000000C
+CDS_FSW_SPARC_REG_SCALAR_VAL, SPARC GR712RC Register - GPTIMER Scalar Value,U1234,,HEX,ENG_BOOT,757,0,32,,,, SPARC GR712RC Register Value at address 0x80000300
+CDS_FSW_SPARC_REG_SCALAR_RLD, SPARC GR712RC Register - GPTIMER Scalar Reload,U1234,,HEX,ENG_BOOT,761,0,32,,,, SPARC GR712RC Register Value at address 0x80000304 
+CDS_FSW_SPARC_REG_GP_CFG, SPARC GR712RC Register - GPTIMER Configuration,U1234,,HEX,ENG_BOOT,765,0,32,,,, SPARC GR712RC Register Value at address 0x80000308 
+CDS_FSW_SPARC_REG_TIMER1_COUNT, SPARC GR712RC Register - GPTIMER Timer #1 Count,U1234,,HEX,ENG_BOOT,769,0,32,,,, SPARC GR712RC Register Value at address 0x80000310
+CDS_FSW_SPARC_REG_TIMER1_RLD, SPARC GR712RC Register - GPTIMER Timer #1 Reload,U1234,,HEX,ENG_BOOT,773,0,32,,,, SPARC GR712RC Register Value at address 0x80000314
+CDS_FSW_SPARC_REG_TIMER1_CTRL, SPARC GR712RC Register - GPTIMER Timer #1 Control,U1234,,HEX,ENG_BOOT,777,0,32,,,, SPARC GR712RC Register Value at address 0x80000318
+CDS_FSW_SPARC_REG_TIMER2_COUNT, SPARC GR712RC Register - GPTIMER Timer #2 Count,U1234,,HEX,ENG_BOOT,781,0,32,,,, SPARC GR712RC Register Value at address 0x80000320
+CDS_FSW_SPARC_REG_TIMER2_RLD, SPARC GR712RC Register - GPTIMER Timer #2 Reload,U1234,,HEX,ENG_BOOT,785,0,32,,,, SPARC GR712RC Register Value at address 0x80000324
+CDS_FSW_SPARC_REG_TIMER2_CTRL, SPARC GR712RC Register - GPTIMER Timer #2 Control,U1234,,HEX,ENG_BOOT,789,0,32,,,, SPARC GR712RC Register Value at address 0x80000328
+CDS_FSW_SPARC_REG_TIMER3_COUNT, SPARC GR712RC Register - GPTIMER Timer #3 Count,U1234,,HEX,ENG_BOOT,793,0,32,,,, SPARC GR712RC Register Value at address 0x80000330
+CDS_FSW_SPARC_REG_TIMER3_RLD, SPARC GR712RC Register - GPTIMER Timer #3 Reload,U1234,,HEX,ENG_BOOT,797,0,32,,,, SPARC GR712RC Register Value at address 0x80000334
+CDS_FSW_SPARC_REG_TIMER3_CTRL, SPARC GR712RC Register - GPTIMER Timer #3 Control,U1234,,HEX,ENG_BOOT,801,0,32,,,, SPARC GR712RC Register Value at address 0x80000338
+CDS_FSW_SPARC_REG_TIMER4_COUNT, SPARC GR712RC Register - GPTIMER Timer #4 Count,U1234,,HEX,ENG_BOOT,805,0,32,,,, SPARC GR712RC Register Value at address 0x80000340
+CDS_FSW_SPARC_REG_TIMER4_RLD, SPARC GR712RC Register - GPTIMER Timer #4 Reload,U1234,,HEX,ENG_BOOT,809,0,32,,,, SPARC GR712RC Register Value at address 0x80000344
+CDS_FSW_SPARC_REG_TIMER4_CTRL, SPARC GR712RC Register - GPTIMER Timer #4 Control,U1234,,HEX,ENG_BOOT,813,0,32,,,, SPARC GR712RC Register Value at address 0x80000348
+CDS_FSW_SPARC_AHB_REG_FAIL_ADDR, SPARC GR712RC Register - AHB Register Failing Address,U1234,,HEX,ENG_BOOT,817,0,32,,,, SPARC GR712RC Register Value at address 0x80000F04
+CDS_FSW_SPARC_AHB_REG_FAIL_STATUS, SPARC GR712RC Register - AHB Register Failing Status,U1234,,HEX,ENG_BOOT,821,0,32,,,, SPARC GR712RC Register Value at address 0x80000F00
+CDS_FSW_SPARC_REG_CLKGATE_UNLOCK, SPARC GR712RC Register - Clock Gating Unlock,U1234,,HEX,ENG_BOOT,825,0,32,,,, SPARC GR712RC Register Value at address 0x80000D00
+CDS_FSW_SPARC_REG_CLKGATE_EN, SPARC GR712RC Register - Clock Gating Enable,U1234,,HEX,ENG_BOOT,829,0,32,,,, SPARC GR712RC Register Value at address 0x80000D04
+CDS_FSW_SPARC_REG_CLKGATE_RESET, SPARC GR712RC Register - Clock Gating Reset,U1234,,HEX,ENG_BOOT,833,0,32,,,, SPARC GR712RC Register Value at address 0x80000D08
+CDS_FSW_SPARC_REG_GRGPREG, SPARC GR712RC Register - General Purpose Register,U1234,,HEX,ENG_BOOT,837,0,32,,,, SPARC GR712RC Register Value at address 0x80000600
+CDS_FSW_SPARC_REG_DSU_CTRL, SPARC GR712RC Register - DSU Control,U1234,,HEX,ENG_BOOT,841,0,32,,,, SPARC GR712RC Register Value at address 0x90000000
+CDS_FSW_SPARC_REG_DSU_BRKSS, SPARC GR712RC Register - DSU Break,U1234,,HEX,ENG_BOOT,845,0,32,,,, SPARC GR712RC Register Value at address 0x90000020
+CDS_FSW_SPARC_REG_AHB_CTRL, SPARC GR712RC Register - AHB Control Register,U1234,,HEX,ENG_BOOT,849,0,32,,,, SPARC GR712RC Register Value at address 0x90000040
+ENG_BOOT_HIST1_SAFEHOLD_ADDR,Bootstrap Log History Entry #1: Address the Safehold image was loaded from.,U1234,,HEX,ENG_BOOT,853,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 1
+ENG_BOOT_HIST1_SAFEHOLD_VERSION,Bootstrap Log History Entry #1: Safehold image version.,U1234,,HEX,ENG_BOOT,857,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 2
+ENG_BOOT_HIST1_SAFEHOLD_DATE,Bootstrap Log History Entry #1: Date Safehold image was compiled.,U1234,,HEX,ENG_BOOT,861,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 3
+ENG_BOOT_HIST1_SAFEHOLD_TIME,Bootstrap Log History Entry #1: Time Safehold image was compiled.,U1234,,HEX,ENG_BOOT,865,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 4
+ENG_BOOT_HIST1_SAFEHOLD_EXPCHKSUM,Bootstrap Log History Entry #1: Precalculated checksum for the Safehold image.,U1234,,HEX,ENG_BOOT,869,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 5
+ENG_BOOT_HIST1_SAFEHOLD_COMPCHKSUM,Bootstrap Log History Entry #1: Computed checksum for the Safehold image.,U1234,,HEX,ENG_BOOT,873,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 6
+ENG_BOOT_HIST1_SAFEHOLD_FLAGS,Bootstrap Log History Entry #1: Flags from the Safehold image header.,U1234,,HEX,ENG_BOOT,877,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 7
+ENG_BOOT_HIST1_SAFEHOLD_STATUS,Bootstrap Log History Entry #1: Status of the Safehold image.,U1234,,HEX,ENG_BOOT,881,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 8
+ENG_BOOT_HIST1_OPERATIONAL1_ADDR,Bootstrap Log History Entry #1: Address Operational1 image was loaded from.,U1234,,HEX,ENG_BOOT,885,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 9
+ENG_BOOT_HIST1_OPERATIONAL1_VERSION,Bootstrap Log History Entry #1: Operational1 image version.,U1234,,HEX,ENG_BOOT,889,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 10
+ENG_BOOT_HIST1_OPERATIONAL1_DATE,Bootstrap Log History Entry #1: Date Operational1 image was compiled.,U1234,,HEX,ENG_BOOT,893,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 11
+ENG_BOOT_HIST1_OPERATIONAL1_TIME,Bootstrap Log History Entry #1: Time Operational1 image was compiled.,U1234,,HEX,ENG_BOOT,897,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 12
+ENG_BOOT_HIST1_OPERATIONAL1_EXPCHKSUM,Bootstrap Log History Entry #1: Precalculated checksum for the Operational1 image.,U1234,,HEX,ENG_BOOT,901,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 13
+ENG_BOOT_HIST1_OPERATIONAL1_COMPCHKSUM,Bootstrap Log History Entry #1: Computed checksum for the Operational1 image.,U1234,,HEX,ENG_BOOT,905,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 14
+ENG_BOOT_HIST1_OPERATIONAL1_FLAGS,Bootstrap Log History Entry #1: Flags from the Operational1 image header.,U1234,,HEX,ENG_BOOT,909,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 15
+ENG_BOOT_HIST1_OPERATIONAL1_STATUS,Bootstrap Log History Entry #1: Status of the Operational1 image.,U1234,,HEX,ENG_BOOT,913,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 16
+ENG_BOOT_HIST1_OPERATIONAL2_ADDR,Bootstrap Log History Entry #1: Address Operational2 image was loaded from.,U1234,,HEX,ENG_BOOT,917,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 17
+ENG_BOOT_HIST1_OPERATIONAL2_VERSION,Bootstrap Log History Entry #1: Operational2 image version.,U1234,,HEX,ENG_BOOT,921,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 18
+ENG_BOOT_HIST1_OPERATIONAL2_DATE,Bootstrap Log History Entry #1: Date Operational2 image was compiled.,U1234,,HEX,ENG_BOOT,925,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 19
+ENG_BOOT_HIST1_OPERATIONAL2_TIME,Bootstrap Log History Entry #1: Time Operational2 image was compiled.,U1234,,HEX,ENG_BOOT,929,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 20
+ENG_BOOT_HIST1_OPERATIONAL2_EXPCHKSUM,Bootstrap Log History Entry #1: Precalculated checksum for the Operational2 image.,U1234,,HEX,ENG_BOOT,933,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 21
+ENG_BOOT_HIST1_OPERATIONAL2_COMPCHKSUM,Bootstrap Log History Entry #1: Computed checksum for the Operational2 image.,U1234,,HEX,ENG_BOOT,937,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 22
+ENG_BOOT_HIST1_OPERATIONAL2_FLAGS,Bootstrap Log History Entry #1: Flags from the Operational2 image header.,U1234,,HEX,ENG_BOOT,941,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 23
+ENG_BOOT_HIST1_OPERATIONAL2_STATUS,Bootstrap Log History Entry #1: Status of the Operational2 image.,U1234,,HEX,ENG_BOOT,945,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 24
+ENG_BOOT_HIST1_BOOTSTRAP_ADDR,Bootstrap Log History Entry #1: Address Bootstrap image was loaded from.,U1234,,HEX,ENG_BOOT,949,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 25
+ENG_BOOT_HIST1_BOOTSTRAP_VERSION,Bootstrap Log History Entry #1: Bootstrap image version.,U1234,,HEX,ENG_BOOT,953,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 26
+ENG_BOOT_HIST1_BOOTSTRAP_DATE,Bootstrap Log History Entry #1: Date Bootstrap image was compiled.,U1234,,HEX,ENG_BOOT,957,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 27
+ENG_BOOT_HIST1_BOOTSTRAP_TIME,Bootstrap Log History Entry #1: Time Bootstrap image was compiled.,U1234,,HEX,ENG_BOOT,961,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 28
+ENG_BOOT_HIST1_BOOTSTRAP_EXPCHKSUM,Bootstrap Log History Entry #1: Precalculated checksum for the Bootstrap image.,U1234,,HEX,ENG_BOOT,965,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 29
+ENG_BOOT_HIST1_BOOTSTRAP_COMPCHKSUM,Bootstrap Log History Entry #1: Computed checksum for the Bootstrap image.,U1234,,HEX,ENG_BOOT,969,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 30
+ENG_BOOT_HIST1_BOOTSTRAP_FLAGS,Bootstrap Log History Entry #1: Flags from the Bootstrap image header.,U1234,,HEX,ENG_BOOT,973,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 31
+ENG_BOOT_HIST1_BOOTSTRAP_STATUS,Bootstrap Log History Entry #1: Status of the Bootstrap image.,U1234,,HEX,ENG_BOOT,977,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 32
+ENG_BOOT_HIST1_BOOTED_ADDR,Bootstrap Log History Entry #1: Address of the booted image.,U1234,,HEX,ENG_BOOT,981,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 33
+ENG_BOOT_HIST1_BOOTED_TIME_QUALITY,Bootstrap Log History Entry #1: VTC quality of the booted image just before execution,U1234,,HEX,ENG_BOOT,985,0,2,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 34
+ENG_BOOT_HIST1_BOOTED_TIME_FILL1,Bootstrap Log History Entry #1: VTC fill.,U1234,,HEX,ENG_BOOT,985,2,1,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 35
+ENG_BOOT_HIST1_BOOTED_TIME_YEAR,Bootstrap Log History Entry #1: VTC quality of the booted image just before execution,U1234,,HEX,ENG_BOOT,985,3,12,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 36
+ENG_BOOT_HIST1_BOOTED_TIME_DAY,Bootstrap Log History Entry #1: VTC quality of the booted image just before execution,U1234,,HEX,ENG_BOOT,986,7,9,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 37
+ENG_BOOT_HIST1_BOOTED_TIME_FILL2,Bootstrap Log History Entry #1: VTC fill.,U1234,,HEX,ENG_BOOT,988,0,3,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 38
+ENG_BOOT_HIST1_BOOTED_TIME_HOUR,Bootstrap Log History Entry #1: VTC hour of the booted image just before execution,U1234,,HEX,ENG_BOOT,988,3,5,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 39
+ENG_BOOT_HIST1_BOOTED_TIME_MIN,Bootstrap Log History Entry #1: VTC minute of the booted image just before execution,U1234,,HEX,ENG_BOOT,989,0,6,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 40
+ENG_BOOT_HIST1_BOOTED_TIME_SEC,Bootstrap Log History Entry #1: VTC second of the booted image just before execution,U1234,,HEX,ENG_BOOT,989,6,6,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 41
+ENG_BOOT_HIST1_BOOTED_TIME_USEC,Bootstrap Log History Entry #1: VTC microseconds of the booted image just before execution,U1234,,HEX,ENG_BOOT,990,4,20,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 42
+ENG_BOOT_HIST1_BOOTED_RESET_REASON,Bootstrap Log History Entry #1: Reason for last reset at boot.,U1234,,HEX,ENG_BOOT,993,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 43
+ENG_BOOT_HIST1_BOOTED_BYPASS_VAL,Bootstrap Log History Entry #1: Value of the LZ general purpose register at boot.,U1234,,HEX,ENG_BOOT,997,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 44
+ENG_BOOT_HIST1_BOOTED_ABUS_FAIL_MASK,Bootstrap Log History Entry #1: BIST address bus test failures.,U1234,,HEX,ENG_BOOT,1001,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 45
+ENG_BOOT_HIST1_BOOTED_DBUS_FAIL_MASK,Bootstrap Log History Entry #1: BIST data bus test failures.,U1234,,HEX,ENG_BOOT,1005,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 46
+ENG_BOOT_HIST1_BOOTED_SRAM_FAIL_FIRST,Bootstrap Log History Entry #1: BIST address of the first failing SRAM address.,U1234,,HEX,ENG_BOOT,1009,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 47
+ENG_BOOT_HIST1_BOOTED_SRAM_FAIL_LAST,Bootstrap Log History Entry #1: BIST address of the last failing SRAM address.,U1234,,HEX,ENG_BOOT,1013,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 48
+ENG_BOOT_HIST1_BOOTED_SRAM_FAIL_MAP,Bootstrap Log History Entry #1: BIST map of failed memory in 128 kB blocks.,U1234,,HEX,ENG_BOOT,1017,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 49
+ENG_BOOT_HIST1_BOOTED_SRAM_FAIL_COUNT,Bootstrap Log History Entry #1: BIST count of failed address.,U1234,,HEX,ENG_BOOT,1021,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 50
+ENG_BOOT_HIST1_BOOTED_BIST_STATUS,Bootstrap Log History Entry #1: BIST status.,U1234,,HEX,ENG_BOOT,1025,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 51
+ENG_BOOT_HIST2_SAFEHOLD_ADDR,Bootstrap Log History Entry #2: Address the Safehold image was loaded from.,U1234,,HEX,ENG_BOOT,1029,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 52
+ENG_BOOT_HIST2_SAFEHOLD_VERSION,Bootstrap Log History Entry #2: Safehold image version.,U1234,,HEX,ENG_BOOT,1033,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 53
+ENG_BOOT_HIST2_SAFEHOLD_DATE,Bootstrap Log History Entry #2: Date Safehold image was compiled.,U1234,,HEX,ENG_BOOT,1037,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 54
+ENG_BOOT_HIST2_SAFEHOLD_TIME,Bootstrap Log History Entry #2: Time Safehold image was compiled.,U1234,,HEX,ENG_BOOT,1041,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 55
+ENG_BOOT_HIST2_SAFEHOLD_EXPCHKSUM,Bootstrap Log History Entry #2: Precalculated checksum for the Safehold image.,U1234,,HEX,ENG_BOOT,1045,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 56
+ENG_BOOT_HIST2_SAFEHOLD_COMPCHKSUM,Bootstrap Log History Entry #2: Computed checksum for the Safehold image.,U1234,,HEX,ENG_BOOT,1049,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 57
+ENG_BOOT_HIST2_SAFEHOLD_FLAGS,Bootstrap Log History Entry #2: Flags from the Safehold image header.,U1234,,HEX,ENG_BOOT,1053,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 58
+ENG_BOOT_HIST2_SAFEHOLD_STATUS,Bootstrap Log History Entry #2: Status of the Safehold image.,U1234,,HEX,ENG_BOOT,1057,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 59
+ENG_BOOT_HIST2_OPERATIONAL1_ADDR,Bootstrap Log History Entry #2: Address Operational1 image was loaded from.,U1234,,HEX,ENG_BOOT,1061,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 60
+ENG_BOOT_HIST2_OPERATIONAL1_VERSION,Bootstrap Log History Entry #2: Operational1 image version.,U1234,,HEX,ENG_BOOT,1065,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 61
+ENG_BOOT_HIST2_OPERATIONAL1_DATE,Bootstrap Log History Entry #2: Date Operational1 image was compiled.,U1234,,HEX,ENG_BOOT,1069,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 62
+ENG_BOOT_HIST2_OPERATIONAL1_TIME,Bootstrap Log History Entry #2: Time Operational1 image was compiled.,U1234,,HEX,ENG_BOOT,1073,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 63
+ENG_BOOT_HIST2_OPERATIONAL1_EXPCHKSUM,Bootstrap Log History Entry #2: Precalculated checksum for the Operational1 image.,U1234,,HEX,ENG_BOOT,1077,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 64
+ENG_BOOT_HIST2_OPERATIONAL1_COMPCHKSUM,Bootstrap Log History Entry #2: Computed checksum for the Operational1 image.,U1234,,HEX,ENG_BOOT,1081,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 65
+ENG_BOOT_HIST2_OPERATIONAL1_FLAGS,Bootstrap Log History Entry #2: Flags from the Operational1 image header.,U1234,,HEX,ENG_BOOT,1085,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 66
+ENG_BOOT_HIST2_OPERATIONAL1_STATUS,Bootstrap Log History Entry #2: Status of the Operational1 image.,U1234,,HEX,ENG_BOOT,1089,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 67
+ENG_BOOT_HIST2_OPERATIONAL2_ADDR,Bootstrap Log History Entry #2: Address Operational2 image was loaded from.,U1234,,HEX,ENG_BOOT,1093,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 68
+ENG_BOOT_HIST2_OPERATIONAL2_VERSION,Bootstrap Log History Entry #2: Operational2 image version.,U1234,,HEX,ENG_BOOT,1097,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 69
+ENG_BOOT_HIST2_OPERATIONAL2_DATE,Bootstrap Log History Entry #2: Date Operational2 image was compiled.,U1234,,HEX,ENG_BOOT,1101,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 70
+ENG_BOOT_HIST2_OPERATIONAL2_TIME,Bootstrap Log History Entry #2: Time Operational2 image was compiled.,U1234,,HEX,ENG_BOOT,1105,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 71
+ENG_BOOT_HIST2_OPERATIONAL2_EXPCHKSUM,Bootstrap Log History Entry #2: Precalculated checksum for the Operational2 image.,U1234,,HEX,ENG_BOOT,1109,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 72
+ENG_BOOT_HIST2_OPERATIONAL2_COMPCHKSUM,Bootstrap Log History Entry #2: Computed checksum for the Operational2 image.,U1234,,HEX,ENG_BOOT,1113,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 73
+ENG_BOOT_HIST2_OPERATIONAL2_FLAGS,Bootstrap Log History Entry #2: Flags from the Operational2 image header.,U1234,,HEX,ENG_BOOT,1117,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 74
+ENG_BOOT_HIST2_OPERATIONAL2_STATUS,Bootstrap Log History Entry #2: Status of the Operational2 image.,U1234,,HEX,ENG_BOOT,1121,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 75
+ENG_BOOT_HIST2_BOOTSTRAP_ADDR,Bootstrap Log History Entry #2: Address Bootstrap image was loaded from.,U1234,,HEX,ENG_BOOT,1125,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 76
+ENG_BOOT_HIST2_BOOTSTRAP_VERSION,Bootstrap Log History Entry #2: Bootstrap image version.,U1234,,HEX,ENG_BOOT,1129,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 77
+ENG_BOOT_HIST2_BOOTSTRAP_DATE,Bootstrap Log History Entry #2: Date Bootstrap image was compiled.,U1234,,HEX,ENG_BOOT,1133,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 78
+ENG_BOOT_HIST2_BOOTSTRAP_TIME,Bootstrap Log History Entry #2: Time Bootstrap image was compiled.,U1234,,HEX,ENG_BOOT,1137,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 79
+ENG_BOOT_HIST2_BOOTSTRAP_EXPCHKSUM,Bootstrap Log History Entry #2: Precalculated checksum for the Bootstrap image.,U1234,,HEX,ENG_BOOT,1141,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 80
+ENG_BOOT_HIST2_BOOTSTRAP_COMPCHKSUM,Bootstrap Log History Entry #2: Computed checksum for the Bootstrap image.,U1234,,HEX,ENG_BOOT,1145,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 81
+ENG_BOOT_HIST2_BOOTSTRAP_FLAGS,Bootstrap Log History Entry #2: Flags from the Bootstrap image header.,U1234,,HEX,ENG_BOOT,1149,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 82
+ENG_BOOT_HIST2_BOOTSTRAP_STATUS,Bootstrap Log History Entry #2: Status of the Bootstrap image.,U1234,,HEX,ENG_BOOT,1153,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 83
+ENG_BOOT_HIST2_BOOTED_ADDR,Bootstrap Log History Entry #2: Address of the booted image.,U1234,,HEX,ENG_BOOT,1157,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 84
+ENG_BOOT_HIST2_BOOTED_TIME_QUALITY,Bootstrap Log History Entry #2: VTC quality of the booted image just before execution,U1234,,HEX,ENG_BOOT,1161,0,2,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 85
+ENG_BOOT_HIST2_BOOTED_TIME_FILL1,Bootstrap Log History Entry #2: VTC fill.,U1234,,HEX,ENG_BOOT,1161,2,1,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 86
+ENG_BOOT_HIST2_BOOTED_TIME_YEAR,Bootstrap Log History Entry #2: VTC quality of the booted image just before execution,U1234,,HEX,ENG_BOOT,1161,3,12,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 87
+ENG_BOOT_HIST2_BOOTED_TIME_DAY,Bootstrap Log History Entry #2: VTC quality of the booted image just before execution,U1234,,HEX,ENG_BOOT,1162,7,9,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 88
+ENG_BOOT_HIST2_BOOTED_TIME_FILL2,Bootstrap Log History Entry #2: VTC fill.,U1234,,HEX,ENG_BOOT,1164,0,3,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 89
+ENG_BOOT_HIST2_BOOTED_TIME_HOUR,Bootstrap Log History Entry #2: VTC hour of the booted image just before execution,U1234,,HEX,ENG_BOOT,1164,3,5,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 90
+ENG_BOOT_HIST2_BOOTED_TIME_MIN,Bootstrap Log History Entry #2: VTC minute of the booted image just before execution,U1234,,HEX,ENG_BOOT,1165,0,6,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 91
+ENG_BOOT_HIST2_BOOTED_TIME_SEC,Bootstrap Log History Entry #2: VTC second of the booted image just before execution,U1234,,HEX,ENG_BOOT,1165,6,6,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 92
+ENG_BOOT_HIST2_BOOTED_TIME_USEC,Bootstrap Log History Entry #2: VTC microseconds of the booted image just before execution,U1234,,HEX,ENG_BOOT,1166,4,20,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 93
+ENG_BOOT_HIST2_BOOTED_RESET_REASON,Bootstrap Log History Entry #2: Reason for last reset at boot.,U1234,,HEX,ENG_BOOT,1169,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 94
+ENG_BOOT_HIST2_BOOTED_BYPASS_VAL,Bootstrap Log History Entry #2: Value of the LZ general purpose register at boot.,U1234,,HEX,ENG_BOOT,1173,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 95
+ENG_BOOT_HIST2_BOOTED_ABUS_FAIL_MASK,Bootstrap Log History Entry #2: BIST address bus test failures.,U1234,,HEX,ENG_BOOT,1177,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 96
+ENG_BOOT_HIST2_BOOTED_DBUS_FAIL_MASK,Bootstrap Log History Entry #2: BIST data bus test failures.,U1234,,HEX,ENG_BOOT,1181,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 97
+ENG_BOOT_HIST2_BOOTED_SRAM_FAIL_FIRST,Bootstrap Log History Entry #2: BIST address of the first failing SRAM address.,U1234,,HEX,ENG_BOOT,1185,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 98
+ENG_BOOT_HIST2_BOOTED_SRAM_FAIL_LAST,Bootstrap Log History Entry #2: BIST address of the last failing SRAM address.,U1234,,HEX,ENG_BOOT,1189,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 99
+ENG_BOOT_HIST2_BOOTED_SRAM_FAIL_MAP,Bootstrap Log History Entry #2: BIST map of failed memory in 128 kB blocks.,U1234,,HEX,ENG_BOOT,1193,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 100
+ENG_BOOT_HIST2_BOOTED_SRAM_FAIL_COUNT,Bootstrap Log History Entry #2: BIST count of failed address.,U1234,,HEX,ENG_BOOT,1197,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 101
+ENG_BOOT_HIST2_BOOTED_BIST_STATUS,Bootstrap Log History Entry #2: BIST status.,U1234,,HEX,ENG_BOOT,1201,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 102
+ENG_BOOT_HIST3_SAFEHOLD_ADDR,Bootstrap Log History Entry #3: Address the Safehold image was loaded from.,U1234,,HEX,ENG_BOOT,1205,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 103
+ENG_BOOT_HIST3_SAFEHOLD_VERSION,Bootstrap Log History Entry #3: Safehold image version.,U1234,,HEX,ENG_BOOT,1209,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 104
+ENG_BOOT_HIST3_SAFEHOLD_DATE,Bootstrap Log History Entry #3: Date Safehold image was compiled.,U1234,,HEX,ENG_BOOT,1213,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 105
+ENG_BOOT_HIST3_SAFEHOLD_TIME,Bootstrap Log History Entry #3: Time Safehold image was compiled.,U1234,,HEX,ENG_BOOT,1217,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 106
+ENG_BOOT_HIST3_SAFEHOLD_EXPCHKSUM,Bootstrap Log History Entry #3: Precalculated checksum for the Safehold image.,U1234,,HEX,ENG_BOOT,1221,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 107
+ENG_BOOT_HIST3_SAFEHOLD_COMPCHKSUM,Bootstrap Log History Entry #3: Computed checksum for the Safehold image.,U1234,,HEX,ENG_BOOT,1225,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 108
+ENG_BOOT_HIST3_SAFEHOLD_FLAGS,Bootstrap Log History Entry #3: Flags from the Safehold image header.,U1234,,HEX,ENG_BOOT,1229,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 109
+ENG_BOOT_HIST3_SAFEHOLD_STATUS,Bootstrap Log History Entry #3: Status of the Safehold image.,U1234,,HEX,ENG_BOOT,1233,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 110
+ENG_BOOT_HIST3_OPERATIONAL1_ADDR,Bootstrap Log History Entry #3: Address Operational1 image was loaded from.,U1234,,HEX,ENG_BOOT,1237,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 111
+ENG_BOOT_HIST3_OPERATIONAL1_VERSION,Bootstrap Log History Entry #3: Operational1 image version.,U1234,,HEX,ENG_BOOT,1241,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 112
+ENG_BOOT_HIST3_OPERATIONAL1_DATE,Bootstrap Log History Entry #3: Date Operational1 image was compiled.,U1234,,HEX,ENG_BOOT,1245,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 113
+ENG_BOOT_HIST3_OPERATIONAL1_TIME,Bootstrap Log History Entry #3: Time Operational1 image was compiled.,U1234,,HEX,ENG_BOOT,1249,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 114
+ENG_BOOT_HIST3_OPERATIONAL1_EXPCHKSUM,Bootstrap Log History Entry #3: Precalculated checksum for the Operational1 image.,U1234,,HEX,ENG_BOOT,1253,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 115
+ENG_BOOT_HIST3_OPERATIONAL1_COMPCHKSUM,Bootstrap Log History Entry #3: Computed checksum for the Operational1 image.,U1234,,HEX,ENG_BOOT,1257,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 116
+ENG_BOOT_HIST3_OPERATIONAL1_FLAGS,Bootstrap Log History Entry #3: Flags from the Operational1 image header.,U1234,,HEX,ENG_BOOT,1261,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 117
+ENG_BOOT_HIST3_OPERATIONAL1_STATUS,Bootstrap Log History Entry #3: Status of the Operational1 image.,U1234,,HEX,ENG_BOOT,1265,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 118
+ENG_BOOT_HIST3_OPERATIONAL2_ADDR,Bootstrap Log History Entry #3: Address Operational2 image was loaded from.,U1234,,HEX,ENG_BOOT,1269,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 119
+ENG_BOOT_HIST3_OPERATIONAL2_VERSION,Bootstrap Log History Entry #3: Operational2 image version.,U1234,,HEX,ENG_BOOT,1273,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 120
+ENG_BOOT_HIST3_OPERATIONAL2_DATE,Bootstrap Log History Entry #3: Date Operational2 image was compiled.,U1234,,HEX,ENG_BOOT,1277,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 121
+ENG_BOOT_HIST3_OPERATIONAL2_TIME,Bootstrap Log History Entry #3: Time Operational2 image was compiled.,U1234,,HEX,ENG_BOOT,1281,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 122
+ENG_BOOT_HIST3_OPERATIONAL2_EXPCHKSUM,Bootstrap Log History Entry #3: Precalculated checksum for the Operational2 image.,U1234,,HEX,ENG_BOOT,1285,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 123
+ENG_BOOT_HIST3_OPERATIONAL2_COMPCHKSUM,Bootstrap Log History Entry #3: Computed checksum for the Operational2 image.,U1234,,HEX,ENG_BOOT,1289,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 124
+ENG_BOOT_HIST3_OPERATIONAL2_FLAGS,Bootstrap Log History Entry #3: Flags from the Operational2 image header.,U1234,,HEX,ENG_BOOT,1293,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 125
+ENG_BOOT_HIST3_OPERATIONAL2_STATUS,Bootstrap Log History Entry #3: Status of the Operational2 image.,U1234,,HEX,ENG_BOOT,1297,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 126
+ENG_BOOT_HIST3_BOOTSTRAP_ADDR,Bootstrap Log History Entry #3: Address Bootstrap image was loaded from.,U1234,,HEX,ENG_BOOT,1301,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 127
+ENG_BOOT_HIST3_BOOTSTRAP_VERSION,Bootstrap Log History Entry #3: Bootstrap image version.,U1234,,HEX,ENG_BOOT,1305,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 128
+ENG_BOOT_HIST3_BOOTSTRAP_DATE,Bootstrap Log History Entry #3: Date Bootstrap image was compiled.,U1234,,HEX,ENG_BOOT,1309,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 129
+ENG_BOOT_HIST3_BOOTSTRAP_TIME,Bootstrap Log History Entry #3: Time Bootstrap image was compiled.,U1234,,HEX,ENG_BOOT,1313,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 130
+ENG_BOOT_HIST3_BOOTSTRAP_EXPCHKSUM,Bootstrap Log History Entry #3: Precalculated checksum for the Bootstrap image.,U1234,,HEX,ENG_BOOT,1317,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 131
+ENG_BOOT_HIST3_BOOTSTRAP_COMPCHKSUM,Bootstrap Log History Entry #3: Computed checksum for the Bootstrap image.,U1234,,HEX,ENG_BOOT,1321,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 132
+ENG_BOOT_HIST3_BOOTSTRAP_FLAGS,Bootstrap Log History Entry #3: Flags from the Bootstrap image header.,U1234,,HEX,ENG_BOOT,1325,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 133
+ENG_BOOT_HIST3_BOOTSTRAP_STATUS,Bootstrap Log History Entry #3: Status of the Bootstrap image.,U1234,,HEX,ENG_BOOT,1329,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 134
+ENG_BOOT_HIST3_BOOTED_ADDR,Bootstrap Log History Entry #3: Address of the booted image.,U1234,,HEX,ENG_BOOT,1333,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 135
+ENG_BOOT_HIST3_BOOTED_TIME_QUALITY,Bootstrap Log History Entry #3: VTC quality of the booted image just before execution,U1234,,HEX,ENG_BOOT,1337,0,2,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 136
+ENG_BOOT_HIST3_BOOTED_TIME_FILL1,Bootstrap Log History Entry #3: VTC fill.,U1234,,HEX,ENG_BOOT,1337,2,1,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 137
+ENG_BOOT_HIST3_BOOTED_TIME_YEAR,Bootstrap Log History Entry #3: VTC quality of the booted image just before execution,U1234,,HEX,ENG_BOOT,1337,3,12,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 138
+ENG_BOOT_HIST3_BOOTED_TIME_DAY,Bootstrap Log History Entry #3: VTC quality of the booted image just before execution,U1234,,HEX,ENG_BOOT,1338,7,9,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 139
+ENG_BOOT_HIST3_BOOTED_TIME_FILL2,Bootstrap Log History Entry #3: VTC fill.,U1234,,HEX,ENG_BOOT,1340,0,3,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 140
+ENG_BOOT_HIST3_BOOTED_TIME_HOUR,Bootstrap Log History Entry #3: VTC hour of the booted image just before execution,U1234,,HEX,ENG_BOOT,1340,3,5,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 141
+ENG_BOOT_HIST3_BOOTED_TIME_MIN,Bootstrap Log History Entry #3: VTC minute of the booted image just before execution,U1234,,HEX,ENG_BOOT,1341,0,6,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 142
+ENG_BOOT_HIST3_BOOTED_TIME_SEC,Bootstrap Log History Entry #3: VTC second of the booted image just before execution,U1234,,HEX,ENG_BOOT,1341,6,6,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 143
+ENG_BOOT_HIST3_BOOTED_TIME_USEC,Bootstrap Log History Entry #3: VTC microseconds of the booted image just before execution,U1234,,HEX,ENG_BOOT,1342,4,20,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 144
+ENG_BOOT_HIST3_BOOTED_RESET_REASON,Bootstrap Log History Entry #3: Reason for last reset at boot.,U1234,,HEX,ENG_BOOT,1345,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 145
+ENG_BOOT_HIST3_BOOTED_BYPASS_VAL,Bootstrap Log History Entry #3: Value of the LZ general purpose register at boot.,U1234,,HEX,ENG_BOOT,1349,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 146
+ENG_BOOT_HIST3_BOOTED_ABUS_FAIL_MASK,Bootstrap Log History Entry #3: BIST address bus test failures.,U1234,,HEX,ENG_BOOT,1353,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 147
+ENG_BOOT_HIST3_BOOTED_DBUS_FAIL_MASK,Bootstrap Log History Entry #3: BIST data bus test failures.,U1234,,HEX,ENG_BOOT,1357,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 148
+ENG_BOOT_HIST3_BOOTED_SRAM_FAIL_FIRST,Bootstrap Log History Entry #3: BIST address of the first failing SRAM address.,U1234,,HEX,ENG_BOOT,1361,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 149
+ENG_BOOT_HIST3_BOOTED_SRAM_FAIL_LAST,Bootstrap Log History Entry #3: BIST address of the last failing SRAM address.,U1234,,HEX,ENG_BOOT,1365,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 150
+ENG_BOOT_HIST3_BOOTED_SRAM_FAIL_MAP,Bootstrap Log History Entry #3: BIST map of failed memory in 128 kB blocks.,U1234,,HEX,ENG_BOOT,1369,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 151
+ENG_BOOT_HIST3_BOOTED_SRAM_FAIL_COUNT,Bootstrap Log History Entry #3: BIST count of failed address.,U1234,,HEX,ENG_BOOT,1373,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 152
+ENG_BOOT_HIST3_BOOTED_BIST_STATUS,Bootstrap Log History Entry #3: BIST status.,U1234,,HEX,ENG_BOOT,1377,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 153
+ENG_BOOT_HIST4_SAFEHOLD_ADDR,Bootstrap Log History Entry #4: Address the Safehold image was loaded from.,U1234,,HEX,ENG_BOOT,1381,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 154
+ENG_BOOT_HIST4_SAFEHOLD_VERSION,Bootstrap Log History Entry #4: Safehold image version.,U1234,,HEX,ENG_BOOT,1385,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 155
+ENG_BOOT_HIST4_SAFEHOLD_DATE,Bootstrap Log History Entry #4: Date Safehold image was compiled.,U1234,,HEX,ENG_BOOT,1389,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 156
+ENG_BOOT_HIST4_SAFEHOLD_TIME,Bootstrap Log History Entry #4: Time Safehold image was compiled.,U1234,,HEX,ENG_BOOT,1393,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 157
+ENG_BOOT_HIST4_SAFEHOLD_EXPCHKSUM,Bootstrap Log History Entry #4: Precalculated checksum for the Safehold image.,U1234,,HEX,ENG_BOOT,1397,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 158
+ENG_BOOT_HIST4_SAFEHOLD_COMPCHKSUM,Bootstrap Log History Entry #4: Computed checksum for the Safehold image.,U1234,,HEX,ENG_BOOT,1401,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 159
+ENG_BOOT_HIST4_SAFEHOLD_FLAGS,Bootstrap Log History Entry #4: Flags from the Safehold image header.,U1234,,HEX,ENG_BOOT,1405,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 160
+ENG_BOOT_HIST4_SAFEHOLD_STATUS,Bootstrap Log History Entry #4: Status of the Safehold image.,U1234,,HEX,ENG_BOOT,1409,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 161
+ENG_BOOT_HIST4_OPERATIONAL1_ADDR,Bootstrap Log History Entry #4: Address Operational1 image was loaded from.,U1234,,HEX,ENG_BOOT,1413,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 162
+ENG_BOOT_HIST4_OPERATIONAL1_VERSION,Bootstrap Log History Entry #4: Operational1 image version.,U1234,,HEX,ENG_BOOT,1417,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 163
+ENG_BOOT_HIST4_OPERATIONAL1_DATE,Bootstrap Log History Entry #4: Date Operational1 image was compiled.,U1234,,HEX,ENG_BOOT,1421,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 164
+ENG_BOOT_HIST4_OPERATIONAL1_TIME,Bootstrap Log History Entry #4: Time Operational1 image was compiled.,U1234,,HEX,ENG_BOOT,1425,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 165
+ENG_BOOT_HIST4_OPERATIONAL1_EXPCHKSUM,Bootstrap Log History Entry #4: Precalculated checksum for the Operational1 image.,U1234,,HEX,ENG_BOOT,1429,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 166
+ENG_BOOT_HIST4_OPERATIONAL1_COMPCHKSUM,Bootstrap Log History Entry #4: Computed checksum for the Operational1 image.,U1234,,HEX,ENG_BOOT,1433,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 167
+ENG_BOOT_HIST4_OPERATIONAL1_FLAGS,Bootstrap Log History Entry #4: Flags from the Operational1 image header.,U1234,,HEX,ENG_BOOT,1437,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 168
+ENG_BOOT_HIST4_OPERATIONAL1_STATUS,Bootstrap Log History Entry #4: Status of the Operational1 image.,U1234,,HEX,ENG_BOOT,1441,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 169
+ENG_BOOT_HIST4_OPERATIONAL2_ADDR,Bootstrap Log History Entry #4: Address Operational2 image was loaded from.,U1234,,HEX,ENG_BOOT,1445,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 170
+ENG_BOOT_HIST4_OPERATIONAL2_VERSION,Bootstrap Log History Entry #4: Operational2 image version.,U1234,,HEX,ENG_BOOT,1449,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 171
+ENG_BOOT_HIST4_OPERATIONAL2_DATE,Bootstrap Log History Entry #4: Date Operational2 image was compiled.,U1234,,HEX,ENG_BOOT,1453,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 172
+ENG_BOOT_HIST4_OPERATIONAL2_TIME,Bootstrap Log History Entry #4: Time Operational2 image was compiled.,U1234,,HEX,ENG_BOOT,1457,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 173
+ENG_BOOT_HIST4_OPERATIONAL2_EXPCHKSUM,Bootstrap Log History Entry #4: Precalculated checksum for the Operational2 image.,U1234,,HEX,ENG_BOOT,1461,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 174
+ENG_BOOT_HIST4_OPERATIONAL2_COMPCHKSUM,Bootstrap Log History Entry #4: Computed checksum for the Operational2 image.,U1234,,HEX,ENG_BOOT,1465,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 175
+ENG_BOOT_HIST4_OPERATIONAL2_FLAGS,Bootstrap Log History Entry #4: Flags from the Operational2 image header.,U1234,,HEX,ENG_BOOT,1469,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 176
+ENG_BOOT_HIST4_OPERATIONAL2_STATUS,Bootstrap Log History Entry #4: Status of the Operational2 image.,U1234,,HEX,ENG_BOOT,1473,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 177
+ENG_BOOT_HIST4_BOOTSTRAP_ADDR,Bootstrap Log History Entry #4: Address Bootstrap image was loaded from.,U1234,,HEX,ENG_BOOT,1477,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 178
+ENG_BOOT_HIST4_BOOTSTRAP_VERSION,Bootstrap Log History Entry #4: Bootstrap image version.,U1234,,HEX,ENG_BOOT,1481,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 179
+ENG_BOOT_HIST4_BOOTSTRAP_DATE,Bootstrap Log History Entry #4: Date Bootstrap image was compiled.,U1234,,HEX,ENG_BOOT,1485,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 180
+ENG_BOOT_HIST4_BOOTSTRAP_TIME,Bootstrap Log History Entry #4: Time Bootstrap image was compiled.,U1234,,HEX,ENG_BOOT,1489,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 181
+ENG_BOOT_HIST4_BOOTSTRAP_EXPCHKSUM,Bootstrap Log History Entry #4: Precalculated checksum for the Bootstrap image.,U1234,,HEX,ENG_BOOT,1493,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 182
+ENG_BOOT_HIST4_BOOTSTRAP_COMPCHKSUM,Bootstrap Log History Entry #4: Computed checksum for the Bootstrap image.,U1234,,HEX,ENG_BOOT,1497,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 183
+ENG_BOOT_HIST4_BOOTSTRAP_FLAGS,Bootstrap Log History Entry #4: Flags from the Bootstrap image header.,U1234,,HEX,ENG_BOOT,1501,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 184
+ENG_BOOT_HIST4_BOOTSTRAP_STATUS,Bootstrap Log History Entry #4: Status of the Bootstrap image.,U1234,,HEX,ENG_BOOT,1505,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 185
+ENG_BOOT_HIST4_BOOTED_ADDR,Bootstrap Log History Entry #4: Address of the booted image.,U1234,,HEX,ENG_BOOT,1509,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 186
+ENG_BOOT_HIST4_BOOTED_TIME_QUALITY,Bootstrap Log History Entry #4: VTC quality of the booted image just before execution,U1234,,HEX,ENG_BOOT,1513,0,2,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 187
+ENG_BOOT_HIST4_BOOTED_TIME_FILL1,Bootstrap Log History Entry #4: VTC fill.,U1234,,HEX,ENG_BOOT,1513,2,1,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 188
+ENG_BOOT_HIST4_BOOTED_TIME_YEAR,Bootstrap Log History Entry #4: VTC quality of the booted image just before execution,U1234,,HEX,ENG_BOOT,1513,3,12,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 189
+ENG_BOOT_HIST4_BOOTED_TIME_DAY,Bootstrap Log History Entry #4: VTC quality of the booted image just before execution,U1234,,HEX,ENG_BOOT,1514,7,9,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 190
+ENG_BOOT_HIST4_BOOTED_TIME_FILL2,Bootstrap Log History Entry #4: VTC fill.,U1234,,HEX,ENG_BOOT,1516,0,3,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 191
+ENG_BOOT_HIST4_BOOTED_TIME_HOUR,Bootstrap Log History Entry #4: VTC hour of the booted image just before execution,U1234,,HEX,ENG_BOOT,1516,3,5,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 192
+ENG_BOOT_HIST4_BOOTED_TIME_MIN,Bootstrap Log History Entry #4: VTC minute of the booted image just before execution,U1234,,HEX,ENG_BOOT,1517,0,6,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 193
+ENG_BOOT_HIST4_BOOTED_TIME_SEC,Bootstrap Log History Entry #4: VTC second of the booted image just before execution,U1234,,HEX,ENG_BOOT,1517,6,6,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 194
+ENG_BOOT_HIST4_BOOTED_TIME_USEC,Bootstrap Log History Entry #4: VTC microseconds of the booted image just before execution,U1234,,HEX,ENG_BOOT,1518,4,20,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 195
+ENG_BOOT_HIST4_BOOTED_RESET_REASON,Bootstrap Log History Entry #4: Reason for last reset at boot.,U1234,,HEX,ENG_BOOT,1521,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 196
+ENG_BOOT_HIST4_BOOTED_BYPASS_VAL,Bootstrap Log History Entry #4: Value of the LZ general purpose register at boot.,U1234,,HEX,ENG_BOOT,1525,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 197
+ENG_BOOT_HIST4_BOOTED_ABUS_FAIL_MASK,Bootstrap Log History Entry #4: BIST address bus test failures.,U1234,,HEX,ENG_BOOT,1529,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 198
+ENG_BOOT_HIST4_BOOTED_DBUS_FAIL_MASK,Bootstrap Log History Entry #4: BIST data bus test failures.,U1234,,HEX,ENG_BOOT,1533,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 199
+ENG_BOOT_HIST4_BOOTED_SRAM_FAIL_FIRST,Bootstrap Log History Entry #4: BIST address of the first failing SRAM address.,U1234,,HEX,ENG_BOOT,1537,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 200
+ENG_BOOT_HIST4_BOOTED_SRAM_FAIL_LAST,Bootstrap Log History Entry #4: BIST address of the last failing SRAM address.,U1234,,HEX,ENG_BOOT,1541,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 201
+ENG_BOOT_HIST4_BOOTED_SRAM_FAIL_MAP,Bootstrap Log History Entry #4: BIST map of failed memory in 128 kB blocks.,U1234,,HEX,ENG_BOOT,1545,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 202
+ENG_BOOT_HIST4_BOOTED_SRAM_FAIL_COUNT,Bootstrap Log History Entry #4: BIST count of failed address.,U1234,,HEX,ENG_BOOT,1549,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 203
+ENG_BOOT_HIST4_BOOTED_BIST_STATUS,Bootstrap Log History Entry #4: BIST status.,U1234,,HEX,ENG_BOOT,1553,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 204
+ENG_BOOT_HIST5_SAFEHOLD_ADDR,Bootstrap Log History Entry #5: Address the Safehold image was loaded from.,U1234,,HEX,ENG_BOOT,1557,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 205
+ENG_BOOT_HIST5_SAFEHOLD_VERSION,Bootstrap Log History Entry #5: Safehold image version.,U1234,,HEX,ENG_BOOT,1561,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 206
+ENG_BOOT_HIST5_SAFEHOLD_DATE,Bootstrap Log History Entry #5: Date Safehold image was compiled.,U1234,,HEX,ENG_BOOT,1565,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 207
+ENG_BOOT_HIST5_SAFEHOLD_TIME,Bootstrap Log History Entry #5: Time Safehold image was compiled.,U1234,,HEX,ENG_BOOT,1569,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 208
+ENG_BOOT_HIST5_SAFEHOLD_EXPCHKSUM,Bootstrap Log History Entry #5: Precalculated checksum for the Safehold image.,U1234,,HEX,ENG_BOOT,1573,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 209
+ENG_BOOT_HIST5_SAFEHOLD_COMPCHKSUM,Bootstrap Log History Entry #5: Computed checksum for the Safehold image.,U1234,,HEX,ENG_BOOT,1577,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 210
+ENG_BOOT_HIST5_SAFEHOLD_FLAGS,Bootstrap Log History Entry #5: Flags from the Safehold image header.,U1234,,HEX,ENG_BOOT,1581,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 211
+ENG_BOOT_HIST5_SAFEHOLD_STATUS,Bootstrap Log History Entry #5: Status of the Safehold image.,U1234,,HEX,ENG_BOOT,1585,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 212
+ENG_BOOT_HIST5_OPERATIONAL1_ADDR,Bootstrap Log History Entry #5: Address Operational1 image was loaded from.,U1234,,HEX,ENG_BOOT,1589,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 213
+ENG_BOOT_HIST5_OPERATIONAL1_VERSION,Bootstrap Log History Entry #5: Operational1 image version.,U1234,,HEX,ENG_BOOT,1593,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 214
+ENG_BOOT_HIST5_OPERATIONAL1_DATE,Bootstrap Log History Entry #5: Date Operational1 image was compiled.,U1234,,HEX,ENG_BOOT,1597,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 215
+ENG_BOOT_HIST5_OPERATIONAL1_TIME,Bootstrap Log History Entry #5: Time Operational1 image was compiled.,U1234,,HEX,ENG_BOOT,1601,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 216
+ENG_BOOT_HIST5_OPERATIONAL1_EXPCHKSUM,Bootstrap Log History Entry #5: Precalculated checksum for the Operational1 image.,U1234,,HEX,ENG_BOOT,1605,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 217
+ENG_BOOT_HIST5_OPERATIONAL1_COMPCHKSUM,Bootstrap Log History Entry #5: Computed checksum for the Operational1 image.,U1234,,HEX,ENG_BOOT,1609,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 218
+ENG_BOOT_HIST5_OPERATIONAL1_FLAGS,Bootstrap Log History Entry #5: Flags from the Operational1 image header.,U1234,,HEX,ENG_BOOT,1613,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 219
+ENG_BOOT_HIST5_OPERATIONAL1_STATUS,Bootstrap Log History Entry #5: Status of the Operational1 image.,U1234,,HEX,ENG_BOOT,1617,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 220
+ENG_BOOT_HIST5_OPERATIONAL2_ADDR,Bootstrap Log History Entry #5: Address Operational2 image was loaded from.,U1234,,HEX,ENG_BOOT,1621,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 221
+ENG_BOOT_HIST5_OPERATIONAL2_VERSION,Bootstrap Log History Entry #5: Operational2 image version.,U1234,,HEX,ENG_BOOT,1625,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 222
+ENG_BOOT_HIST5_OPERATIONAL2_DATE,Bootstrap Log History Entry #5: Date Operational2 image was compiled.,U1234,,HEX,ENG_BOOT,1629,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 223
+ENG_BOOT_HIST5_OPERATIONAL2_TIME,Bootstrap Log History Entry #5: Time Operational2 image was compiled.,U1234,,HEX,ENG_BOOT,1633,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 224
+ENG_BOOT_HIST5_OPERATIONAL2_EXPCHKSUM,Bootstrap Log History Entry #5: Precalculated checksum for the Operational2 image.,U1234,,HEX,ENG_BOOT,1637,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 225
+ENG_BOOT_HIST5_OPERATIONAL2_COMPCHKSUM,Bootstrap Log History Entry #5: Computed checksum for the Operational2 image.,U1234,,HEX,ENG_BOOT,1641,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 226
+ENG_BOOT_HIST5_OPERATIONAL2_FLAGS,Bootstrap Log History Entry #5: Flags from the Operational2 image header.,U1234,,HEX,ENG_BOOT,1645,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 227
+ENG_BOOT_HIST5_OPERATIONAL2_STATUS,Bootstrap Log History Entry #5: Status of the Operational2 image.,U1234,,HEX,ENG_BOOT,1649,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 228
+ENG_BOOT_HIST5_BOOTSTRAP_ADDR,Bootstrap Log History Entry #5: Address Bootstrap image was loaded from.,U1234,,HEX,ENG_BOOT,1653,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 229
+ENG_BOOT_HIST5_BOOTSTRAP_VERSION,Bootstrap Log History Entry #5: Bootstrap image version.,U1234,,HEX,ENG_BOOT,1657,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 230
+ENG_BOOT_HIST5_BOOTSTRAP_DATE,Bootstrap Log History Entry #5: Date Bootstrap image was compiled.,U1234,,HEX,ENG_BOOT,1661,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 231
+ENG_BOOT_HIST5_BOOTSTRAP_TIME,Bootstrap Log History Entry #5: Time Bootstrap image was compiled.,U1234,,HEX,ENG_BOOT,1665,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 232
+ENG_BOOT_HIST5_BOOTSTRAP_EXPCHKSUM,Bootstrap Log History Entry #5: Precalculated checksum for the Bootstrap image.,U1234,,HEX,ENG_BOOT,1669,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 233
+ENG_BOOT_HIST5_BOOTSTRAP_COMPCHKSUM,Bootstrap Log History Entry #5: Computed checksum for the Bootstrap image.,U1234,,HEX,ENG_BOOT,1673,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 234
+ENG_BOOT_HIST5_BOOTSTRAP_FLAGS,Bootstrap Log History Entry #5: Flags from the Bootstrap image header.,U1234,,HEX,ENG_BOOT,1677,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 235
+ENG_BOOT_HIST5_BOOTSTRAP_STATUS,Bootstrap Log History Entry #5: Status of the Bootstrap image.,U1234,,HEX,ENG_BOOT,1681,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 236
+ENG_BOOT_HIST5_BOOTED_ADDR,Bootstrap Log History Entry #5: Address of the booted image.,U1234,,HEX,ENG_BOOT,1685,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 237
+ENG_BOOT_HIST5_BOOTED_TIME_QUALITY,Bootstrap Log History Entry #5: VTC quality of the booted image just before execution,U1234,,HEX,ENG_BOOT,1689,0,2,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 238
+ENG_BOOT_HIST5_BOOTED_TIME_FILL1,Bootstrap Log History Entry #5: VTC fill.,U1234,,HEX,ENG_BOOT,1689,2,1,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 239
+ENG_BOOT_HIST5_BOOTED_TIME_YEAR,Bootstrap Log History Entry #5: VTC quality of the booted image just before execution,U1234,,HEX,ENG_BOOT,1689,3,12,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 240
+ENG_BOOT_HIST5_BOOTED_TIME_DAY,Bootstrap Log History Entry #5: VTC quality of the booted image just before execution,U1234,,HEX,ENG_BOOT,1690,7,9,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 241
+ENG_BOOT_HIST5_BOOTED_TIME_FILL2,Bootstrap Log History Entry #5: VTC fill.,U1234,,HEX,ENG_BOOT,1692,0,3,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 242
+ENG_BOOT_HIST5_BOOTED_TIME_HOUR,Bootstrap Log History Entry #5: VTC hour of the booted image just before execution,U1234,,HEX,ENG_BOOT,1692,3,5,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 243
+ENG_BOOT_HIST5_BOOTED_TIME_MIN,Bootstrap Log History Entry #5: VTC minute of the booted image just before execution,U1234,,HEX,ENG_BOOT,1693,0,6,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 244
+ENG_BOOT_HIST5_BOOTED_TIME_SEC,Bootstrap Log History Entry #5: VTC second of the booted image just before execution,U1234,,HEX,ENG_BOOT,1693,6,6,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 245
+ENG_BOOT_HIST5_BOOTED_TIME_USEC,Bootstrap Log History Entry #5: VTC microseconds of the booted image just before execution,U1234,,HEX,ENG_BOOT,1694,4,20,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 246
+ENG_BOOT_HIST5_BOOTED_RESET_REASON,Bootstrap Log History Entry #5: Reason for last reset at boot.,U1234,,HEX,ENG_BOOT,1697,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 247
+ENG_BOOT_HIST5_BOOTED_BYPASS_VAL,Bootstrap Log History Entry #5: Value of the LZ general purpose register at boot.,U1234,,HEX,ENG_BOOT,1701,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 248
+ENG_BOOT_HIST5_BOOTED_ABUS_FAIL_MASK,Bootstrap Log History Entry #5: BIST address bus test failures.,U1234,,HEX,ENG_BOOT,1705,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 249
+ENG_BOOT_HIST5_BOOTED_DBUS_FAIL_MASK,Bootstrap Log History Entry #5: BIST data bus test failures.,U1234,,HEX,ENG_BOOT,1709,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 250
+ENG_BOOT_HIST5_BOOTED_SRAM_FAIL_FIRST,Bootstrap Log History Entry #5: BIST address of the first failing SRAM address.,U1234,,HEX,ENG_BOOT,1713,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 251
+ENG_BOOT_HIST5_BOOTED_SRAM_FAIL_LAST,Bootstrap Log History Entry #5: BIST address of the last failing SRAM address.,U1234,,HEX,ENG_BOOT,1717,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 252
+ENG_BOOT_HIST5_BOOTED_SRAM_FAIL_MAP,Bootstrap Log History Entry #5: BIST map of failed memory in 128 kB blocks.,U1234,,HEX,ENG_BOOT,1721,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 253
+ENG_BOOT_HIST5_BOOTED_SRAM_FAIL_COUNT,Bootstrap Log History Entry #5: BIST count of failed address.,U1234,,HEX,ENG_BOOT,1725,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 254
+ENG_BOOT_HIST5_BOOTED_BIST_STATUS,Bootstrap Log History Entry #5: BIST status.,U1234,,HEX,ENG_BOOT,1729,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 255
+ENG_BOOT_HIST6_SAFEHOLD_ADDR,Bootstrap Log History Entry #6: Address the Safehold image was loaded from.,U1234,,HEX,ENG_BOOT,1733,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 256
+ENG_BOOT_HIST6_SAFEHOLD_VERSION,Bootstrap Log History Entry #6: Safehold image version.,U1234,,HEX,ENG_BOOT,1737,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 257
+ENG_BOOT_HIST6_SAFEHOLD_DATE,Bootstrap Log History Entry #6: Date Safehold image was compiled.,U1234,,HEX,ENG_BOOT,1741,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 258
+ENG_BOOT_HIST6_SAFEHOLD_TIME,Bootstrap Log History Entry #6: Time Safehold image was compiled.,U1234,,HEX,ENG_BOOT,1745,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 259
+ENG_BOOT_HIST6_SAFEHOLD_EXPCHKSUM,Bootstrap Log History Entry #6: Precalculated checksum for the Safehold image.,U1234,,HEX,ENG_BOOT,1749,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 260
+ENG_BOOT_HIST6_SAFEHOLD_COMPCHKSUM,Bootstrap Log History Entry #6: Computed checksum for the Safehold image.,U1234,,HEX,ENG_BOOT,1753,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 261
+ENG_BOOT_HIST6_SAFEHOLD_FLAGS,Bootstrap Log History Entry #6: Flags from the Safehold image header.,U1234,,HEX,ENG_BOOT,1757,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 262
+ENG_BOOT_HIST6_SAFEHOLD_STATUS,Bootstrap Log History Entry #6: Status of the Safehold image.,U1234,,HEX,ENG_BOOT,1761,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 263
+ENG_BOOT_HIST6_OPERATIONAL1_ADDR,Bootstrap Log History Entry #6: Address Operational1 image was loaded from.,U1234,,HEX,ENG_BOOT,1765,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 264
+ENG_BOOT_HIST6_OPERATIONAL1_VERSION,Bootstrap Log History Entry #6: Operational1 image version.,U1234,,HEX,ENG_BOOT,1769,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 265
+ENG_BOOT_HIST6_OPERATIONAL1_DATE,Bootstrap Log History Entry #6: Date Operational1 image was compiled.,U1234,,HEX,ENG_BOOT,1773,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 266
+ENG_BOOT_HIST6_OPERATIONAL1_TIME,Bootstrap Log History Entry #6: Time Operational1 image was compiled.,U1234,,HEX,ENG_BOOT,1777,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 267
+ENG_BOOT_HIST6_OPERATIONAL1_EXPCHKSUM,Bootstrap Log History Entry #6: Precalculated checksum for the Operational1 image.,U1234,,HEX,ENG_BOOT,1781,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 268
+ENG_BOOT_HIST6_OPERATIONAL1_COMPCHKSUM,Bootstrap Log History Entry #6: Computed checksum for the Operational1 image.,U1234,,HEX,ENG_BOOT,1785,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 269
+ENG_BOOT_HIST6_OPERATIONAL1_FLAGS,Bootstrap Log History Entry #6: Flags from the Operational1 image header.,U1234,,HEX,ENG_BOOT,1789,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 270
+ENG_BOOT_HIST6_OPERATIONAL1_STATUS,Bootstrap Log History Entry #6: Status of the Operational1 image.,U1234,,HEX,ENG_BOOT,1793,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 271
+ENG_BOOT_HIST6_OPERATIONAL2_ADDR,Bootstrap Log History Entry #6: Address Operational2 image was loaded from.,U1234,,HEX,ENG_BOOT,1797,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 272
+ENG_BOOT_HIST6_OPERATIONAL2_VERSION,Bootstrap Log History Entry #6: Operational2 image version.,U1234,,HEX,ENG_BOOT,1801,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 273
+ENG_BOOT_HIST6_OPERATIONAL2_DATE,Bootstrap Log History Entry #6: Date Operational2 image was compiled.,U1234,,HEX,ENG_BOOT,1805,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 274
+ENG_BOOT_HIST6_OPERATIONAL2_TIME,Bootstrap Log History Entry #6: Time Operational2 image was compiled.,U1234,,HEX,ENG_BOOT,1809,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 275
+ENG_BOOT_HIST6_OPERATIONAL2_EXPCHKSUM,Bootstrap Log History Entry #6: Precalculated checksum for the Operational2 image.,U1234,,HEX,ENG_BOOT,1813,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 276
+ENG_BOOT_HIST6_OPERATIONAL2_COMPCHKSUM,Bootstrap Log History Entry #6: Computed checksum for the Operational2 image.,U1234,,HEX,ENG_BOOT,1817,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 277
+ENG_BOOT_HIST6_OPERATIONAL2_FLAGS,Bootstrap Log History Entry #6: Flags from the Operational2 image header.,U1234,,HEX,ENG_BOOT,1821,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 278
+ENG_BOOT_HIST6_OPERATIONAL2_STATUS,Bootstrap Log History Entry #6: Status of the Operational2 image.,U1234,,HEX,ENG_BOOT,1825,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 279
+ENG_BOOT_HIST6_BOOTSTRAP_ADDR,Bootstrap Log History Entry #6: Address Bootstrap image was loaded from.,U1234,,HEX,ENG_BOOT,1829,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 280
+ENG_BOOT_HIST6_BOOTSTRAP_VERSION,Bootstrap Log History Entry #6: Bootstrap image version.,U1234,,HEX,ENG_BOOT,1833,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 281
+ENG_BOOT_HIST6_BOOTSTRAP_DATE,Bootstrap Log History Entry #6: Date Bootstrap image was compiled.,U1234,,HEX,ENG_BOOT,1837,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 282
+ENG_BOOT_HIST6_BOOTSTRAP_TIME,Bootstrap Log History Entry #6: Time Bootstrap image was compiled.,U1234,,HEX,ENG_BOOT,1841,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 283
+ENG_BOOT_HIST6_BOOTSTRAP_EXPCHKSUM,Bootstrap Log History Entry #6: Precalculated checksum for the Bootstrap image.,U1234,,HEX,ENG_BOOT,1845,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 284
+ENG_BOOT_HIST6_BOOTSTRAP_COMPCHKSUM,Bootstrap Log History Entry #6: Computed checksum for the Bootstrap image.,U1234,,HEX,ENG_BOOT,1849,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 285
+ENG_BOOT_HIST6_BOOTSTRAP_FLAGS,Bootstrap Log History Entry #6: Flags from the Bootstrap image header.,U1234,,HEX,ENG_BOOT,1853,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 286
+ENG_BOOT_HIST6_BOOTSTRAP_STATUS,Bootstrap Log History Entry #6: Status of the Bootstrap image.,U1234,,HEX,ENG_BOOT,1857,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 287
+ENG_BOOT_HIST6_BOOTED_ADDR,Bootstrap Log History Entry #6: Address of the booted image.,U1234,,HEX,ENG_BOOT,1861,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 288
+ENG_BOOT_HIST6_BOOTED_TIME_QUALITY,Bootstrap Log History Entry #6: VTC quality of the booted image just before execution,U1234,,HEX,ENG_BOOT,1865,0,2,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 289
+ENG_BOOT_HIST6_BOOTED_TIME_FILL1,Bootstrap Log History Entry #6: VTC fill.,U1234,,HEX,ENG_BOOT,1865,2,1,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 290
+ENG_BOOT_HIST6_BOOTED_TIME_YEAR,Bootstrap Log History Entry #6: VTC quality of the booted image just before execution,U1234,,HEX,ENG_BOOT,1865,3,12,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 291
+ENG_BOOT_HIST6_BOOTED_TIME_DAY,Bootstrap Log History Entry #6: VTC quality of the booted image just before execution,U1234,,HEX,ENG_BOOT,1866,7,9,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 292
+ENG_BOOT_HIST6_BOOTED_TIME_FILL2,Bootstrap Log History Entry #6: VTC fill.,U1234,,HEX,ENG_BOOT,1868,0,3,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 293
+ENG_BOOT_HIST6_BOOTED_TIME_HOUR,Bootstrap Log History Entry #6: VTC hour of the booted image just before execution,U1234,,HEX,ENG_BOOT,1868,3,5,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 294
+ENG_BOOT_HIST6_BOOTED_TIME_MIN,Bootstrap Log History Entry #6: VTC minute of the booted image just before execution,U1234,,HEX,ENG_BOOT,1869,0,6,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 295
+ENG_BOOT_HIST6_BOOTED_TIME_SEC,Bootstrap Log History Entry #6: VTC second of the booted image just before execution,U1234,,HEX,ENG_BOOT,1869,6,6,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 296
+ENG_BOOT_HIST6_BOOTED_TIME_USEC,Bootstrap Log History Entry #6: VTC microseconds of the booted image just before execution,U1234,,HEX,ENG_BOOT,1870,4,20,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 297
+ENG_BOOT_HIST6_BOOTED_RESET_REASON,Bootstrap Log History Entry #6: Reason for last reset at boot.,U1234,,HEX,ENG_BOOT,1873,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 298
+ENG_BOOT_HIST6_BOOTED_BYPASS_VAL,Bootstrap Log History Entry #6: Value of the LZ general purpose register at boot.,U1234,,HEX,ENG_BOOT,1877,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 299
+ENG_BOOT_HIST6_BOOTED_ABUS_FAIL_MASK,Bootstrap Log History Entry #6: BIST address bus test failures.,U1234,,HEX,ENG_BOOT,1881,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 300
+ENG_BOOT_HIST6_BOOTED_DBUS_FAIL_MASK,Bootstrap Log History Entry #6: BIST data bus test failures.,U1234,,HEX,ENG_BOOT,1885,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 301
+ENG_BOOT_HIST6_BOOTED_SRAM_FAIL_FIRST,Bootstrap Log History Entry #6: BIST address of the first failing SRAM address.,U1234,,HEX,ENG_BOOT,1889,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 302
+ENG_BOOT_HIST6_BOOTED_SRAM_FAIL_LAST,Bootstrap Log History Entry #6: BIST address of the last failing SRAM address.,U1234,,HEX,ENG_BOOT,1893,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 303
+ENG_BOOT_HIST6_BOOTED_SRAM_FAIL_MAP,Bootstrap Log History Entry #6: BIST map of failed memory in 128 kB blocks.,U1234,,HEX,ENG_BOOT,1897,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 304
+ENG_BOOT_HIST6_BOOTED_SRAM_FAIL_COUNT,Bootstrap Log History Entry #6: BIST count of failed address.,U1234,,HEX,ENG_BOOT,1901,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 305
+ENG_BOOT_HIST6_BOOTED_BIST_STATUS,Bootstrap Log History Entry #6: BIST status.,U1234,,HEX,ENG_BOOT,1905,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 306
+ENG_BOOT_HIST7_SAFEHOLD_ADDR,Bootstrap Log History Entry #7: Address the Safehold image was loaded from.,U1234,,HEX,ENG_BOOT,1909,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 307
+ENG_BOOT_HIST7_SAFEHOLD_VERSION,Bootstrap Log History Entry #7: Safehold image version.,U1234,,HEX,ENG_BOOT,1913,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 308
+ENG_BOOT_HIST7_SAFEHOLD_DATE,Bootstrap Log History Entry #7: Date Safehold image was compiled.,U1234,,HEX,ENG_BOOT,1917,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 309
+ENG_BOOT_HIST7_SAFEHOLD_TIME,Bootstrap Log History Entry #7: Time Safehold image was compiled.,U1234,,HEX,ENG_BOOT,1921,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 310
+ENG_BOOT_HIST7_SAFEHOLD_EXPCHKSUM,Bootstrap Log History Entry #7: Precalculated checksum for the Safehold image.,U1234,,HEX,ENG_BOOT,1925,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 311
+ENG_BOOT_HIST7_SAFEHOLD_COMPCHKSUM,Bootstrap Log History Entry #7: Computed checksum for the Safehold image.,U1234,,HEX,ENG_BOOT,1929,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 312
+ENG_BOOT_HIST7_SAFEHOLD_FLAGS,Bootstrap Log History Entry #7: Flags from the Safehold image header.,U1234,,HEX,ENG_BOOT,1933,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 313
+ENG_BOOT_HIST7_SAFEHOLD_STATUS,Bootstrap Log History Entry #7: Status of the Safehold image.,U1234,,HEX,ENG_BOOT,1937,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 314
+ENG_BOOT_HIST7_OPERATIONAL1_ADDR,Bootstrap Log History Entry #7: Address Operational1 image was loaded from.,U1234,,HEX,ENG_BOOT,1941,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 315
+ENG_BOOT_HIST7_OPERATIONAL1_VERSION,Bootstrap Log History Entry #7: Operational1 image version.,U1234,,HEX,ENG_BOOT,1945,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 316
+ENG_BOOT_HIST7_OPERATIONAL1_DATE,Bootstrap Log History Entry #7: Date Operational1 image was compiled.,U1234,,HEX,ENG_BOOT,1949,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 317
+ENG_BOOT_HIST7_OPERATIONAL1_TIME,Bootstrap Log History Entry #7: Time Operational1 image was compiled.,U1234,,HEX,ENG_BOOT,1953,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 318
+ENG_BOOT_HIST7_OPERATIONAL1_EXPCHKSUM,Bootstrap Log History Entry #7: Precalculated checksum for the Operational1 image.,U1234,,HEX,ENG_BOOT,1957,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 319
+ENG_BOOT_HIST7_OPERATIONAL1_COMPCHKSUM,Bootstrap Log History Entry #7: Computed checksum for the Operational1 image.,U1234,,HEX,ENG_BOOT,1961,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 320
+ENG_BOOT_HIST7_OPERATIONAL1_FLAGS,Bootstrap Log History Entry #7: Flags from the Operational1 image header.,U1234,,HEX,ENG_BOOT,1965,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 321
+ENG_BOOT_HIST7_OPERATIONAL1_STATUS,Bootstrap Log History Entry #7: Status of the Operational1 image.,U1234,,HEX,ENG_BOOT,1969,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 322
+ENG_BOOT_HIST7_OPERATIONAL2_ADDR,Bootstrap Log History Entry #7: Address Operational2 image was loaded from.,U1234,,HEX,ENG_BOOT,1973,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 323
+ENG_BOOT_HIST7_OPERATIONAL2_VERSION,Bootstrap Log History Entry #7: Operational2 image version.,U1234,,HEX,ENG_BOOT,1977,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 324
+ENG_BOOT_HIST7_OPERATIONAL2_DATE,Bootstrap Log History Entry #7: Date Operational2 image was compiled.,U1234,,HEX,ENG_BOOT,1981,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 325
+ENG_BOOT_HIST7_OPERATIONAL2_TIME,Bootstrap Log History Entry #7: Time Operational2 image was compiled.,U1234,,HEX,ENG_BOOT,1985,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 326
+ENG_BOOT_HIST7_OPERATIONAL2_EXPCHKSUM,Bootstrap Log History Entry #7: Precalculated checksum for the Operational2 image.,U1234,,HEX,ENG_BOOT,1989,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 327
+ENG_BOOT_HIST7_OPERATIONAL2_COMPCHKSUM,Bootstrap Log History Entry #7: Computed checksum for the Operational2 image.,U1234,,HEX,ENG_BOOT,1993,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 328
+ENG_BOOT_HIST7_OPERATIONAL2_FLAGS,Bootstrap Log History Entry #7: Flags from the Operational2 image header.,U1234,,HEX,ENG_BOOT,1997,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 329
+ENG_BOOT_HIST7_OPERATIONAL2_STATUS,Bootstrap Log History Entry #7: Status of the Operational2 image.,U1234,,HEX,ENG_BOOT,2001,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 330
+ENG_BOOT_HIST7_BOOTSTRAP_ADDR,Bootstrap Log History Entry #7: Address Bootstrap image was loaded from.,U1234,,HEX,ENG_BOOT,2005,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 331
+ENG_BOOT_HIST7_BOOTSTRAP_VERSION,Bootstrap Log History Entry #7: Bootstrap image version.,U1234,,HEX,ENG_BOOT,2009,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 332
+ENG_BOOT_HIST7_BOOTSTRAP_DATE,Bootstrap Log History Entry #7: Date Bootstrap image was compiled.,U1234,,HEX,ENG_BOOT,2013,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 333
+ENG_BOOT_HIST7_BOOTSTRAP_TIME,Bootstrap Log History Entry #7: Time Bootstrap image was compiled.,U1234,,HEX,ENG_BOOT,2017,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 334
+ENG_BOOT_HIST7_BOOTSTRAP_EXPCHKSUM,Bootstrap Log History Entry #7: Precalculated checksum for the Bootstrap image.,U1234,,HEX,ENG_BOOT,2021,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 335
+ENG_BOOT_HIST7_BOOTSTRAP_COMPCHKSUM,Bootstrap Log History Entry #7: Computed checksum for the Bootstrap image.,U1234,,HEX,ENG_BOOT,2025,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 336
+ENG_BOOT_HIST7_BOOTSTRAP_FLAGS,Bootstrap Log History Entry #7: Flags from the Bootstrap image header.,U1234,,HEX,ENG_BOOT,2029,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 337
+ENG_BOOT_HIST7_BOOTSTRAP_STATUS,Bootstrap Log History Entry #7: Status of the Bootstrap image.,U1234,,HEX,ENG_BOOT,2033,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 338
+ENG_BOOT_HIST7_BOOTED_ADDR,Bootstrap Log History Entry #7: Address of the booted image.,U1234,,HEX,ENG_BOOT,2037,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 339
+ENG_BOOT_HIST7_BOOTED_TIME_QUALITY,Bootstrap Log History Entry #7: VTC quality of the booted image just before execution,U1234,,HEX,ENG_BOOT,2041,0,2,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 340
+ENG_BOOT_HIST7_BOOTED_TIME_FILL1,Bootstrap Log History Entry #7: VTC fill.,U1234,,HEX,ENG_BOOT,2041,2,1,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 341
+ENG_BOOT_HIST7_BOOTED_TIME_YEAR,Bootstrap Log History Entry #7: VTC quality of the booted image just before execution,U1234,,HEX,ENG_BOOT,2041,3,12,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 342
+ENG_BOOT_HIST7_BOOTED_TIME_DAY,Bootstrap Log History Entry #7: VTC quality of the booted image just before execution,U1234,,HEX,ENG_BOOT,2042,7,9,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 343
+ENG_BOOT_HIST7_BOOTED_TIME_FILL2,Bootstrap Log History Entry #7: VTC fill.,U1234,,HEX,ENG_BOOT,2044,0,3,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 344
+ENG_BOOT_HIST7_BOOTED_TIME_HOUR,Bootstrap Log History Entry #7: VTC hour of the booted image just before execution,U1234,,HEX,ENG_BOOT,2044,3,5,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 345
+ENG_BOOT_HIST7_BOOTED_TIME_MIN,Bootstrap Log History Entry #7: VTC minute of the booted image just before execution,U1234,,HEX,ENG_BOOT,2045,0,6,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 346
+ENG_BOOT_HIST7_BOOTED_TIME_SEC,Bootstrap Log History Entry #7: VTC second of the booted image just before execution,U1234,,HEX,ENG_BOOT,2045,6,6,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 347
+ENG_BOOT_HIST7_BOOTED_TIME_USEC,Bootstrap Log History Entry #7: VTC microseconds of the booted image just before execution,U1234,,HEX,ENG_BOOT,2046,4,20,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 348
+ENG_BOOT_HIST7_BOOTED_RESET_REASON,Bootstrap Log History Entry #7: Reason for last reset at boot.,U1234,,HEX,ENG_BOOT,2049,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 349
+ENG_BOOT_HIST7_BOOTED_BYPASS_VAL,Bootstrap Log History Entry #7: Value of the LZ general purpose register at boot.,U1234,,HEX,ENG_BOOT,2053,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 350
+ENG_BOOT_HIST7_BOOTED_ABUS_FAIL_MASK,Bootstrap Log History Entry #7: BIST address bus test failures.,U1234,,HEX,ENG_BOOT,2057,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 351
+ENG_BOOT_HIST7_BOOTED_DBUS_FAIL_MASK,Bootstrap Log History Entry #7: BIST data bus test failures.,U1234,,HEX,ENG_BOOT,2061,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 352
+ENG_BOOT_HIST7_BOOTED_SRAM_FAIL_FIRST,Bootstrap Log History Entry #7: BIST address of the first failing SRAM address.,U1234,,HEX,ENG_BOOT,2065,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 353
+ENG_BOOT_HIST7_BOOTED_SRAM_FAIL_LAST,Bootstrap Log History Entry #7: BIST address of the last failing SRAM address.,U1234,,HEX,ENG_BOOT,2069,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 354
+ENG_BOOT_HIST7_BOOTED_SRAM_FAIL_MAP,Bootstrap Log History Entry #7: BIST map of failed memory in 128 kB blocks.,U1234,,HEX,ENG_BOOT,2073,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 355
+ENG_BOOT_HIST7_BOOTED_SRAM_FAIL_COUNT,Bootstrap Log History Entry #7: BIST count of failed address.,U1234,,HEX,ENG_BOOT,2077,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 356
+ENG_BOOT_HIST7_BOOTED_BIST_STATUS,Bootstrap Log History Entry #7: BIST status.,U1234,,HEX,ENG_BOOT,2081,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 357
+ENG_BOOT_HIST8_SAFEHOLD_ADDR,Bootstrap Log History Entry #8: Address the Safehold image was loaded from.,U1234,,HEX,ENG_BOOT,2085,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 358
+ENG_BOOT_HIST8_SAFEHOLD_VERSION,Bootstrap Log History Entry #8: Safehold image version.,U1234,,HEX,ENG_BOOT,2089,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 359
+ENG_BOOT_HIST8_SAFEHOLD_DATE,Bootstrap Log History Entry #8: Date Safehold image was compiled.,U1234,,HEX,ENG_BOOT,2093,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 360
+ENG_BOOT_HIST8_SAFEHOLD_TIME,Bootstrap Log History Entry #8: Time Safehold image was compiled.,U1234,,HEX,ENG_BOOT,2097,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 361
+ENG_BOOT_HIST8_SAFEHOLD_EXPCHKSUM,Bootstrap Log History Entry #8: Precalculated checksum for the Safehold image.,U1234,,HEX,ENG_BOOT,2101,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 362
+ENG_BOOT_HIST8_SAFEHOLD_COMPCHKSUM,Bootstrap Log History Entry #8: Computed checksum for the Safehold image.,U1234,,HEX,ENG_BOOT,2105,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 363
+ENG_BOOT_HIST8_SAFEHOLD_FLAGS,Bootstrap Log History Entry #8: Flags from the Safehold image header.,U1234,,HEX,ENG_BOOT,2109,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 364
+ENG_BOOT_HIST8_SAFEHOLD_STATUS,Bootstrap Log History Entry #8: Status of the Safehold image.,U1234,,HEX,ENG_BOOT,2113,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 365
+ENG_BOOT_HIST8_OPERATIONAL1_ADDR,Bootstrap Log History Entry #8: Address Operational1 image was loaded from.,U1234,,HEX,ENG_BOOT,2117,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 366
+ENG_BOOT_HIST8_OPERATIONAL1_VERSION,Bootstrap Log History Entry #8: Operational1 image version.,U1234,,HEX,ENG_BOOT,2121,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 367
+ENG_BOOT_HIST8_OPERATIONAL1_DATE,Bootstrap Log History Entry #8: Date Operational1 image was compiled.,U1234,,HEX,ENG_BOOT,2125,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 368
+ENG_BOOT_HIST8_OPERATIONAL1_TIME,Bootstrap Log History Entry #8: Time Operational1 image was compiled.,U1234,,HEX,ENG_BOOT,2129,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 369
+ENG_BOOT_HIST8_OPERATIONAL1_EXPCHKSUM,Bootstrap Log History Entry #8: Precalculated checksum for the Operational1 image.,U1234,,HEX,ENG_BOOT,2133,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 370
+ENG_BOOT_HIST8_OPERATIONAL1_COMPCHKSUM,Bootstrap Log History Entry #8: Computed checksum for the Operational1 image.,U1234,,HEX,ENG_BOOT,2137,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 371
+ENG_BOOT_HIST8_OPERATIONAL1_FLAGS,Bootstrap Log History Entry #8: Flags from the Operational1 image header.,U1234,,HEX,ENG_BOOT,2141,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 372
+ENG_BOOT_HIST8_OPERATIONAL1_STATUS,Bootstrap Log History Entry #8: Status of the Operational1 image.,U1234,,HEX,ENG_BOOT,2145,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 373
+ENG_BOOT_HIST8_OPERATIONAL2_ADDR,Bootstrap Log History Entry #8: Address Operational2 image was loaded from.,U1234,,HEX,ENG_BOOT,2149,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 374
+ENG_BOOT_HIST8_OPERATIONAL2_VERSION,Bootstrap Log History Entry #8: Operational2 image version.,U1234,,HEX,ENG_BOOT,2153,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 375
+ENG_BOOT_HIST8_OPERATIONAL2_DATE,Bootstrap Log History Entry #8: Date Operational2 image was compiled.,U1234,,HEX,ENG_BOOT,2157,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 376
+ENG_BOOT_HIST8_OPERATIONAL2_TIME,Bootstrap Log History Entry #8: Time Operational2 image was compiled.,U1234,,HEX,ENG_BOOT,2161,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 377
+ENG_BOOT_HIST8_OPERATIONAL2_EXPCHKSUM,Bootstrap Log History Entry #8: Precalculated checksum for the Operational2 image.,U1234,,HEX,ENG_BOOT,2165,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 378
+ENG_BOOT_HIST8_OPERATIONAL2_COMPCHKSUM,Bootstrap Log History Entry #8: Computed checksum for the Operational2 image.,U1234,,HEX,ENG_BOOT,2169,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 379
+ENG_BOOT_HIST8_OPERATIONAL2_FLAGS,Bootstrap Log History Entry #8: Flags from the Operational2 image header.,U1234,,HEX,ENG_BOOT,2173,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 380
+ENG_BOOT_HIST8_OPERATIONAL2_STATUS,Bootstrap Log History Entry #8: Status of the Operational2 image.,U1234,,HEX,ENG_BOOT,2177,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 381
+ENG_BOOT_HIST8_BOOTSTRAP_ADDR,Bootstrap Log History Entry #8: Address Bootstrap image was loaded from.,U1234,,HEX,ENG_BOOT,2181,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 382
+ENG_BOOT_HIST8_BOOTSTRAP_VERSION,Bootstrap Log History Entry #8: Bootstrap image version.,U1234,,HEX,ENG_BOOT,2185,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 383
+ENG_BOOT_HIST8_BOOTSTRAP_DATE,Bootstrap Log History Entry #8: Date Bootstrap image was compiled.,U1234,,HEX,ENG_BOOT,2189,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 384
+ENG_BOOT_HIST8_BOOTSTRAP_TIME,Bootstrap Log History Entry #8: Time Bootstrap image was compiled.,U1234,,HEX,ENG_BOOT,2193,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 385
+ENG_BOOT_HIST8_BOOTSTRAP_EXPCHKSUM,Bootstrap Log History Entry #8: Precalculated checksum for the Bootstrap image.,U1234,,HEX,ENG_BOOT,2197,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 386
+ENG_BOOT_HIST8_BOOTSTRAP_COMPCHKSUM,Bootstrap Log History Entry #8: Computed checksum for the Bootstrap image.,U1234,,HEX,ENG_BOOT,2201,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 387
+ENG_BOOT_HIST8_BOOTSTRAP_FLAGS,Bootstrap Log History Entry #8: Flags from the Bootstrap image header.,U1234,,HEX,ENG_BOOT,2205,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 388
+ENG_BOOT_HIST8_BOOTSTRAP_STATUS,Bootstrap Log History Entry #8: Status of the Bootstrap image.,U1234,,HEX,ENG_BOOT,2209,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 389
+ENG_BOOT_HIST8_BOOTED_ADDR,Bootstrap Log History Entry #8: Address of the booted image.,U1234,,HEX,ENG_BOOT,2213,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 390
+ENG_BOOT_HIST8_BOOTED_TIME_QUALITY,Bootstrap Log History Entry #8: VTC quality of the booted image just before execution,U1234,,HEX,ENG_BOOT,2217,0,2,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 391
+ENG_BOOT_HIST8_BOOTED_TIME_FILL1,Bootstrap Log History Entry #8: VTC fill.,U1234,,HEX,ENG_BOOT,2217,2,1,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 392
+ENG_BOOT_HIST8_BOOTED_TIME_YEAR,Bootstrap Log History Entry #8: VTC quality of the booted image just before execution,U1234,,HEX,ENG_BOOT,2217,3,12,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 393
+ENG_BOOT_HIST8_BOOTED_TIME_DAY,Bootstrap Log History Entry #8: VTC quality of the booted image just before execution,U1234,,HEX,ENG_BOOT,2218,7,9,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 394
+ENG_BOOT_HIST8_BOOTED_TIME_FILL2,Bootstrap Log History Entry #8: VTC fill.,U1234,,HEX,ENG_BOOT,2220,0,3,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 395
+ENG_BOOT_HIST8_BOOTED_TIME_HOUR,Bootstrap Log History Entry #8: VTC hour of the booted image just before execution,U1234,,HEX,ENG_BOOT,2220,3,5,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 396
+ENG_BOOT_HIST8_BOOTED_TIME_MIN,Bootstrap Log History Entry #8: VTC minute of the booted image just before execution,U1234,,HEX,ENG_BOOT,2221,0,6,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 397
+ENG_BOOT_HIST8_BOOTED_TIME_SEC,Bootstrap Log History Entry #8: VTC second of the booted image just before execution,U1234,,HEX,ENG_BOOT,2221,6,6,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 398
+ENG_BOOT_HIST8_BOOTED_TIME_USEC,Bootstrap Log History Entry #8: VTC microseconds of the booted image just before execution,U1234,,HEX,ENG_BOOT,2222,4,20,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 399
+ENG_BOOT_HIST8_BOOTED_RESET_REASON,Bootstrap Log History Entry #8: Reason for last reset at boot.,U1234,,HEX,ENG_BOOT,2225,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 400
+ENG_BOOT_HIST8_BOOTED_BYPASS_VAL,Bootstrap Log History Entry #8: Value of the LZ general purpose register at boot.,U1234,,HEX,ENG_BOOT,2229,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 401
+ENG_BOOT_HIST8_BOOTED_ABUS_FAIL_MASK,Bootstrap Log History Entry #8: BIST address bus test failures.,U1234,,HEX,ENG_BOOT,2233,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 402
+ENG_BOOT_HIST8_BOOTED_DBUS_FAIL_MASK,Bootstrap Log History Entry #8: BIST data bus test failures.,U1234,,HEX,ENG_BOOT,2237,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 403
+ENG_BOOT_HIST8_BOOTED_SRAM_FAIL_FIRST,Bootstrap Log History Entry #8: BIST address of the first failing SRAM address.,U1234,,HEX,ENG_BOOT,2241,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 404
+ENG_BOOT_HIST8_BOOTED_SRAM_FAIL_LAST,Bootstrap Log History Entry #8: BIST address of the last failing SRAM address.,U1234,,HEX,ENG_BOOT,2245,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 405
+ENG_BOOT_HIST8_BOOTED_SRAM_FAIL_MAP,Bootstrap Log History Entry #8: BIST map of failed memory in 128 kB blocks.,U1234,,HEX,ENG_BOOT,2249,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 406
+ENG_BOOT_HIST8_BOOTED_SRAM_FAIL_COUNT,Bootstrap Log History Entry #8: BIST count of failed address.,U1234,,HEX,ENG_BOOT,2253,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 407
+ENG_BOOT_HIST8_BOOTED_BIST_STATUS,Bootstrap Log History Entry #8: BIST status.,U1234,,HEX,ENG_BOOT,2257,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 408
+ENG_BOOT_HIST9_SAFEHOLD_ADDR,Bootstrap Log History Entry #9: Address the Safehold image was loaded from.,U1234,,HEX,ENG_BOOT,2261,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 409
+ENG_BOOT_HIST9_SAFEHOLD_VERSION,Bootstrap Log History Entry #9: Safehold image version.,U1234,,HEX,ENG_BOOT,2265,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 410
+ENG_BOOT_HIST9_SAFEHOLD_DATE,Bootstrap Log History Entry #9: Date Safehold image was compiled.,U1234,,HEX,ENG_BOOT,2269,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 411
+ENG_BOOT_HIST9_SAFEHOLD_TIME,Bootstrap Log History Entry #9: Time Safehold image was compiled.,U1234,,HEX,ENG_BOOT,2273,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 412
+ENG_BOOT_HIST9_SAFEHOLD_EXPCHKSUM,Bootstrap Log History Entry #9: Precalculated checksum for the Safehold image.,U1234,,HEX,ENG_BOOT,2277,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 413
+ENG_BOOT_HIST9_SAFEHOLD_COMPCHKSUM,Bootstrap Log History Entry #9: Computed checksum for the Safehold image.,U1234,,HEX,ENG_BOOT,2281,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 414
+ENG_BOOT_HIST9_SAFEHOLD_FLAGS,Bootstrap Log History Entry #9: Flags from the Safehold image header.,U1234,,HEX,ENG_BOOT,2285,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 415
+ENG_BOOT_HIST9_SAFEHOLD_STATUS,Bootstrap Log History Entry #9: Status of the Safehold image.,U1234,,HEX,ENG_BOOT,2289,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 416
+ENG_BOOT_HIST9_OPERATIONAL1_ADDR,Bootstrap Log History Entry #9: Address Operational1 image was loaded from.,U1234,,HEX,ENG_BOOT,2293,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 417
+ENG_BOOT_HIST9_OPERATIONAL1_VERSION,Bootstrap Log History Entry #9: Operational1 image version.,U1234,,HEX,ENG_BOOT,2297,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 418
+ENG_BOOT_HIST9_OPERATIONAL1_DATE,Bootstrap Log History Entry #9: Date Operational1 image was compiled.,U1234,,HEX,ENG_BOOT,2301,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 419
+ENG_BOOT_HIST9_OPERATIONAL1_TIME,Bootstrap Log History Entry #9: Time Operational1 image was compiled.,U1234,,HEX,ENG_BOOT,2305,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 420
+ENG_BOOT_HIST9_OPERATIONAL1_EXPCHKSUM,Bootstrap Log History Entry #9: Precalculated checksum for the Operational1 image.,U1234,,HEX,ENG_BOOT,2309,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 421
+ENG_BOOT_HIST9_OPERATIONAL1_COMPCHKSUM,Bootstrap Log History Entry #9: Computed checksum for the Operational1 image.,U1234,,HEX,ENG_BOOT,2313,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 422
+ENG_BOOT_HIST9_OPERATIONAL1_FLAGS,Bootstrap Log History Entry #9: Flags from the Operational1 image header.,U1234,,HEX,ENG_BOOT,2317,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 423
+ENG_BOOT_HIST9_OPERATIONAL1_STATUS,Bootstrap Log History Entry #9: Status of the Operational1 image.,U1234,,HEX,ENG_BOOT,2321,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 424
+ENG_BOOT_HIST9_OPERATIONAL2_ADDR,Bootstrap Log History Entry #9: Address Operational2 image was loaded from.,U1234,,HEX,ENG_BOOT,2325,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 425
+ENG_BOOT_HIST9_OPERATIONAL2_VERSION,Bootstrap Log History Entry #9: Operational2 image version.,U1234,,HEX,ENG_BOOT,2329,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 426
+ENG_BOOT_HIST9_OPERATIONAL2_DATE,Bootstrap Log History Entry #9: Date Operational2 image was compiled.,U1234,,HEX,ENG_BOOT,2333,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 427
+ENG_BOOT_HIST9_OPERATIONAL2_TIME,Bootstrap Log History Entry #9: Time Operational2 image was compiled.,U1234,,HEX,ENG_BOOT,2337,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 428
+ENG_BOOT_HIST9_OPERATIONAL2_EXPCHKSUM,Bootstrap Log History Entry #9: Precalculated checksum for the Operational2 image.,U1234,,HEX,ENG_BOOT,2341,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 429
+ENG_BOOT_HIST9_OPERATIONAL2_COMPCHKSUM,Bootstrap Log History Entry #9: Computed checksum for the Operational2 image.,U1234,,HEX,ENG_BOOT,2345,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 430
+ENG_BOOT_HIST9_OPERATIONAL2_FLAGS,Bootstrap Log History Entry #9: Flags from the Operational2 image header.,U1234,,HEX,ENG_BOOT,2349,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 431
+ENG_BOOT_HIST9_OPERATIONAL2_STATUS,Bootstrap Log History Entry #9: Status of the Operational2 image.,U1234,,HEX,ENG_BOOT,2353,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 432
+ENG_BOOT_HIST9_BOOTSTRAP_ADDR,Bootstrap Log History Entry #9: Address Bootstrap image was loaded from.,U1234,,HEX,ENG_BOOT,2357,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 433
+ENG_BOOT_HIST9_BOOTSTRAP_VERSION,Bootstrap Log History Entry #9: Bootstrap image version.,U1234,,HEX,ENG_BOOT,2361,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 434
+ENG_BOOT_HIST9_BOOTSTRAP_DATE,Bootstrap Log History Entry #9: Date Bootstrap image was compiled.,U1234,,HEX,ENG_BOOT,2365,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 435
+ENG_BOOT_HIST9_BOOTSTRAP_TIME,Bootstrap Log History Entry #9: Time Bootstrap image was compiled.,U1234,,HEX,ENG_BOOT,2369,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 436
+ENG_BOOT_HIST9_BOOTSTRAP_EXPCHKSUM,Bootstrap Log History Entry #9: Precalculated checksum for the Bootstrap image.,U1234,,HEX,ENG_BOOT,2373,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 437
+ENG_BOOT_HIST9_BOOTSTRAP_COMPCHKSUM,Bootstrap Log History Entry #9: Computed checksum for the Bootstrap image.,U1234,,HEX,ENG_BOOT,2377,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 438
+ENG_BOOT_HIST9_BOOTSTRAP_FLAGS,Bootstrap Log History Entry #9: Flags from the Bootstrap image header.,U1234,,HEX,ENG_BOOT,2381,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 439
+ENG_BOOT_HIST9_BOOTSTRAP_STATUS,Bootstrap Log History Entry #9: Status of the Bootstrap image.,U1234,,HEX,ENG_BOOT,2385,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 440
+ENG_BOOT_HIST9_BOOTED_ADDR,Bootstrap Log History Entry #9: Address of the booted image.,U1234,,HEX,ENG_BOOT,2389,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 441
+ENG_BOOT_HIST9_BOOTED_TIME_QUALITY,Bootstrap Log History Entry #9: VTC quality of the booted image just before execution,U1234,,HEX,ENG_BOOT,2393,0,2,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 442
+ENG_BOOT_HIST9_BOOTED_TIME_FILL1,Bootstrap Log History Entry #9: VTC fill.,U1234,,HEX,ENG_BOOT,2393,2,1,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 443
+ENG_BOOT_HIST9_BOOTED_TIME_YEAR,Bootstrap Log History Entry #9: VTC quality of the booted image just before execution,U1234,,HEX,ENG_BOOT,2393,3,12,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 444
+ENG_BOOT_HIST9_BOOTED_TIME_DAY,Bootstrap Log History Entry #9: VTC quality of the booted image just before execution,U1234,,HEX,ENG_BOOT,2394,7,9,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 445
+ENG_BOOT_HIST9_BOOTED_TIME_FILL2,Bootstrap Log History Entry #9: VTC fill.,U1234,,HEX,ENG_BOOT,2396,0,3,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 446
+ENG_BOOT_HIST9_BOOTED_TIME_HOUR,Bootstrap Log History Entry #9: VTC hour of the booted image just before execution,U1234,,HEX,ENG_BOOT,2396,3,5,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 447
+ENG_BOOT_HIST9_BOOTED_TIME_MIN,Bootstrap Log History Entry #9: VTC minute of the booted image just before execution,U1234,,HEX,ENG_BOOT,2397,0,6,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 448
+ENG_BOOT_HIST9_BOOTED_TIME_SEC,Bootstrap Log History Entry #9: VTC second of the booted image just before execution,U1234,,HEX,ENG_BOOT,2397,6,6,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 449
+ENG_BOOT_HIST9_BOOTED_TIME_USEC,Bootstrap Log History Entry #9: VTC microseconds of the booted image just before execution,U1234,,HEX,ENG_BOOT,2398,4,20,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 450
+ENG_BOOT_HIST9_BOOTED_RESET_REASON,Bootstrap Log History Entry #9: Reason for last reset at boot.,U1234,,HEX,ENG_BOOT,2401,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 451
+ENG_BOOT_HIST9_BOOTED_BYPASS_VAL,Bootstrap Log History Entry #9: Value of the LZ general purpose register at boot.,U1234,,HEX,ENG_BOOT,2405,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 452
+ENG_BOOT_HIST9_BOOTED_ABUS_FAIL_MASK,Bootstrap Log History Entry #9: BIST address bus test failures.,U1234,,HEX,ENG_BOOT,2409,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 453
+ENG_BOOT_HIST9_BOOTED_DBUS_FAIL_MASK,Bootstrap Log History Entry #9: BIST data bus test failures.,U1234,,HEX,ENG_BOOT,2413,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 454
+ENG_BOOT_HIST9_BOOTED_SRAM_FAIL_FIRST,Bootstrap Log History Entry #9: BIST address of the first failing SRAM address.,U1234,,HEX,ENG_BOOT,2417,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 455
+ENG_BOOT_HIST9_BOOTED_SRAM_FAIL_LAST,Bootstrap Log History Entry #9: BIST address of the last failing SRAM address.,U1234,,HEX,ENG_BOOT,2421,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 456
+ENG_BOOT_HIST9_BOOTED_SRAM_FAIL_MAP,Bootstrap Log History Entry #9: BIST map of failed memory in 128 kB blocks.,U1234,,HEX,ENG_BOOT,2425,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 457
+ENG_BOOT_HIST9_BOOTED_SRAM_FAIL_COUNT,Bootstrap Log History Entry #9: BIST count of failed address.,U1234,,HEX,ENG_BOOT,2429,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 458
+ENG_BOOT_HIST9_BOOTED_BIST_STATUS,Bootstrap Log History Entry #9: BIST status.,U1234,,HEX,ENG_BOOT,2433,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 459
+ENG_BOOT_HIST10_SAFEHOLD_ADDR,Bootstrap Log History Entry #10: Address the Safehold image was loaded from.,U1234,,HEX,ENG_BOOT,2437,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 460
+ENG_BOOT_HIST10_SAFEHOLD_VERSION,Bootstrap Log History Entry #10: Safehold image version.,U1234,,HEX,ENG_BOOT,2441,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 461
+ENG_BOOT_HIST10_SAFEHOLD_DATE,Bootstrap Log History Entry #10: Date Safehold image was compiled.,U1234,,HEX,ENG_BOOT,2445,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 462
+ENG_BOOT_HIST10_SAFEHOLD_TIME,Bootstrap Log History Entry #10: Time Safehold image was compiled.,U1234,,HEX,ENG_BOOT,2449,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 463
+ENG_BOOT_HIST10_SAFEHOLD_EXPCHKSUM,Bootstrap Log History Entry #10: Precalculated checksum for the Safehold image.,U1234,,HEX,ENG_BOOT,2453,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 464
+ENG_BOOT_HIST10_SAFEHOLD_COMPCHKSUM,Bootstrap Log History Entry #10: Computed checksum for the Safehold image.,U1234,,HEX,ENG_BOOT,2457,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 465
+ENG_BOOT_HIST10_SAFEHOLD_FLAGS,Bootstrap Log History Entry #10: Flags from the Safehold image header.,U1234,,HEX,ENG_BOOT,2461,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 466
+ENG_BOOT_HIST10_SAFEHOLD_STATUS,Bootstrap Log History Entry #10: Status of the Safehold image.,U1234,,HEX,ENG_BOOT,2465,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 467
+ENG_BOOT_HIST10_OPERATIONAL1_ADDR,Bootstrap Log History Entry #10: Address Operational1 image was loaded from.,U1234,,HEX,ENG_BOOT,2469,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 468
+ENG_BOOT_HIST10_OPERATIONAL1_VERSION,Bootstrap Log History Entry #10: Operational1 image version.,U1234,,HEX,ENG_BOOT,2473,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 469
+ENG_BOOT_HIST10_OPERATIONAL1_DATE,Bootstrap Log History Entry #10: Date Operational1 image was compiled.,U1234,,HEX,ENG_BOOT,2477,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 470
+ENG_BOOT_HIST10_OPERATIONAL1_TIME,Bootstrap Log History Entry #10: Time Operational1 image was compiled.,U1234,,HEX,ENG_BOOT,2481,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 471
+ENG_BOOT_HIST10_OPERATIONAL1_EXPCHKSUM,Bootstrap Log History Entry #10: Precalculated checksum for the Operational1 image.,U1234,,HEX,ENG_BOOT,2485,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 472
+ENG_BOOT_HIST10_OPERATIONAL1_COMPCHKSUM,Bootstrap Log History Entry #10: Computed checksum for the Operational1 image.,U1234,,HEX,ENG_BOOT,2489,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 473
+ENG_BOOT_HIST10_OPERATIONAL1_FLAGS,Bootstrap Log History Entry #10: Flags from the Operational1 image header.,U1234,,HEX,ENG_BOOT,2493,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 474
+ENG_BOOT_HIST10_OPERATIONAL1_STATUS,Bootstrap Log History Entry #10: Status of the Operational1 image.,U1234,,HEX,ENG_BOOT,2497,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 475
+ENG_BOOT_HIST10_OPERATIONAL2_ADDR,Bootstrap Log History Entry #10: Address Operational2 image was loaded from.,U1234,,HEX,ENG_BOOT,2501,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 476
+ENG_BOOT_HIST10_OPERATIONAL2_VERSION,Bootstrap Log History Entry #10: Operational2 image version.,U1234,,HEX,ENG_BOOT,2505,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 477
+ENG_BOOT_HIST10_OPERATIONAL2_DATE,Bootstrap Log History Entry #10: Date Operational2 image was compiled.,U1234,,HEX,ENG_BOOT,2509,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 478
+ENG_BOOT_HIST10_OPERATIONAL2_TIME,Bootstrap Log History Entry #10: Time Operational2 image was compiled.,U1234,,HEX,ENG_BOOT,2513,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 479
+ENG_BOOT_HIST10_OPERATIONAL2_EXPCHKSUM,Bootstrap Log History Entry #10: Precalculated checksum for the Operational2 image.,U1234,,HEX,ENG_BOOT,2517,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 480
+ENG_BOOT_HIST10_OPERATIONAL2_COMPCHKSUM,Bootstrap Log History Entry #10: Computed checksum for the Operational2 image.,U1234,,HEX,ENG_BOOT,2521,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 481
+ENG_BOOT_HIST10_OPERATIONAL2_FLAGS,Bootstrap Log History Entry #10: Flags from the Operational2 image header.,U1234,,HEX,ENG_BOOT,2525,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 482
+ENG_BOOT_HIST10_OPERATIONAL2_STATUS,Bootstrap Log History Entry #10: Status of the Operational2 image.,U1234,,HEX,ENG_BOOT,2529,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 483
+ENG_BOOT_HIST10_BOOTSTRAP_ADDR,Bootstrap Log History Entry #10: Address Bootstrap image was loaded from.,U1234,,HEX,ENG_BOOT,2533,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 484
+ENG_BOOT_HIST10_BOOTSTRAP_VERSION,Bootstrap Log History Entry #10: Bootstrap image version.,U1234,,HEX,ENG_BOOT,2537,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 485
+ENG_BOOT_HIST10_BOOTSTRAP_DATE,Bootstrap Log History Entry #10: Date Bootstrap image was compiled.,U1234,,HEX,ENG_BOOT,2541,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 486
+ENG_BOOT_HIST10_BOOTSTRAP_TIME,Bootstrap Log History Entry #10: Time Bootstrap image was compiled.,U1234,,HEX,ENG_BOOT,2545,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 487
+ENG_BOOT_HIST10_BOOTSTRAP_EXPCHKSUM,Bootstrap Log History Entry #10: Precalculated checksum for the Bootstrap image.,U1234,,HEX,ENG_BOOT,2549,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 488
+ENG_BOOT_HIST10_BOOTSTRAP_COMPCHKSUM,Bootstrap Log History Entry #10: Computed checksum for the Bootstrap image.,U1234,,HEX,ENG_BOOT,2553,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 489
+ENG_BOOT_HIST10_BOOTSTRAP_FLAGS,Bootstrap Log History Entry #10: Flags from the Bootstrap image header.,U1234,,HEX,ENG_BOOT,2557,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 490
+ENG_BOOT_HIST10_BOOTSTRAP_STATUS,Bootstrap Log History Entry #10: Status of the Bootstrap image.,U1234,,HEX,ENG_BOOT,2561,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 491
+ENG_BOOT_HIST10_BOOTED_ADDR,Bootstrap Log History Entry #10: Address of the booted image.,U1234,,HEX,ENG_BOOT,2565,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 492
+ENG_BOOT_HIST10_BOOTED_TIME_QUALITY,Bootstrap Log History Entry #10: VTC quality of the booted image just before execution,U1234,,HEX,ENG_BOOT,2569,0,2,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 493
+ENG_BOOT_HIST10_BOOTED_TIME_FILL1,Bootstrap Log History Entry #10: VTC fill.,U1234,,HEX,ENG_BOOT,2569,2,1,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 494
+ENG_BOOT_HIST10_BOOTED_TIME_YEAR,Bootstrap Log History Entry #10: VTC quality of the booted image just before execution,U1234,,HEX,ENG_BOOT,2569,3,12,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 495
+ENG_BOOT_HIST10_BOOTED_TIME_DAY,Bootstrap Log History Entry #10: VTC quality of the booted image just before execution,U1234,,HEX,ENG_BOOT,2570,7,9,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 496
+ENG_BOOT_HIST10_BOOTED_TIME_FILL2,Bootstrap Log History Entry #10: VTC fill.,U1234,,HEX,ENG_BOOT,2572,0,3,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 497
+ENG_BOOT_HIST10_BOOTED_TIME_HOUR,Bootstrap Log History Entry #10: VTC hour of the booted image just before execution,U1234,,HEX,ENG_BOOT,2572,3,5,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 498
+ENG_BOOT_HIST10_BOOTED_TIME_MIN,Bootstrap Log History Entry #10: VTC minute of the booted image just before execution,U1234,,HEX,ENG_BOOT,2573,0,6,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 499
+ENG_BOOT_HIST10_BOOTED_TIME_SEC,Bootstrap Log History Entry #10: VTC second of the booted image just before execution,U1234,,HEX,ENG_BOOT,2573,6,6,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 500
+ENG_BOOT_HIST10_BOOTED_TIME_USEC,Bootstrap Log History Entry #10: VTC microseconds of the booted image just before execution,U1234,,HEX,ENG_BOOT,2574,4,20,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 501
+ENG_BOOT_HIST10_BOOTED_RESET_REASON,Bootstrap Log History Entry #10: Reason for last reset at boot.,U1234,,HEX,ENG_BOOT,2577,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 502
+ENG_BOOT_HIST10_BOOTED_BYPASS_VAL,Bootstrap Log History Entry #10: Value of the LZ general purpose register at boot.,U1234,,HEX,ENG_BOOT,2581,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 503
+ENG_BOOT_HIST10_BOOTED_ABUS_FAIL_MASK,Bootstrap Log History Entry #10: BIST address bus test failures.,U1234,,HEX,ENG_BOOT,2585,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 504
+ENG_BOOT_HIST10_BOOTED_DBUS_FAIL_MASK,Bootstrap Log History Entry #10: BIST data bus test failures.,U1234,,HEX,ENG_BOOT,2589,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 505
+ENG_BOOT_HIST10_BOOTED_SRAM_FAIL_FIRST,Bootstrap Log History Entry #10: BIST address of the first failing SRAM address.,U1234,,HEX,ENG_BOOT,2593,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 506
+ENG_BOOT_HIST10_BOOTED_SRAM_FAIL_LAST,Bootstrap Log History Entry #10: BIST address of the last failing SRAM address.,U1234,,HEX,ENG_BOOT,2597,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 507
+ENG_BOOT_HIST10_BOOTED_SRAM_FAIL_MAP,Bootstrap Log History Entry #10: BIST map of failed memory in 128 kB blocks.,U1234,,HEX,ENG_BOOT,2601,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 508
+ENG_BOOT_HIST10_BOOTED_SRAM_FAIL_COUNT,Bootstrap Log History Entry #10: BIST count of failed address.,U1234,,HEX,ENG_BOOT,2605,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 509
+ENG_BOOT_HIST10_BOOTED_BIST_STATUS,Bootstrap Log History Entry #10: BIST status.,U1234,,HEX,ENG_BOOT,2609,0,32,,,,Current bootstrap log entry Index = (ENG_BOOT.CDS_FSW_BOOT_CNT % 10) + 510
+CDS_FSW_TST_CHECKSUM,Checksum of the Telemetry Steering Table (TST)  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,2613,0,32,,,,Checksum of the table at boot time.
+CDS_FSW_FPT_CHECKSUM,Checksum of the FSW Parameter Table (FPT)  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,2617,0,32,,,,Checksum of the table at boot time.
+CDS_FSW_ACT_CHECKSUM,Checksum of the ADCS Configuration Table (ACT)  *at boot time* (will not change until a reboot).,U1234,,HEX,ENG_BOOT,2621,0,32,,,,Checksum of the table at boot time.
+ENG_BOOT_PADDING,Padding to ensure 4-byte alignment,U1234,,HEX,ENG_BOOT,2625,0,8,,,,
+ENG_BOOT_CKSUM,Sum of all prior bytes including carry,U12,,HEX,ENG_BOOT,2626,0,16,,,,

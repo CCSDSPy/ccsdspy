@@ -1,0 +1,64 @@
+Mnemonic       ,Description                             ,Type           ,Units,Conversion,Subsystem,Start Byte,Start Bit  ,Data Size,Conversion Formula,States,Limits Defined?,Source
+SCI_META_V2_HDR_VER,Source packet version number,U1,,HEX,SCI_META_V2,0,0,3,,,,
+SCI_META_V2_HDR_TYPE,Source packet type,U1,,HEX,SCI_META_V2,0,3,1,,,,
+SCI_META_V2_HDR_SHDR,Secondary header present flag,U1,,HEX,SCI_META_V2,0,4,1,,,,
+SCI_META_V2_HDR_APID,Application Identifier,U12,,HEX,SCI_META_V2,0,5,11,,,,
+SCI_META_V2_HDR_GRP,Grouping flags,U1,,HEX,SCI_META_V2,2,0,2,,,,
+SCI_META_V2_HDR_SEQ,Source sequence count,U12,,HEX,SCI_META_V2,2,2,14,,,,
+SCI_META_V2_HDR_LEN,Packet length,U12,,HEX,SCI_META_V2,4,0,16,,,,
+SCI_META_V2_HDR_SCID,Spacecraft Identifier,U1,,HEX,SCI_META_V2,6,0,8,,,,
+SCI_META_V2_HDR_FLASH_BLOCK,Flash Block #,U12,,HEX,SCI_META_V2,7,0,14,,,,
+SCI_META_V2_HDR_YEAR,Packet timestamp UTC Year,U12,,HEX,SCI_META_V2,8,6,12,,,,
+SCI_META_V2_HDR_DAY,Packet timestamp UTC Day-In-Year,U12,,HEX,SCI_META_V2,10,2,9,,,,
+SCI_META_V2_HDR_HOUR,Packet timestamp UTC Hour-In-Day,U1,,HEX,SCI_META_V2,11,3,5,,,,
+SCI_META_V2_HDR_MIN,Packet timestamp UTC Minute-In-Hour,U1,,HEX,SCI_META_V2,12,0,6,,,,
+SCI_META_V2_HDR_SEC,Packet timestamp UTC Second-In-Minute,U12,,HEX,SCI_META_V2,12,6,6,,,,
+SCI_META_V2_HDR_USEC,Packet timestamp UTC Microseconds-In-Seconds,U1234,,HEX,SCI_META_V2,13,4,20,,,,
+SCI_META_GPS_WEEK,GPS weeks from CYGNSS packet,U1234,week,HEX,SCI_META_V2,16,0,12,,,,
+SCI_META_GPS_SEC,GPS seconds from PVT packet (rounded integer seconds),U1234,sec,HEX,SCI_META_V2,17,4,20,,,,"CYGNSS Packet 0x7F, rounded integer seconds"
+ADCS_ATT_TIME_WEEK,S/C Attitude Validity Time in GPS Weeks,U1234,,HEX,SCI_META_V2,20,0,12,,,,
+ADCS_ATT_TIME_SEC,S/C Attitude Validity Time in GPS Seconds,U1234,,HEX,SCI_META_V2,21,4,20,,,,Convert ADCSM 4 Hz cycle timestamp to this GPS value
+ADCS_ATT_TIME_SUBSECONDS,S/C Attitude Validity Time in GPS Seconds,U1,,HEX,SCI_META_V2,24,0,4,,,,Convert ADCSM 4 Hz cycle timestamp to this GPS value
+ADCS_ATT_TIME_SPARE,Spare bits,U1,,HEX,SCI_META_V2,24,4,2,,,,
+DDMI_RF1_ZN_LNA_SW,Status of the Zenith (LNA1 - RF1) Blackbody Load Switch Status (from CYGNSS packet),U1,,HEX,SCI_META_V2,24,6,1,,,,CYGNSS Packet 0x7F
+CDS_XCVR_SBAND_PWR,Status of the CDS XCVR Xmiter (Enabled/Disabled),U1,,HEX,SCI_META_V2,24,7,1,,,,
+ADCS_OFRAME_ROLL,Spacecraft Attitude Orbit Frame Roll Angle,I12,deg,HEX,SCI_META_V2,25,0,16,x*0.0001*(180/3.14159265359),,,From ADCS_BUS_FSW_OUT
+ADCS_OFRAME_PITCH,Spacecraft Attitude Orbit Frame Pitch Angle,I12,deg,HEX,SCI_META_V2,27,0,16,x*0.0001*(180/3.14159265359),,,From ADCS_BUS_FSW_OUT
+ADCS_OFRAME_YAW,Spacecraft Attitude Orbit Frame Yaw Angle,I12,deg,HEX,SCI_META_V2,29,0,16,x*0.0001*(180/3.14159265359),,,From ADCS_BUS_FSW_OUT
+DDMI_LNA1_ZN_TEMP,Zenith Antenna LNA (RF1 - LNA1) Temperature,I12,C,HEX,SCI_META_V2,31,0,16,x*0.005,,,CYGNSS Packet 0x7F
+DDMI_LNA2_SB_TEMP,Nadir Antenna 1 (RF2 - LNA2 - Starboard) LNA Temperature,I12,C,HEX,SCI_META_V2,33,0,16,x*0.005,,,CYGNSS Packet 0x7F
+DDMI_LNA3_PT_TEMP,Nadir Antenna 2 (RF3 - LNA3 - Port) LNA Temperature,I12,C,HEX,SCI_META_V2,35,0,16,x*0.005,,,CYGNSS Packet 0x7F
+DDMI_RF1_ZN_NOISE,RF 1 (Zenith) Noise Channel,U12,,HEX,SCI_META_V2,37,0,16,,,,CYGNSS Packet 0x7F
+DDMI_RF2_SB_NOISE,RF 2 (Starboard) Noise Channel,U12,,HEX,SCI_META_V2,39,0,16,,,,CYGNSS Packet 0x7F
+DDMI_RF3_PT_NOISE,RF 3 (Port) Noise Channel,U12,,HEX,SCI_META_V2,41,0,16,,,,CYGNSS Packet 0x7F
+DDMI_EL_MASK,Elevation Mask,I1,,HEX,SCI_META_V2,43,0,8,,,,CYGNSS Packet 0x7F
+SCI_META_DDM1_PRN_CODE,PRN Code,U12,,HEX,SCI_META_V2,44,0,6,,,,CYGNSS Packet 0x7F
+SCI_META_DDM1_SPARE2,Spare bits,U1,,HEX,SCI_META_V2,44,6,2,,,,
+DDMI_DDM1_SP_RANGE,Additional range to SP,F1234,,HEX,SCI_META_V2,45,0,32,,,,CYGNSS Packet 0x7F
+DDMI_DDM1_SP_DOPP,Doppler at SP,I12,,HEX,SCI_META_V2,49,0,16,,,,CYGNSS Packet 0x7F
+DDMI_DDM1_ZENITH_SNR,Zenith Signal SNR,U12,,HEX,SCI_META_V2,51,0,16,,,,CYGNSS Packet 0x7F
+DDMI_DDM1_ZENITH_DELAY,Zenith Signal Delay,U12,,HEX,SCI_META_V2,53,0,16,,,,CYGNSS Packet 0x7F
+DDMI_DDM1_PRN_FOM,DMR PRN Selection Figure of Merit,U1,,HEX,SCI_META_V2,55,0,8,,,,CYGNSS Packet 0x7F
+SCI_META_DDM2_PRN_CODE,PRN Code,U12,,HEX,SCI_META_V2,56,0,6,,,,CYGNSS Packet 0x7F
+SCI_META_DDM2_SPARE2,Spare bits,U1,,HEX,SCI_META_V2,56,6,2,,,,
+DDMI_DDM2_SP_RANGE,Additional range to SP,F1234,,HEX,SCI_META_V2,57,0,32,,,,CYGNSS Packet 0x7F
+DDMI_DDM2_SP_DOPP,Doppler at SP,I12,,HEX,SCI_META_V2,61,0,16,,,,CYGNSS Packet 0x7F
+DDMI_DDM2_ZENITH_SNR,Zenith Signal SNR,U12,,HEX,SCI_META_V2,63,0,16,,,,CYGNSS Packet 0x7F
+DDMI_DDM2_ZENITH_DELAY,Zenith Signal Delay,U12,,HEX,SCI_META_V2,65,0,16,,,,CYGNSS Packet 0x7F
+DDMI_DDM2_PRN_FOM,DMR PRN Selection Figure of Merit,U1,,HEX,SCI_META_V2,67,0,8,,,,CYGNSS Packet 0x7F
+SCI_META_DDM3_PRN_CODE,PRN Code,U12,,HEX,SCI_META_V2,68,0,6,,,,CYGNSS Packet 0x7F
+SCI_META_DDM3_SPARE2,Spare bits,U1,,HEX,SCI_META_V2,68,6,2,,,,
+DDMI_DDM3_SP_RANGE,Additional range to SP,F1234,,HEX,SCI_META_V2,69,0,32,,,,CYGNSS Packet 0x7F
+DDMI_DDM3_SP_DOPP,Doppler at SP,I12,,HEX,SCI_META_V2,73,0,16,,,,CYGNSS Packet 0x7F
+DDMI_DDM3_ZENITH_SNR,Zenith Signal SNR,U12,,HEX,SCI_META_V2,75,0,16,,,,CYGNSS Packet 0x7F
+DDMI_DDM3_ZENITH_DELAY,Zenith Signal Delay,U12,,HEX,SCI_META_V2,77,0,16,,,,CYGNSS Packet 0x7F
+DDMI_DDM3_PRN_FOM,DMR PRN Selection Figure of Merit,U1,,HEX,SCI_META_V2,79,0,8,,,,CYGNSS Packet 0x7F
+SCI_META_DDM4_PRN_CODE,PRN Code,U12,,HEX,SCI_META_V2,80,0,6,,,,CYGNSS Packet 0x7F
+SCI_META_DDM4_SPARE2,Spare bits,U1,,HEX,SCI_META_V2,80,6,2,,,,
+DDMI_DDM4_SP_RANGE,Additional range to SP,F1234,,HEX,SCI_META_V2,81,0,32,,,,CYGNSS Packet 0x7F
+DDMI_DDM4_SP_DOPP,Doppler at SP,I12,,HEX,SCI_META_V2,85,0,16,,,,CYGNSS Packet 0x7F
+DDMI_DDM4_ZENITH_SNR,Zenith Signal SNR,U12,,HEX,SCI_META_V2,87,0,16,,,,CYGNSS Packet 0x7F
+DDMI_DDM4_ZENITH_DELAY,Zenith Signal Delay,U12,,HEX,SCI_META_V2,89,0,16,,,,CYGNSS Packet 0x7F
+DDMI_DDM4_PRN_FOM,DMR PRN Selection Figure of Merit,U1,,HEX,SCI_META_V2,91,0,8,,,,CYGNSS Packet 0x7F
+SCI_META_PADDING,Padding to ensure 4-byte alignment,U1234,,HEX,SCI_META_V2,92,0,16,,,,
+SCI_META_CKSUM,Sum of all prior bytes (including headers) with carry,U12,,HEX,SCI_META_V2,94,0,16,,,,
