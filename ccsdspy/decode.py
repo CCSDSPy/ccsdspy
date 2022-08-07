@@ -1,6 +1,6 @@
 """Internal decoding routines."""
 from __future__ import division
-from collections import namedtuple, OrderedDict
+from collections import namedtuple
 import numpy as np
 
 __author__ = 'Daniel da Silva <mail@danieldasilva.org>'
@@ -19,7 +19,8 @@ def _decode_fixed_length(file_bytes, fields):
 
     Returns
     -------
-    Ordered dictionary mapping field names to NumPy arrays.
+    dictionary mapping field names to NumPy arrays, stored in the same order as
+    the fields array passed.
     """
     # Setup a dictionary mapping a bit offset to each field. It is assumed
     # that the `fields` array contains entries for the secondary header.
@@ -86,7 +87,7 @@ def _decode_fixed_length(file_bytes, fields):
         np_dtype = {
             'uint': '>u%d' % nbytes_final,
             'int':  '>i%d' % nbytes_final,
-            'fill': '>u%d' % nbytes_final,
+            'fill': 'S%d' % nbytes_final,
             'float': '%sf%d' % (byte_order_symbol, nbytes_final),
             'str':   'S%d' % nbytes_final,
         }[field._data_type]
@@ -121,7 +122,7 @@ def _decode_fixed_length(file_bytes, fields):
 
     # Switch dtype of byte arrays to the final dtype, and apply masks and shifts
     # to interpret the correct bits.
-    field_arrays = OrderedDict()
+    field_arrays = {}
 
     for field in fields:
         meta = field_meta[field]

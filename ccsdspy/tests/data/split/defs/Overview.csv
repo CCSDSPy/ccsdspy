@@ -1,0 +1,59 @@
+Packet Short Name,APID,"Packet Size (Bytes)
+as computed from bit totals",Packet Description,APID_Decimal
+ENG_LZ,0x180,260,"Level Zero packet produced exclusively by the H/W.  Contains all of the Microsat (CDS and EPS) voltages, currents, FPGA registers, and switch statuses, etc.",384
+ENG_PASS,0x181,336,"Packet produced at the start of each ground pass, and can be requested by command.  Contains relatively static engineering values (e.g. diagnostic mode statuses), some prior-pass statistics and values, and a few values that are re-calculated each pass as health checks (e.g. image checksums).",385
+ENG_HI,0x182,104,"Packet containing engineering values that may change frequently, such as the current observatory mode, Flash playback/record pointers, execution state of ATSs and RTSs.",386
+ENG_LOW,0x183,260,"Packet containing engineering values that change slowly, or that don't typically need to be reported at a high rate, such as the # of commands in ATSs and RTSs, configuration settings that change infrequently, etc.",387
+ENG_BOOT,0x184,2628,"Packet produced at the conclusion of each FSW boot and can be requested by command.  Contains boot-time configuration settings, FSW image checksums, etc.",388
+ENG_ERREVT,0x185,420,Packet produced anytime an error or event message is produced by the FSW.  Number of errors/events in the packet depends on the number produced during the reporting period.  A script translates the  packet contents into discrete ITOS event window entries when this packet is received by ITOS.,389
+ENG_DNLD,0x186,2084,"Packet produced in response to a memory dump command.  The packet is also produced in response to certain diagnostic commands such as any telemetry that may be produced as a result of an ADCS ""ANY"" command.",390
+ENG_DNLD_FAT,0x18D,148,"Packet produced upon a CDS_FSW_FAT_DNLD command being sent.  Contains a telemetered copy of the Flash Allocation Table (FAT), defining how Flash is organized among stored data types",397
+ENG_DNLD_FPT,0x18E,1044,"Packet produced upon a CDS_FSW_FPT_DNLD command being sent.  Contains a telemetered copy of the FSW Parameter Table (FPT), either the MRAM or the SRAM copy, depending upon the command parameter to CDS_FSW_FPT_DNLD.",398
+ENG_FILL,0x187,1680,"Packet that is used to ""flush"" the hardware transfer frame buffer to prevent a partial frame from being left in the hardware at the conclusion of a pass.",391
+ENG_ADCS,0x188,168,Packet that contains key ADCS algorithm engineering values and is used to assess the health & performance of the ADCS algorithm.,392
+ENG_ADCSIO,0x189,140,Packet that contains key ADCS sensor/actuator command & telemetry values.  ,393
+ENG_PVT,0x18A,76,Packet that contains the Position/Velocity/Time message received from the DDMI at 1 Hz.  Also contains the DDMI RF front-end counts.  Packet serves as both an engineering and science meta-data packet.,394
+ENG_DDMI,0x18B,60,"Packet that contains nominal DDMI engineering values, and is used as both an engineering and science meta-data packet.",395
+ENG_SSV,0x18C,256,"Packet that is produced at each FSW boot, and can be requested by command.  Contains the contents of the Save State Vector that is recorded to MRAM by the FSW prior to any reboot to indicate what cause the reboot and various state information at the time of the reboot.  This data is also used by the FSW to attempt automatic mode recovery following a reboot.",396
+SCI_META,0x101,88,"Packet that contains telemetry extracted mostly from the DDMI SBPP packets, and that is used as science meta-data.",257
+SCI_META_V2,0x102,96,Updated version of SCI_META packet which uses 32 bit floats for the DDMI_DDM_SP_RANGE fields instead of 16 bit unsigned integers.,258
+SCI_DDM_X8,0x083,888,"Packet that contains compressed regular DDMs, using the X8 DDM compression algorithm.",131
+SCI_DDM_X10,0x085,888,"Packet that contains compressed regular DDMs, using the X10 DDM compression algorithm.   Created via FSW CR 37965 (Update DDM Compression algorithm for High Altitude Land Measurements).   As of FSW v4.5, SCI_DDM_X10 is produced, instead of SCI_DDM_X8.",133
+SCI_DDM_X11,0x086,892,Updated version of SCI_DDM packet which increases COMP_DELAY fields to 8 bits.,134
+SCI_DDM_BB_X8,0x084,76,"Packet that contains compressed blackbody DDMs, using the X8 DDM compression algorithm.",132
+SCI_FULL,0x0C1,41000,Packet that contains non-compressed regular and black-body DDMs.,193
+SCI_RAW,0x082,2076,"Packets that contain individual Raw IF science data, in the form of Spacewire file transfer packets as defined in the SGR-ReSI User Manual.",130
+DIAG_NST_RAW,0x480,260,Packet that is produced only when the NST diagnostic mode is enabled.  Contains an exact copy of the 4 Hz default NST telemetry message.,1152
+DIAG_RWA_RAW,0x481,140,Packet that is produced only when the RWA diagnostic mode is enabled.  Contains an exact copy of the 4 Hz default RWA telemetry message.,1153
+DIAG_MAG_RAW,0x482,28,Packet that is produced only when the MAG diagnostic mode is enabled.  Contains an exact copy of the 4 Hz default MAG telemetry message.,1154
+DIAG_DDMI_NAV_INFO,0x510,72,"All DIAG_DDMI_* packets are produced only when (a) the corresponding SBPP packet is enabled in DDMI, and (b) DDMI SBPP diagnostic mode is enabled (see exception for APIDs 0x57B, 0x57C, 0x57D).  The APID for these packets are created by ORing the SBPP Message ID into the lower byte of CCSDS Packet APIDs 0x5xx.  ",1296
+DIAG_DDMI_FRONT_END_STAT,0x574,204,See Description for 0x510.,1396
+DIAG_DDMI_CHAN_TRACK_STAT,0x540,48,See Description for 0x510.,1344
+DIAG_DDMI_STATUS,0x530,40,See Description for 0x510.,1328
+DIAG_DDMI_ORBITAL_ELEMENTS,0x570,92,See Description for 0x510.,1392
+DIAG_DDMI_REFL_STAT,0x576,44,See Description for 0x510.,1398
+DIAG_DDMI_REFL_CHAN_STAT,0x577,92,See Description for 0x510.,1399
+DIAG_DDMI_CHAN_PWR,0x544,168,See Description for 0x510.,1348
+DIAG_DDMI_REFL_LIST,0x578,280,See Description for 0x510.,1400
+DIAG_DDMI_ACK,0x535,28,See Description for 0x510.,1333
+DIAG_DDMI_COMM_DIAG,0x572,68,See Description for 0x510.,1394
+DIAG_DDMI_RAW_DATA,0x520,220,See Description for 0x510.,1312
+DIAG_DDMI_PROCESSED_DATA,0x521,272,See Description for 0x510.,1313
+DIAG_DDMI_PVT_INFO,0x550,276,See Description for 0x510.,1360
+DIAG_DDMI_STREAM_ROUTER_STAT,0x57C,48,"See Description for 0x510.  In addition, this packet is also produced when (a) the corresponding SBPP packet is enabled in DDMI, and (b) the Telemetry Steering Table has been setup for Raw IF Record mode.",1404
+DIAG_DDMI_CYGNSS_PKT,0x57F,256,See Description for 0x510.,1407
+DIAG_DDMI_SPW_DDM,0x580,10280,See Description for 0x510.,1408
+DIAG_DDMI_SPW_DDM_TH,0x581,80,See Description for 0x510.,1409
+DIAG_DDMI_DATA_LOGGER_STAT,0x57B,60,"See Description for 0x510.  In addition this packet is also produced when (a) the corresponding SBPP packet is enabled in DDMI, and (b) the Telemetry Steering Table has been setup for Raw IF Record mode.",1403
+DIAG_DDMI_PPS_TABLE,0x57D,72,"See Description for 0x510.  In addition this packet is also produced when (a) the corresponding SBPP packet is enabled in DDMI, and (b) the Telemetry Steering Table has been setup for Raw IF Record mode.",1405
+DIAG_DDMI_AD_RESP,0x575,68,See Description for 0x510.,1397
+DIAG_ECHO,0x400,152,Produced anytime the telecommand echo is enabled in the Microsat FSW.,1024
+DIAG_ADCS_BUS_FSW_INP,0x483,508,Produced anytime the ADCS algorithm input diagnostic mode is enabled.  Contains an exact copy of the 4 Hz ADCS_BUS_FSW_INP data structure that is passed from the CDS FSW to the ADCS FSW.,1155
+DIAG_ADCS_BUS_FSW_OUT,0x484,116,Produced anytime the ADCS algorithm output diagnostic mode is enabled.  Contains an exact copy of the 4 Hz ADCS_BUS_FSW_OUT data structure that is passed from the ADCS FSW to the CDS FSW.,1156
+DIAG_ADCS_BUS_FSW_TLM,0x485,1404,Produced anytime the ADCS algorithm telemetry diagnostic mode is enabled.  Contains an exact copy of the 4 Hz ADCS_BUS_FSW_TLM data structure that is passed from the ADCS FSW to the CDS FSW.,1157
+DIAG_DDMI_OP_SETTINGS,0x532,52,See Description for 0x510.,1330
+DIAG_DDMI_BOOTLOADER_MEM_DUMP,0x580,280,This packet contains the data requested by the Dump command (Flash or RAM).,1408
+DIAG_DDMI_BOOTLOADER_MEM_LOAD,0x582,32,This package acknowledges the load command or informs of the verify failure of the load.,1410
+DIAG_DDMI_BOOTLOADER_ERASEFLASH,0x58A,32,"This package acknowledges the bootloader has accepted the block/sector erasure command. The erasure operation takes place in the background and the requester should use the Status command to monitor the Flash Erasure process and determine when it gets completed. An error is set if the bootloader requests the operation, which can be due to it processing another flash request which has not yet been completed.",1418
+DIAG_DDMI_BOOTLOADER_AUTOLOAD,0x58C,28,"This packet is sent to inform results of Auto-load procedure status. The Auto-load procedure is attempted after every power up or resent and is inhibited by a number of means, either a RAM-Word setting, command line setting, or a failure in the Auto-load procedure itself.",1420
+SUPER_NOM,0x380,4096,Pages of playback data are packetized in this structure. The exception to this are fill packets.,896

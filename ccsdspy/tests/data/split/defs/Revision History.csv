@@ -1,0 +1,274 @@
+Date/Time of Update,Description of Update
+2014-07-22 12:10:00.000,"Make changes that Ronnie incorporated for the following tabs:
+
+- Allocation Analysis
+- ENG_PASS
+- ENG_LOW
+- SCI_DDM
+- SCI_DDM
+- SCI_RAW1
+- SCI_RAW
+
+For all other tabs, added a ""Source"" column to every packet to describe where the telemetry point comes from.
+
+Removed META_SBPP from the spreadshet.  This is superceded by DIAG_DDMI_... packets.
+
+Fix up spreadsheet for repeat of field in SCI_DDM packet.
+
+Fix up naming error in SCI_RAW for CCSDS Primary/Secondary Headers."
+2014-07-22 12:25:00.000,"Incorporated updates from Tonya:
+
+- ENG_LZ tab:  breakout FPGA registers into bit fields, fix up conversions to be correct
+- STATES tab:  define enumerations for FPGA register values"
+2014-07-23 16:41:00.000," - Added STATES for DIAG_DDMI packets as needed per RESI User Manual Vol3
+ - Added new packet DIAG_DDMI_ACK
+ - Broke Tracking Lock Status into individual flags"
+2014-07-24 09:20:26.400,- Added the DDMI_REFL_STATUS tab back (had been accidentally removed).
+2014-07-29 08:31:42.550,- Change DDMI 'raw' Telemetry APID convention; starts at 0x500 now instead of 0x580.
+2014-08-05 16:21:00.000,there was two DIAG_NST_RAW_SPARE12
+2014-08-05 16:34:00.000,changed DIAG_RWA_RAW_SPARE11 and DIAG_RWA_RAW_SPARE12 from U1 to U1234
+2014-08-05 16:50:00.000,Corrected conversion for LZ_EPS_LVPS_5V_EN
+2014-08-08 16:54:41.790,"Via DMR EM testing, make multiple changes to ENG_HI, DIAG_DDMI_* packets, and SCI_DDM."
+2014-08-21 17:03:12.730,Put in packet size cross-check into Overview tab
+2014-08-25 22:06:22.600,Incorporated latest definition of telemetry from BCT into DIAG_RWA_RAW.
+2014-09-16 15:56:56.360,Updated ENG_HI and DIAG_RWA_RAW packet per latest RWA telemetry spreadsheet received.  Spreadsheet tracked via PIMS FSW CR 32667.
+2014-09-16 15:56:56.000,"Fix errors in ENG_HI and DIAG_RWA_RAW that database will compile via ITOS:
+- State names can't have spaces in them.
+- State names can't be duplicated within a telemetry point.
+- 32 bit conversions don't have the (x) in the equation for converting"
+2014-09-22 13:22:00.000,Added PPT break downs
+2014-09-22 16:27:00.000,Updated ENG_LZ to match LVPS FM0 spec
+2014-09-24 12:20:00.000,Added conversions for PPT LZ tlm
+2014-09-25 16:02:00.000,fixed integer division problem in LZ conversion 
+2014-09-25 20:01:00.000,Updated ENG LZ to match latest PPT SPEC
+2014-09-26 09:23:06.000,"Incorporated VBA function for saving comment automatically into ""Revision History"" tab."
+2014-09-26 16:53:00.000,Added new macro to check packet sizes.
+2014-09-26 17:18:07.000,Added padding to packets that need it.
+2014-09-29 11:23:17.000,"Added ""Include in CTAS?"" column on the Overview tab."
+2014-10-01 16:08:41.000,"Remove ""Include in CTAS?"" column in Overview tab (no longer needed).   Modify ENG_HI for ATS and RTS related telemetry points.  "
+2014-10-01 16:34:13.000,Fix up fomula dragging error from last checkin on ENG_HI.
+2014-10-02 14:47:05.000,"Created new ""Conventions"" tab and fixed BeforeSave macro to handle this.  Done to allow CTAS parsing code to work."
+2014-10-02 19:09:12.000,Modify Allocation Analysis spreadsheet.   Add DIAG_DDMI packets for calulcations in Diagnostic flash buffer.   Add calculations for how large the chunks of the 4GB flash need to be.
+2014-10-06 17:42:55.000,"Removed META_SBPP from Allocation Analysis tab.  Packet no longer needed, because it's contents have ended up in SCI_ packets."
+2014-10-07 10:04:25.000,added the new apid tracking fields to eng_hi
+2014-10-07 16:14:42.000,remove padding from eng_hi
+2014-10-16 15:42:16.000,"Replaced SCI_RAW1 and SCI_RAWn packets, replaced with SCI_RAW packets.  SCI_RAW packets will encapsulate ""FD00"" packets, eliminating the need for SCI_RAW1 and SCI_RAWn."
+2014-10-21 11:19:59.000,"Change SCI_RAW back to be 8192 bits (2048 bytes), matching DDMI FD00 packet."
+2014-10-21 11:28:35.000,"One more try, fixing DDMI_RAW_IF_DATA_N."
+2014-10-23 13:35:08.000,Corrected pass duration values affecting allocation analysis
+2014-10-28 09:38:13.000,copied over Tonya's version of eng_lz
+2014-10-28 09:46:08.000,Added new Limits page. Fixed up macro for new page.
+2014-10-30 13:31:54.000,Add new steering tab
+2014-10-30 16:54:19.000,rename columns in steer
+2014-11-07 10:27:11.000,added sci raw1 and sci rawn
+2014-11-10 09:58:39.000,removed lz_eps_ppt_sar_arm B
+2014-11-10 14:47:22.000,removed rawn and raw1. moved steering table to new spreadsheet.
+2015-02-03 13:15:29.000,Removed states sheet.
+2015-02-03 15:38:42.000,"Modified all packets (ENG_*, DIAG_*, SCI_*) for modification in secondary header (Flash Block Added, Time Quality Removed).  See FSW CR 32981."
+2015-02-03 16:13:30.000,"Modified ENG_PASS, ENG_HI, DIAG_DDMI_CHAN_TRACK_STAT, DIAG_DDMI_ORBITAL_ELEMENTS, DIAG_DDMI_REFL_STAT, DIAG_DDMI_REFL_LIST, DIAG_DDMI_ACK, and DIAG_DDMI_STREAM_ROUTER_STAT to be four byte aligned (they were missing the pad bytes at the end) so they can be"
+2015-02-03 16:21:35.000,"Fix up packets (same as previous checkin) to have U1234 for padding instead of U1, because padding can be sometimes greater than 8 bits (could  be 16 or 24)."
+2015-02-17 14:37:00.000,Added DIAG_DDMI_CYGNSS Packet (CYGNSS packet) as part of the itos_home merge from SVN r781.
+2015-02-17 15:10:59.000,Copied over ENG_LZ and Limits tab from CYGNSS_TLM in itos_home (part of merge from SVN r781 branch).
+2015-02-20 09:57:37.000,Undo the byte swapping for Magnetometer data in ENG_HI that was done during Early AI&T (now all fields in ENG_HI are consistentl - not byte swapped)
+2015-03-12 13:52:12.000,Added SBPP header and footer to all DIAG_DDMI packets (PIMS PR 33539).
+2015-03-20 12:49:09.000,Added DIAG_DDMI_SPW_DDM and DIAG_DDMI_SPW_DDM_TH packets.
+2015-03-26 11:08:54.000,Fix typos an add missing field to DIAG_DDMI_SPW_DDM.
+2015-03-26 16:32:34.000,Remove HDR from the FMAT_VER telemetry points in DIAG SpW Packets so that parser doesn't think they are part of the CCSDS headers.
+2015-03-27 07:38:22.000,"Add CRC_INVALID fields to SCI_DDM and SCI_DDM per DDMIM code review, and also add an enumeration to DDM_TYPE (Test DDM)"
+2015-03-27 09:43:21.000,Clarify comments for DDM_TYPE.
+2015-04-01 16:42:37.000,"Added new packets ENG_ADCS, ENG_ADCSIO, ENG_PVT, ENG_DDMI; and changed/rearranged fields in ENG_HI and ENG_LOW."
+2015-04-02 15:43:00.000,"Remove conversions for DIAG_DDMI_SPW_DDM_TH_DOPP_RES DIAG_DDMI_SPW_DDM_TH_DELAY_OFFSET DIAG_DDMI_SPW_DDM_TH_DOPP_OFFSET  so that ITOS will compile. (From DDMI scientest, not sure the conversions are correct)."
+2015-04-07 10:57:04.000,Got rid of stray external link
+2015-04-07 12:48:08.000,"Cleaned up ENG_HI, LO, added hi/lo htr set pts, fixed ENG_FILL to be right size"
+2015-04-07 14:21:15.000,Cleanup and minor corrections to ADCS and ADCSIO
+2015-04-07 14:46:07.000,Minor edits/cleanup of ENG_PVT and ENG_DDMI packets
+2015-04-08 09:50:26.000,Fixed save macro and fixed field size/start calculations in ENG_ADCS.
+2015-04-08 11:06:06.000,Correct type of ADCS_FSW_J2000_TIME to U1234.
+2015-04-08 12:55:06.000,"Fix sizes of ENG_HI_DDMI_RCVR_CLK_BIAS and ENG_HI_DDMI_RCVR_CLK_BRATE to be 32 bits, since they are a float (F1234)"
+2015-04-08 15:17:56.000,Add CYG_OBS_MODE_SCIFULL to ENG_HI (oversight).
+2015-04-09 10:53:38.000,Change CDS_FSW_BYTECNT_RT CDS_FSW_BYTECNT_ENGST CDS_FSW_BYTECNT_SCIST CDS_FSW_BYTECNT_SCIRAWST CDS_FSW_BYTECNT_DIAGST  to byte counts (from packet counts) so they work with the current STOR/TLMM design.
+2015-04-09 15:08:01.000,"Changes per review of AUT implementation in FSW - remove extra ""prior"" FSW_STATs."
+2015-04-09 15:14:47.000,Add commanded wheel speeds to ENG_ADCSIO.
+2015-04-09 15:14:47.000,Re-work ENG_PASS packet.
+2015-04-09 15:24:26.000,"Update DDMI packet descriptions and names such that RF1 = Zenth, RF2 = Nadir 1, RF3 = Nadir 2."
+2015-04-09 15:49:20.000,Chagne RWA_COMM_SPEED to RWA_CMD_SPEED in ADCS_IO.  Modify ordering of ADC bit-counts within ENG_DDMI to match DDMI user manual.
+2015-04-14 15:54:23.000,"Changing over to defining state name in ""States"" column. (Previously ""State Defined?"" column with X where a state was defined for the mnemonic.)"
+2015-04-14 16:53:48.000,Fix sizes of ENG_HI and ENG_ADCSIO such that they are 4 byte aligned. Update save macro to check for (4-byte) word alignment
+2015-04-15 11:04:24.000,Update ENG_LZ to new (and 4 byte aligned) definition.
+2015-04-24 16:31:47.000,Moved RF counts from ENG_DDMI to ENG_PVT and created initial tab for SCI_DDM.
+2015-04-25 09:04:48.000,Changed GAIN_MAP_VERs to Spares in ENG_PASS
+2015-04-25 11:41:12.000,Work-in-progress save - DDM and meta data changes
+2015-04-25 11:50:09.000,Work-in-progress save
+2015-04-25 11:59:24.000,Finished first cut of SCI_META (Overview is broken)
+2015-04-25 12:05:29.000,Finish first-cut of SCI_DDM with split meta-data
+2015-04-25 12:13:49.000,First cut at SCI_FULL with split meta-data
+2015-04-25 12:20:28.000,Fixed Overview warnings
+2015-04-25 12:26:04.000,Formula copy/paste fixes
+2015-04-25 12:29:21.000,Final save before sending draft to Musko/Gleason
+2015-04-25 13:57:06.000,Added rounded GPS sec field to SCI_* for syncing on the ground
+2015-04-25 14:00:01.000,Fixed copy/paste formula errors
+2015-05-01 10:54:33.000,Remove formulas fom TEMP fields of ENG_DDMI.
+2015-05-01 13:22:53.000,Split DDMI_CYG_GAIN_RF1-RF3 in ENG_DDMI and DIAG_DDMI_CYGNSS_PKT_GAIN_RF1-RF3 in DIAG_DDMI_CYGNSS_PKT into one 6-bit value for gain and one 2-bit value for gain mode.
+2015-05-04 16:33:45.000,Change type of SCI_META_PADDING from U12 to U1234 so that ITOS and FSW compilation succeed.
+2015-05-06 15:57:52.000,"added pkts 0x7b, 0x7d, 0x75"
+2015-05-06 16:35:36.000,added states to diag_ddmi_data_logger_stat
+2015-05-06 16:48:01.000,"switched header to new version for 0x7d, 0x75, 0x7b"
+2015-05-08 09:00:48.000,"Add padding and checksum to the end of recently added packets (DIAG_DDMI_DATA_LOGGER_STAT, DIAG_DDMI_PPS_TABLE, DIAG_DDMI_AD_RESP) so that they will correctly telemeter from the CDS FSW."
+2015-05-08 09:33:23.000,Multiple changes made related to SCI* packets and ENG_PASS as a result of design discussions with SOC..  See SVN Comment for details.
+2015-05-08 10:19:46.000,Rename SCI_FULL_GPS_WEEKS to SCI_FULL_GPS_WEEK for consitency.
+2015-05-11 10:35:41.000,"Remove ""Zenith Signal Doppler Frequency"" from SCI_META, per CYGNSS Mission SW SE and DDMI Scientist."
+2015-05-14 10:35:02.000,Modify size of DDM data within SCI_FULL from 1552 to 1584 to work with current (X5) DDM compression algorithm.
+2015-05-15 11:37:35.000,Rename some ENG_DDMI* telemetry points in ENG_PVT to remove ENG_ (per Cmd/TLM summit).
+2015-05-15 13:16:56.000,"Multiple changes (SCI_META, SCI_DDM, SCI_FULL, ENG_PVT).  See SVN comment for full details."
+2015-05-18 14:32:04.000,Added state reference for LZ_CDS_CENT_LZ_COL
+2015-05-18 14:54:19.000,Added state reference to LZ_CDS_CENT_XCVR_TX_EN
+2015-05-18 14:58:06.000,Added state reference to ENG_LZ_LZ_CDS_CENT_XCVR_TX_EN 
+2015-05-28 13:42:48.000,Make a set of 2 SPARE bits in ENG_HI CDS_FSW_STAT_COPROC_AVAIL CDS_FSW_STAT_REFL_STAT_RES  per Science Team request.
+2015-05-28 14:46:15.000,Added diag_echo packet
+2015-05-29 08:05:21.000,"Replace CDS_FSW in the _3DFIX, _ZTCEN, _REFLEN, _COPROC_AVAIL, REFL_STAT_RES, and RAWIFREC with ""DDMI"" to clarify that telemetry points from from DDMI, not CDS FSW.   "
+2015-05-29 08:56:52.000,Add DDMI_RF1_ZN_LNA_SW to SCI_META (using spare bit) per FSW CR 34249.
+2015-06-09 16:11:37.000,update thermistor names in eng_lz
+2015-06-11 09:00:13.000,updated thermistor mnemonics
+2015-06-11 11:12:18.000,"In renamed thermistors, change the ""-"" to a ""_"" (ITOS likes this better, and complains about the ""-"")."
+2015-06-16 08:51:26.000,Fix up size of each DDM_*COMP field in SCI_DDM to match revision X5 of compression memoy (see CR 34310).
+2015-06-16 10:05:30.000,fixed a typo on the nadir radiator
+2015-06-17 15:21:52.000,Consolidated duplicate state names.
+2015-06-18 17:36:36.000,Fixed CYG_PROC_POK state name in ENG_LZ.
+2015-07-02 09:41:29.000,Added state reference to CYG_OBS_MODE_PTG and CYG_OBS_PMODE_PTG
+2015-07-02 09:42:05.000,Added state reference to CYG_OBS_PMODE
+2015-07-09 10:38:26.000,Change DIAG_DDMI_AD_RESP_CH3_3V3_VOL to DIAG_DDMI_AD_RESP_CH4_3V3_VOL (copy/paste error).
+2015-07-14 15:04:37.000,Added NST and RWA states recently added to CYGNSS_STATES (as part of interpreting ENG_ADCSIO).
+2015-07-14 15:23:47.000,"Define NST level 0 WDG menomonics, consolidate RWA and NST mnemonics."
+2015-07-14 15:25:43.000,Fix error from previous checkin (RWA_BOOT_RELAY_STAT spelled wrong).
+2015-07-14 15:29:52.000,Revert NST temperature conversions (reasonable conversion values appear to differ from ICD).
+2015-07-14 15:33:19.000,Add conversions for NST quaternions.
+2015-07-14 15:34:39.000,Add RWA_MOTOR_FAULT as used enumeration.
+2015-07-14 15:51:44.000,Modify NST quaternions to be polynominal conversions (Since ITOS doesn't allow 32 bit ExpressionConversions).
+2015-07-14 15:57:24.000,Add temperature conversions for RWA telemetry points in ENG_ADCSIO.
+2015-07-24 08:10:17.000,"In ENG_ADCSIO, DIAG_NST_RAW, and DIAG_RWA_RAW, modify any conversion starting with "".0"" to start with ""0.0"" (necessary for CTAS ingesting)."
+2015-08-14 08:21:28.000,Bring ENG_LZ tab up to date IAW SVN r2097 change made in itos_home.  Bit breakouts.
+2015-08-14 17:11:11.000,"Removed conversions for ENG_ADCSIO.ADCS_RWA_TEMP1, 2 and 3.  They are no longer necessary."
+2015-08-17 13:50:50.000,Added leading zero to decimal numbers in conversions for ADCS_NST_DET_TEMP and ADCS_RWA_3P3V in ENG_ADCSIO packet
+2015-08-19 16:50:42.290,Added DIAG_ADCS_BUS_FSW_INP DIAG_ADCS_BUS_FSW_OUT DIAG_ADCS_BUS_FSW_TLM as part of 2.4.10 release of CDS FSW.
+2015-09-09 14:31:49.000,Added Packet Description column to Overview tab.
+2015-09-09 14:36:28.000,Additional packet descriptions on Overview tabs.
+2015-09-10 13:36:26.000,added formulas to start byte and start bit of ENG_LZ packet that was previously removed by someone
+2015-09-16 14:43:44.000,changed LZ_EPS_LVPS_LOAD_SHED_EN state to CYG_ENABLED# per AR-17790-73
+2015-09-16 15:07:27.000,ITOS does not like # in conversion name
+2015-09-29 13:22:40.000,added limits to all pages and limits for FLASH_BLOCK=0
+2015-11-03 11:32:16.000,Bit Breakout for XCVR Registers (AI&T CR 34928)
+2015-11-03 11:34:23.000,Just making sure start/stop bit formulae dragged down and all good after previous XCVR bit breakout 
+2015-11-06 09:37:47.000,Added/Updated Conversions for PPT and LVPS Themistors based on CYGNSS_ThermistorMapping spreadsheet from John D.
+2015-11-06 10:35:16.000,"Added ZN, SB, or PT into mnemonics for LNA temps to have a physical reference instead of just 1,2,3"
+2015-11-10 16:48:24.000,Added DIAG_DDMI_OP_SETTING which was inadvertly remove
+2015-11-11 12:13:03.000,Added States to DIAG_DDMI_OP_SETTINGS
+2015-11-11 12:41:22.000,Added iff() logic to protect against divide-by-zero and inf
+2015-11-18 11:14:15.000,fix external links in column K of DIAG_DDMI_OP_SETTINGS
+2015-11-18 15:21:46.000,"Added DDMI STX/ETX header to DIAG_DDMI_DATA_LOGGER_STAT, DIAG_DDMI_PPS_TABLE and DIAG_DDMI_AD_RESP"
+2015-11-23 12:05:00.000,updated LZ conversions to FM
+2015-11-24 10:33:54.000,Updated thermistor mnemonics (corrected physical location references and clarified port/starboard for solar array and science antennas)
+2015-11-24 11:03:18.000,LZ conversion format corrections
+2015-11-24 15:24:41.000,changed PPT LZ conversion from mA to A
+2015-12-01 11:48:16.000,Corrected LVPS conversions in ENG_LZ packet per latest VTP data
+2015-12-02 10:15:54.000,Updated accuracy for LVPS currents
+2015-12-08 10:28:32.000,Merged with 2.5.04 from itos_home_fsw
+2016-01-08 15:19:50.000,corrected offset for RAM_I in LZ packet
+2016-01-27 12:58:41.000,added 6V rx limits
+2016-01-27 13:01:13.000,added conversion to from counts to volts for load shed threshold
+2016-01-29 10:59:29.000,added state to ENG_PVT validity flag
+2016-01-29 11:02:56.000,added state to ENG_DDMI elevation mask
+2016-02-08 14:55:33.000,Update Thermistor Conversions
+2016-02-16 15:37:08.000,update conversion formula for LVPS thermistors and check for counts in valid range on all LVPS and PPT thermistors
+2016-02-16 16:09:35.000,updated LVPS voltage/current conversions
+2016-02-16 17:28:43.000,updated PPT voltage/current conversions
+2016-02-17 10:57:17.000,"replaced ""inv"" with NaN in thermistor conversions as expression to print if counts out of range (would not compile with ""inv"")"
+2016-02-17 11:27:24.000,"NaN doesn't compile either, changed to 999"
+2016-02-21 08:21:37.000,Swapped LZ_CDS_XCVR_LD_RX and _TX
+2016-02-22 09:48:45.000,Changed state for LZ_CDS_XCVR_LD_TX to XMIT_ON and XMIT_OFF
+2016-02-22 10:37:56.000,added limits to thermistors
+2016-02-24 13:16:44.000,Updated LVPS conversions to FM1 uSat (FM5 LVPS). Verified all other converions on LVPS/PPT (including thermal) - jdickinson
+2016-02-24 13:34:39.000,changed ADCS limits per Jacob request
+2016-02-24 14:06:47.000,marked limits on adcsio page
+2016-03-07 12:37:30.000,updated current and voltage limits based on PR35353
+2016-03-07 12:54:05.000,updated thermal limits per PFR-17790-344
+2016-03-07 14:43:42.000,updated ADCS thermal limits
+2016-03-10 10:59:40.000,"updated thermistor conversions (all except the PPT on-board 10K, 806) with latest, more complex, more accurate equations"
+2016-03-14 15:21:03.000,Updates for FSW Version 3.02
+2016-03-25 09:46:50.000,added conversion to LZ_CDS_XCVR_TEMP_PA on LZ tab
+2016-03-25 15:15:06.000,Added ENG_DNLD_FPT and ENG_DNLD_FAT packets
+2016-04-07 15:26:25.000,"Added ADCSIO responsive states, Broke out ENG_LZ Interrupt Pending/Mask Register and added limits for Interrupt Mask Register and ENG_LOW tripped faults, XCVR error limits, LZ_CDS_CENT_WDT_CNT and LZ_CDS_XCVR_TEMP_PA limits updated."
+2016-04-12 07:56:41.000,fixed various limits
+2016-04-12 08:29:18.000,correct mnemonic name for TEMP17 thru TEMP20
+2016-04-16 12:40:09.000,reversed interrupt MASK and PENDING bit assignment
+2016-04-29 10:25:18.000,Adding boot history to the ENG_BOOT packet (FSW CR 35372).
+2016-05-04 16:47:10.000,Add history index to comments in the boot history section of ENG_BOOT.
+2016-05-10 13:10:40.000,Modify descriptions of CDS_FSW_FAULT* in ENG_LOW  IAW FDC SDD.
+2016-05-10 13:49:57.000,Put Time Quality Bits (in place of Spare bits at end of packet) into ENG_PVT.
+2016-05-25 10:12:41.000,ADCS_MODE_ADCS_CONV
+2016-05-25 10:14:18.000,ENG_LZ conversions
+2016-05-25 13:38:37.000,Merge in FPT_245_PPT_EOCV FPT_246_PPT_BCC FPT_247_PVT_JAM  into ENG_DNLD_FPT.
+2016-05-26 11:28:45.000,pare
+2016-05-31 09:34:53.000,Move ADCS_MODE_ADCS to correct telemetry point.   
+2016-05-31 09:36:50.000,Change ENG_ADCS_FSW_MODE_ACS into 3 bits instead of 2 (CR 35309).
+2016-05-31 09:38:43.000,Modify ENG_HI to have overall ADCS mode instead of ACS and ADS modes (CR 35309)
+2016-06-01 15:17:10.000,Put the extra bit needed for ADCS_FSW_MODE_ACS in the correct place.
+2016-06-10 15:51:41.000,Added DIAG_DDMI_BOOTLOADER* packets.
+2016-06-13 11:57:05.000,byte swapped DIAG_DDMI_BOOTLOADER* payload bytes
+2016-06-17 09:51:54.000,"In ENG_PASS, remove CDS_FSW_SAFE_RTS_CSUM and CDS_FSW_OFP_CSUM and replace with CDS_FSW_OFP1_CSUM and CDS_FSW_OFP2_CSUM."
+2016-06-29 09:33:51.000,Clarifying comments for the descriptions of some ENG_PASS and ENG_BOOT tlm points.  Related to CR 35072.  No tlm point name changes or field moving.
+2016-07-11 14:40:15.000,Add _CHECKSUM fields per CR 35072.
+2016-07-11 16:43:58.000,"Clarify that the ENG_BOOT CDS_FSW_[FPT/ACT/TST]_CHECKSUM fields were appended to end of packet, see details in CR 35072"
+2016-07-01 14:59:58.000,Change TR duty cycle conversion from x/10.4 to x/24.0 (CR35825)
+2016-07-01 15:40:50.000,"Populated units column for several commonly used packets (ENG_DDMI, ENG_ADCSIO,  ENG_PVT, DIAG_DDMI_NAV_INFO).  Partially adresses CR 35826, but need full scub of all units eventually. "
+2016-08-24 13:38:19.000,added limits to FLASH enable status
+2016-08-25 13:59:37.000,fixed limit name for lvps_temp2_rad_pt
+2016-09-15 07:44:17.000,changed to CYG_ADCS_HEALTH_STATE_SUCC_CONV for LVLH and SUN PT succession bits
+2016-09-16 15:47:35.000,corrected state for LD_TX per RF Cog E
+2016-09-16 15:56:50.000,corrected RH limit for BATTBUS_V per Cog E
+2016-10-03 19:12:05.000,added limit CYG_OBS_MODE
+2016-10-03 20:47:55.000,correct limits for CYGNSS mode
+2016-10-10 20:30:35.000,updated EPS limits per Cog E
+2016-10-11 11:03:20.000,correct units for PPSP Voltage
+2016-10-11 11:05:03.000,added units to load shed threshold value
+2016-10-11 11:05:29.000,added units to XCVR PA temp
+2016-10-11 11:08:04.000,added units to ST detector measured temp
+2016-10-11 11:17:33.000,added units to RWA heater set point and hysteresis
+2016-10-11 11:22:22.000,added units to CYGNSS packet
+2016-12-04 17:34:54.000,Updated ENG_DNLD_FPT to latest
+2017-03-24 10:14:31.000,Update for new parameters for FSW v4.3.
+2017-03-28 15:54:17.000,Fix issue with start byte formula at the end of the ENG_DNLD_FPT packet.
+2017-04-12 15:43:04.000,"Expand DDM[X]_PRN_CODE field to 6 bits in SCI_META, SCI_DDM_X8, SCI_DDM_BB_X8, and SCI_FULL packets."
+2017-04-18 10:19:34.000,Changed EGSE_TASK_PC to FATAL_PC in ENG_SSV.  See PR #37116.
+2017-04-25 11:41:02.000,Added SUPER_NOM packet for super packets change (CR 37388).
+2017-05-18 12:28:28.000,Added Decimal APID
+2017-05-18 12:36:02.000,Edited SCI_FULL Comments for Comp_Delay and Comp_Dopp
+2017-05-18 12:49:55.000,Changed E+1 in conversion to be E1
+2017-05-18 12:53:51.000,Updated Fault*_Tripped
+2017-05-18 12:56:27.000,Fixed ENG_DDMI MASK to not have 'State'
+2017-05-18 13:07:11.000,Removed Limits on all telemetry
+2017-05-18 13:39:43.000,Updated FPT Description
+2017-05-19 10:08:55.000,"Replace the FAULT_11_THRESHOLD (effectively a spare) with FPT_153_RWA_SPEED_MAX, per change made in FSW v4.4."
+2017-07-06 14:11:15.000,"Per MOC CCR 36549, Clear the Contents of the Source column for each tlm packet, since they have sometimes been out of date, and are now OBE by the Description."
+2017-10-11 11:18:36.000,Add the new FPT parameteres for RWA-9 and NST-7 increment/decrement counters as part of FSW v4.5.
+2017-10-24 14:47:18.000,"Added SCI_DDM_X10.   Packet that contains compressed regular DDMs, using the X10 DDM compression algorithm.   Created via FSW CR 37965 (Update DDM Compression algorithm for High Altitude Land Measurements).   As of FSW v4.5, SCI_DDM_X10 is produced, instead of SCI_DDM_X8."
+2017-10-26 13:20:37.000,"
+Modify the DDMI_DDM4_PRN_CODE in SCI_DDM_X10 to be a U12 instead of a I12 (signed -> unsigned)
+
+Accidentally changed to an I12 via implementation of FSW CR 37965 (Update DDM Compression algorithm for High Altitude Land Measurements).  Originally put in place in a previous FSW build via PR 37421 (DDM[X]_PRN_CODE in DDMI packets cannot store the value 32)."
+2018-07-27 15:53:58.000,Adding 0x521 and 0x550
+2018-08-22 14:15:08.000,Updated endian of DIAG_DDMI_PVT_INFO
+2018-10-30 09:53:27.000,"ENG_LZ: added units and conversion for FSWREG_1, added conversions for XCVR power items"
+2018-10-30 09:54:09.000,ENG_PVT: added units for pos/vel/etc
+2018-10-30 09:58:36.000,SCI_META: added units and conversion to degrees for roll/pitch/yaw
+2018-10-30 10:09:58.000,ENG_DDMI: added units for LNA gains and elevation mask
+2018-10-30 11:35:24.000,ENG_ADCS: Added units for ECI PVT and quats
+2018-10-30 11:44:49.000,"ENG_ADCSIO: Added units for quats; fixed formula in row 85 col H (it was referencing the wrong cells above, but since they happened to be the same as the cells the formula is supposed to ref, it was not causing a problem...)"
+2018-10-30 11:50:02.000,"ENG_HI: add units ""Active"" for all RTSs, ""q"" for quats, ""Blocks"" for rec/pb blocks"
+2018-10-30 12:01:14.000,ENG_ADCS: added units and conversions for angular rate from both mag and NST
+2018-11-14 11:24:41.000,"ENG_LZ and ENG_ADCS: changed newly added conversions from ""expression"" type to ""polynominal"" type for 32bit mnemonics"
+2018-11-14 12:23:52.000,ENG_ADCS: ITOS doesn't do math in poly conversion coeff...
+2019-06-21 10:08:38.000,Add SCI_META_V2 and SCI_DDM_X11 packets
+2019-10-21 14:46:25.000,Changed SCI_DDM_X11 fills
+2019-11-06 14:46:29.000,Updated ENG_DNLD_FPT mnemonics and descriptions to match FSW 4.6 FPT updates
+2019-12-03 08:28:18.000,Updated padding for DIAG_DDMI_PVT_INFO
+2019-12-03 08:46:28.000,Fixed goof for checksum size on DIAG_DDMI_PVT_INFO

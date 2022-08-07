@@ -5,9 +5,6 @@ IO Interface for Reading CCSDS Data in Python.
 """
 
 # For egg_info test builds to pass, put package imports here.
-
 from .interface import (FixedLength, PacketField)
-
-
 
 
