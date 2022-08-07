@@ -87,7 +87,7 @@ def _load_apid_truth(truth_file_path, defs):
         elif data_type == 'uint':
             table_dict[key] = np.array(table_dict[key], dtype=np.uint)
         elif data_type == 'int':
-            table_dict[key] = np.array(table_dict[key], dtype=np.int)
+            table_dict[key] = np.array(table_dict[key], dtype=int)
         elif data_type == 'str':
             table_dict[key] = np.array(table_dict[key], dtype=str)
         elif data_type == 'float':
