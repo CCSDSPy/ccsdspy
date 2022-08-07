@@ -13,7 +13,7 @@ def split_by_apid(mixed_file, valid_apids=None):
     
     Parameters
     ----------
-    mixed_file: str
+    mixed_file: str, file-like
        Path to file on the local file system, or file-like object
     valid_apids: list of int, None
        Optional list of valid APIDs. If specified, warning will be issued when
@@ -21,8 +21,8 @@ def split_by_apid(mixed_file, valid_apids=None):
 
     Returns
     -------
-    Dictionary mapping integer apid number to BytesIO instance with the file
-    pointer at the beginning of the file.
+      Dictionary mapping integer apid number to BytesIO instance with the file
+      pointer at the beginning of the stream.
     """
     if hasattr(mixed_file, 'read'):
         file_bytes = np.frombuffer(mixed_file.read(), 'u1')
