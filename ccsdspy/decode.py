@@ -7,6 +7,7 @@ __author__ = 'Daniel da Silva <mail@danieldasilva.org>'
 
 
 def _decode_fixed_length(file_bytes, fields):
+
     """Decode a fixed length APID.
     
     Parameters
