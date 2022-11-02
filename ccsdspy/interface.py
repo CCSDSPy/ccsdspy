@@ -89,13 +89,15 @@ class FixedLength(object):
         """
         self._fields = fields[:]
 
-    def load(self, file):
+    def load(self, file, include_primary_header=False):
         """Decode a file-like object containing a sequence of these packets.
 
         Parameters
         ----------
         file: str
            Path to file on the local file system, or file-like object
+        include_primary_header: bool
+           If True, provides the primary header in the output
 
         Returns
         -------
@@ -105,6 +107,16 @@ class FixedLength(object):
             file_bytes = np.fromstring(file.read(), 'u1')
         else:
             file_bytes = np.fromfile(file, 'u1')
+
+        if include_primary_header:
+            self._fields = [PacketField(name="CCSDS_VERSION_NUMBER", data_type='uint', bit_length=3),
+                            PacketField(name="CCSDS_PACKET_TYPE", data_type='uint', bit_length=1),
+                            PacketField(name="CCSDS_SECONDARY_FLAG", data_type='uint', bit_length=1),
+                            PacketField(name="CCSDS_APID", data_type='uint', bit_length=11),
+                            PacketField(name="CCSDS_SEQUENCE_FLAG", data_type='uint', bit_length=2),
+                            PacketField(name="CCSDS_SEQUENCE_COUNT", data_type='uint', bit_length=14),
+                            PacketField(name="CCSDS_PACKET_LENGTH", data_type='uint', bit_length=16),
+                            ] + self._fields
 
         field_arrays = _decode_fixed_length(file_bytes, self._fields)
         return field_arrays
