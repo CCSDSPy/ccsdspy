@@ -8,10 +8,10 @@ __author__ = 'Daniel da Silva <mail@danieldasilva.org>'
 
 def _decode_fixed_length(file_bytes, fields):
     """Decode a fixed length APID.
-    
+
     Parameters
     ----------
-    file_bytes : array 
+    file_bytes : array
        A NumPy array of uint8 type, holding the bytes of the file to decode.
     fields : list of ccsdspy.interface.PacketField
        A list of fields, including the secondary header but excluding the
@@ -26,7 +26,7 @@ def _decode_fixed_length(file_bytes, fields):
     packet_nbytes = file_bytes[4] * 256 + file_bytes[5] + 7
     body_nbytes = sum(field._bit_length for field in fields) // 8
     counter = (packet_nbytes - body_nbytes) * 8
-    
+
     bit_offset = {}
 
     for i, field in enumerate(fields):
@@ -46,7 +46,7 @@ def _decode_fixed_length(file_bytes, fields):
             # don't update counter unless the the overlap goes past counter
             counter = max(field._bit_offset + field._bit_length, counter)
         elif field._bit_offset >= counter:
-            # case: otherwise, bit_offset is ahead of counter and we're skipping 
+            # case: otherwise, bit_offset is ahead of counter and we're skipping
             # definition of 0 or more bits.
             bit_offset[field._name] = field._bit_offset
             counter = field._bit_offset + field._bit_length
@@ -61,7 +61,7 @@ def _decode_fixed_length(file_bytes, fields):
     elif counter > packet_nbytes * 8:
         raise RuntimeError(("Packet definition larger than packet length"
                             " by {} bits").format(counter-(packet_nbytes*8)))
-        
+
     # Setup metadata for each field, consiting of where to look for the field in
     # the file and how to parse it.
     FieldMeta = namedtuple('Meta', ['nbytes_file', 'start_byte_file',
@@ -90,7 +90,7 @@ def _decode_fixed_length(file_bytes, fields):
             'float': '%sf%d' % (byte_order_symbol, nbytes_final),
             'str':   'S%d' % nbytes_final,
         }[field._data_type]
-        
+
         field_meta[field] = FieldMeta(
             nbytes_file, start_byte_file, nbytes_final, np_dtype)
 
@@ -101,9 +101,9 @@ def _decode_fixed_length(file_bytes, fields):
 
     if extra_bytes > 0:
         file_bytes = file_bytes[:-extra_bytes]
-    
+
     packet_count = file_bytes.size // packet_nbytes
-    
+
     # Create byte arrays for each field. At the end of this method they are left
     # as the numpy uint8 type.
     field_bytes = {}
@@ -138,23 +138,22 @@ def _decode_fixed_length(file_bytes, fields):
             bitmask_right = (8 * meta.nbytes_final
                              - bitmask_left
                              - field._bit_length)
-     
+
             bitmask_left, bitmask_right = (
                 np.array([bitmask_left, bitmask_right]).astype(meta.np_dtype)
             )
-            
+
             bitmask = np.zeros(arr.shape, meta.np_dtype)
             bitmask |= (1 << int(8 * meta.nbytes_final - bitmask_left)) - 1
             tmp = np.left_shift([1], bitmask_right)
             bitmask &= np.bitwise_not(tmp[0] - 1).astype(meta.np_dtype)
-        
+
             arr &= bitmask
             arr >>= bitmask_right
-            
+
             if field._byte_order == 'little':
                 arr.byteswap(inplace=True)
 
         field_arrays[field._name] = arr
 
     return field_arrays
-

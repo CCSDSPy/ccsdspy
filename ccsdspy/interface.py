@@ -10,7 +10,7 @@ from .decode import _decode_fixed_length
 class PacketField(object):
     """A field contained in a packet.
     """
-    
+
     def __init__(self, name, data_type, bit_length, bit_offset=None,
                  byte_order='big'):
         """
@@ -45,7 +45,7 @@ class PacketField(object):
             raise TypeError('bit_length parameter must be an int')
         if not (bit_offset is None or isinstance(bit_offset, (int, np.integer))):
             raise TypeError('bit_offset parameter must be an int')
-        
+
         valid_data_types = ('uint', 'int', 'float', 'str', 'fill')
         if data_type not in valid_data_types:
             raise ValueError('data_type must be one of {valids}'.format(
@@ -54,8 +54,8 @@ class PacketField(object):
         valid_byte_orders = ('big', 'little')
         if byte_order not in valid_byte_orders:
             raise ValueError('byte_order must be one of {valids}'.format(
-                valids=repr(valid_byte_orders)))        
-        
+                valids=repr(valid_byte_orders)))
+
         self._name = name
         self._data_type = data_type
         self._bit_length = bit_length
@@ -72,23 +72,23 @@ class PacketField(object):
     def __iter__(self):
         return iter([('name', self._name), ('dataType', self._data_type), ('bitLength', self._bit_length), ('bitOffset', self._bit_offset), ('byteOrder', self._byte_order)])
 
-                
+
 class FixedLength(object):
     """Define a fixed length packet to decode binary data.
 
     In the context of engineering and science, fixed length packets correspond
     to data that is of the same layout every time. Examples of this include
     sensor time series, status codes, or error messages.
-    """    
+    """
     def __init__(self, fields):
-        """        
+        """
         Parameters
         ----------
         fields : list of `ccsdspy.PacketField`
             Layout of packet fields contained in the definition.
         """
         self._fields = fields[:]
-       
+
     def load(self, file):
         """Decode a file-like object containing a sequence of these packets.
 
