@@ -1,13 +1,25 @@
 
 name: CCSDSPy CI
-on: [push]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 jobs:
-  Run-Tests-and-Static-Analysis:
-    runs-on: ubuntu-latest
+  build:
+
+    runs-on: ${{ matrix.platform }}
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [ubuntu-latest]
+        python-version: [3.6, 3.7, 3.8, 3.9, '3.10', '3.11']
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
@@ -15,11 +27,9 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install flake8 pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Run tests
+      run: pytest --pyargs ccsdspy --cov ccsdspy
+      env:
+        PLATFORM: ${{ matrix.platform }}
     - name: Lint with flake8
-      run: |
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-    - name: Test with pytest
-      run: |
-        pytest
+      run: flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
