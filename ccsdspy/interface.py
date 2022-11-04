@@ -24,8 +24,8 @@ class PacketField(object):
         bit_length : int
             Number of bits contained in the field.
         bit_offset : int, optional
-            Bit offset into packet, including primary header. If this is not
-            specified, than the bit offset will the be calculated automatically
+            Bit offset into packet, including the primary header which is 48 bits long.
+            If this is not specified, than the bit offset will the be calculated automatically
             from its position inside the packet definition.
         byte_order : {'big', 'little'}, optional
             Byte order of the field. Defaults to big endian.
@@ -109,13 +109,13 @@ class FixedLength(object):
             file_bytes = np.fromfile(file, 'u1')
 
         if include_primary_header:
-            self._fields = [PacketField(name="CCSDS_VERSION_NUMBER", data_type='uint', bit_length=3),
-                            PacketField(name="CCSDS_PACKET_TYPE", data_type='uint', bit_length=1),
-                            PacketField(name="CCSDS_SECONDARY_FLAG", data_type='uint', bit_length=1),
-                            PacketField(name="CCSDS_APID", data_type='uint', bit_length=11),
-                            PacketField(name="CCSDS_SEQUENCE_FLAG", data_type='uint', bit_length=2),
-                            PacketField(name="CCSDS_SEQUENCE_COUNT", data_type='uint', bit_length=14),
-                            PacketField(name="CCSDS_PACKET_LENGTH", data_type='uint', bit_length=16),
+            self._fields = [PacketField(name="CCSDS_VERSION_NUMBER", data_type='uint', bit_length=3, bit_offset=0),
+                            PacketField(name="CCSDS_PACKET_TYPE", data_type='uint', bit_length=1, bit_offset=3),
+                            PacketField(name="CCSDS_SECONDARY_FLAG", data_type='uint', bit_length=1, bit_offset=4),
+                            PacketField(name="CCSDS_APID", data_type='uint', bit_length=11, bit_offset=5),
+                            PacketField(name="CCSDS_SEQUENCE_FLAG", data_type='uint', bit_length=2, bit_offset=16),
+                            PacketField(name="CCSDS_SEQUENCE_COUNT", data_type='uint', bit_length=14, bit_offset=18),
+                            PacketField(name="CCSDS_PACKET_LENGTH", data_type='uint', bit_length=16, bit_offset=32),
                             ] + self._fields
 
         field_arrays = _decode_fixed_length(file_bytes, self._fields)
