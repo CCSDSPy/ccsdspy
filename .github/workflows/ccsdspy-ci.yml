@@ -28,7 +28,7 @@ jobs:
         python -m pip install flake8 pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Run tests
-      run: pytest --pyargs ccsdspy --cov ccsdspy
+      run: pytest --pyargs ccsdspy
       env:
         PLATFORM: ${{ matrix.platform }}
     - name: Lint with flake8
