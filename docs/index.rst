@@ -61,3 +61,4 @@ User Documentation
   :maxdepth: 1
              
   ccsdspy.rst
+  ccsds.rst
