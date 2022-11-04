@@ -1,0 +1,36 @@
+Bit Numbering,Unnamed: 1
+This spreadsheet labels bits and bytes with the zero bit/byte being the most-significant bit/byte (MSb/MSB)  (CCSDS and ITOS Convention),
+"However, in FSW, the zero bit/byte is the least-significant bit (LSb) or least-significant byte (LSB)",
+,
+"Packet naming convention is: TYPE_NAME, where",
+TYPE,"SCI, META, ENG, or DIAG"
+NAME,Short descriptive name
+,
+,
+"Telemetry mnemonic naming convention is: [LZ_]SS_COMP_DESC, where",
+LZ,Level Zero Telemetry Item
+SS,"Subsystem or Element:  ADCS, CDS, DDMI, EPS, FSW, SMT"
+,
+COMP,Component or other sub-subsystem identifier (e.g. HTR)
+DESC,Short descriptive name and/or number
+"However, packet header telemetry values and trailing checksums are named beginning with the packet short-name (e.g. ENG_HI)",
+,
+Telemetry APID Conventions (bit # is relative to start of the Packet Primary Header field),
+Bits 5-8,Indicates packet type as follows:
+1,Science
+10,Science Meta-Data
+11,Engineering
+111,Super-Packet
+1000,Diagnostic - General
+1001,Diagnostic - ADCS
+101x,Diagnostic - DDMI
+,
+,
+,
+,
+Bits 9-15,Packet number (unique when paired with Bits 5-8)
+,"When bits 5-7 are ""Diagnostic - DDMI"", bits 8-15 will be populated with the ""Packet ID"" of the SBPP message output by the DDMI.   (ref doc # 0216897)"
+,"                  All DDMI telemetry will be available as ""raw ""RS-422 Packaged Packets, with packet names DDMI_RAW_0x580, DDMI_RAW_0x581, etc.."
+,
+,
+Notes/Questions/ToDo:,

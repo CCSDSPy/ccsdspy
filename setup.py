@@ -8,11 +8,11 @@ with open("README.rst") as f:
 PACKAGENAME = 'ccsdspy'
 DESCRIPTION = 'IO Interface for Reading CCSDS Data in Python.'
 AUTHOR = 'Daniel da Silva'
-AUTHOR_EMAIL = ''
-LICENSE = 'unknown'
-URL = 'http://github.com/ddasilva/ccsdspy'
+AUTHOR_EMAIL = 'mail@danieldasilva.org'
+LICENSE = 'BSD-3'
+URL = 'https://ccsdspy.readthedocs.io/en/latest/'
 # VERSION should be PEP440 compatible (http://www.python.org/dev/peps/pep-0440)
-VERSION = '0.0.11'
+VERSION = '0.0.12'
 
 setup(
     name=PACKAGENAME,
@@ -31,8 +31,11 @@ setup(
     classifiers=[
         "Development Status :: 5 - Production/Stable  ",
         "Intended Audience :: Science/Research",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         "License :: OSI Approved :: BSD License",
         "Operating System :: OS Independent",
     ]

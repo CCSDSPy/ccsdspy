@@ -1,0 +1,44 @@
+Mnemonic       ,Description                             ,Type           ,Units,Conversion,Subsystem,Start Byte,Start Bit  ,Data Size,Conversion Formula,States,Limits Defined?,Source
+ENG_PVT_HDR_VER,Source packet version number,U1,,HEX,ENG_PVT,0,0,3,,,,
+ENG_PVT_HDR_TYPE,Source packet type,U1,,HEX,ENG_PVT,0,3,1,,,,
+ENG_PVT_HDR_SHDR,Secondary header present flag,U1,,HEX,ENG_PVT,0,4,1,,,,
+ENG_PVT_HDR_APID,Application Identifier,U12,,HEX,ENG_PVT,0,5,11,,,,
+ENG_PVT_HDR_GRP,Grouping flags,U1,,HEX,ENG_PVT,2,0,2,,,,
+ENG_PVT_HDR_SEQ,Source sequence count,U12,,HEX,ENG_PVT,2,2,14,,,,
+ENG_PVT_HDR_LEN,Packet length,U12,,HEX,ENG_PVT,4,0,16,,,,
+ENG_PVT_HDR_SCID,Spacecraft Identifier,U1,,HEX,ENG_PVT,6,0,8,,,,
+ENG_PVT_HDR_FLASH_BLOCK,Flash Block #,U12,,HEX,ENG_PVT,7,0,14,,,,
+ENG_PVT_HDR_YEAR,Packet timestamp UTC Year,U12,,HEX,ENG_PVT,8,6,12,,,,
+ENG_PVT_HDR_DAY,Packet timestamp UTC Day-In-Year,U12,,HEX,ENG_PVT,10,2,9,,,,
+ENG_PVT_HDR_HOUR,Packet timestamp UTC Hour-In-Day,U1,,HEX,ENG_PVT,11,3,5,,,,
+ENG_PVT_HDR_MIN,Packet timestamp UTC Minute-In-Hour,U1,,HEX,ENG_PVT,12,0,6,,,,
+ENG_PVT_HDR_SEC,Packet timestamp UTC Second-In-Minute,U12,,HEX,ENG_PVT,12,6,6,,,,
+ENG_PVT_HDR_USEC,Packet timestamp UTC Microseconds-In-Seconds,U1234,,HEX,ENG_PVT,13,4,20,,,,
+DDMI_PVT_SCPOS_X,Spacecraft Position X,F1234,m,HEX,ENG_PVT,16,0,32,,,,
+DDMI_PVT_SCPOS_Y,Spacecraft Position Y,F1234,m,HEX,ENG_PVT,20,0,32,,,,
+DDMI_PVT_SCPOS_Z,Spacecraft Position Z,F1234,m,HEX,ENG_PVT,24,0,32,,,,
+DDMI_PVT_SCVEL_X,Spacecraft Velocity X,F1234,m/s,HEX,ENG_PVT,28,0,32,,,,
+DDMI_PVT_SCVEL_Y,Spacecraft Velocity Y,F1234,m/s,HEX,ENG_PVT,32,0,32,,,,
+DDMI_PVT_SCVEL_Z,Spacecraft Velocity Z,F1234,m/s,HEX,ENG_PVT,36,0,32,,,,
+DDMI_PVT_GPS_WEEK,PVT GPS Week,U12,week,HEX,ENG_PVT,40,0,16,,,,
+DDMI_PVT_GPS_SEC,PVT GPS Seconds,F12345678,sec,HEX,ENG_PVT,42,0,64,,,,
+DDMI_RCVR_CLK_BIAS,Receiver Clock Bias (* speed of light),F1234,,HEX,ENG_PVT,50,0,32,,,,
+DDMI_RCVR_CLK_BRATE,Receiver Clock Bias Rate (* speed of light),F1234,,HEX,ENG_PVT,54,0,32,,,,
+DDMI_PVT_NUMSATS,Number of satellites used in the position fix,U1,numsats,HEX,ENG_PVT,58,0,8,,,,
+DDMI_PVT_GDOP,GDOP,U1,GDOP,HEX,ENG_PVT,59,0,8,,,,
+DDMI_PVT_VALID,Position validity,U1,,HEX,ENG_PVT,60,0,8,,DIAG_DDMI_NAV_INFO_POS_FIX_VALID,,
+DDMI_RF1_ZN_M3_CNTS,RF 1 - Minus 3 Counts,U1,,HEX,ENG_PVT,61,0,8,,,,Derived from SBPP Packet 0x74
+DDMI_RF1_ZN_M1_CNTS,RF 1 - Minus 1 Counts,U1,,HEX,ENG_PVT,62,0,8,,,,Derived from SBPP Packet 0x74
+DDMI_RF1_ZN_P1_CNTS,RF 1 - Plus 1 Counts,U1,,HEX,ENG_PVT,63,0,8,,,,Derived from SBPP Packet 0x74
+DDMI_RF1_ZN_P3_CNTS,RF 1 - Plus 3 Counts,U1,,HEX,ENG_PVT,64,0,8,,,,Derived from SBPP Packet 0x74
+DDMI_RF2_SB_M3_CNTS,RF 2 - Minus 3 Counts,U1,,HEX,ENG_PVT,65,0,8,,,,Derived from SBPP Packet 0x74
+DDMI_RF2_SB_M1_CNTS,RF 2 - Minus 1 Counts,U1,,HEX,ENG_PVT,66,0,8,,,,Derived from SBPP Packet 0x74
+DDMI_RF2_SB_P1_CNTS,RF 2 - Plus 1 Counts,U1,,HEX,ENG_PVT,67,0,8,,,,Derived from SBPP Packet 0x74
+DDMI_RF2_SB_P3_CNTS,RF 2 - Plus 3 Counts,U1,,HEX,ENG_PVT,68,0,8,,,,Derived from SBPP Packet 0x74
+DDMI_RF3_PT_M3_CNTS,RF 3 - Minus 3 Counts,U1,,HEX,ENG_PVT,69,0,8,,,,Derived from SBPP Packet 0x74
+DDMI_RF3_PT_M1_CNTS,RF 3 - Minus 1 Counts,U1,,HEX,ENG_PVT,70,0,8,,,,Derived from SBPP Packet 0x74
+DDMI_RF3_PT_P1_CNTS,RF 3 - Plus 1 Counts,U1,,HEX,ENG_PVT,71,0,8,,,,Derived from SBPP Packet 0x74
+DDMI_RF3_PT_P3_CNTS,RF 3 - Plus 3 Counts,U1,,HEX,ENG_PVT,72,0,8,,,,Derived from SBPP Packet 0x74
+CDS_FSW_STAT_TIMEQ,Current time quality,U1,,HEX,ENG_PVT,73,0,2,,,,
+ENG_PVT_PADDING,Padding to ensure 4-byte alignment,U1234,,HEX,ENG_PVT,73,2,6,,,,
+ENG_PVT_CKSUM,Sum of all prior bytes (including headers) with carry,U12,,HEX,ENG_PVT,74,0,16,,,,

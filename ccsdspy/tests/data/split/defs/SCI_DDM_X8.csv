@@ -1,0 +1,69 @@
+Mnemonic       ,Description                             ,Type           ,Units,Conversion,Subsystem,Start Byte,Start Bit  ,Data Size,Conversion Formula,States,Limits Defined?,Source
+SCI_DDM_X8_HDR_VER,Source packet version number,U1,,HEX,SCI_DDM,0,0,3,,,,
+SCI_DDM_X8_HDR_TYPE,Source packet type,U1,,HEX,SCI_DDM,0,3,1,,,,
+SCI_DDM_X8_HDR_SHDR,Secondary header present flag,U1,,HEX,SCI_DDM,0,4,1,,,,
+SCI_DDM_X8_HDR_APID,Application Identifier,U12,,HEX,SCI_DDM,0,5,11,,,,
+SCI_DDM_X8_HDR_GRP,Grouping flags,U1,,HEX,SCI_DDM,2,0,2,,,,
+SCI_DDM_X8_HDR_SEQ,Source sequence count,U12,,HEX,SCI_DDM,2,2,14,,,,
+SCI_DDM_X8_HDR_LEN,Packet length,U12,,HEX,SCI_DDM,4,0,16,,,,
+SCI_DDM_X8_HDR_SCID,Spacecraft Identifier,U1,,HEX,SCI_DDM,6,0,8,,,,
+SCI_DDM_X8_HDR_FLASH_BLOCK,Flash Block #,U12,,HEX,SCI_DDM,7,0,14,,,,
+SCI_DDM_X8_HDR_YEAR,Packet timestamp UTC Year,U12,,HEX,SCI_DDM,8,6,12,,,,
+SCI_DDM_X8_HDR_DAY,Packet timestamp UTC Day-In-Year,U12,,HEX,SCI_DDM,10,2,9,,,,
+SCI_DDM_X8_HDR_HOUR,Packet timestamp UTC Hour-In-Day,U1,,HEX,SCI_DDM,11,3,5,,,,
+SCI_DDM_X8_HDR_MIN,Packet timestamp UTC Minute-In-Hour,U1,,HEX,SCI_DDM,12,0,6,,,,
+SCI_DDM_X8_HDR_SEC,Packet timestamp UTC Second-In-Minute,U12,,HEX,SCI_DDM,12,6,6,,,,
+SCI_DDM_X8_HDR_USEC,Packet timestamp UTC Microseconds-In-Seconds,U1234,,HEX,SCI_DDM,13,4,20,,,,
+SCI_DDM_GPS_WEEK,GPS weeks from CYGNSS packet,U1234,,HEX,SCI_DDM,16,0,12,,,,
+SCI_DDM_GPS_SEC,GPS seconds from DDM Packet (rounded integer seconds),U1234,,HEX,SCI_DDM,17,4,20,,,,"DDM Packet, bytes 10-13"
+SCI_DDM_END_TIME,DDM Integration End Time Stamp Offset,U1234,,HEX,SCI_DDM,20,0,32,,,,"DDM Packet, bytes 14-17"
+DDMI_DDM1_TEST_DDM,Set if DDM is a Test DDM,U1,,HEX,SCI_DDM,24,0,1,,,,"0=Regular DDM, 1=Test DDM"
+DDMI_DDM1_CRC_INVALID,CRC Valid/Invalid Flag (from SpW DDM packet),U1,,HEX,SCI_DDM,24,1,1,,,,
+DDMI_DDM1_LNA_SW,Low-Noise Amplifier (LNA) Switch State,U1,,HEX,SCI_DDM,24,2,1,,,,"DDM Track Header, Calibration RF Front-End State"
+DDMI_DDM1_RECONFIG,Reconfiguration Flag,U1,,HEX,SCI_DDM,24,3,1,,,,"DDM Packet, byte 8"
+SCI_DDM_DDM1_SPARE1,Spare bit,U1,,HEX,SCI_DDM,24,4,1,,,,
+SCI_DDM_DDM1_SPARE2,Spare bit,U1,,HEX,SCI_DDM,24,5,1,,,,
+DDMI_DDM1_PRN_MODE,Pseudo-Random Noise (PRN) Code/Antenna Selection Mode,U1,,HEX,SCI_DDM,24,6,2,,,,"DDM Track Header, byte 43"
+DDMI_DDM1_PRN_CODE,PRN Code,U12,,HEX,SCI_DDM,25,0,6,,,,"DDM Track Header, byte 47, Satellite Selection (PRN)"
+DDMI_DDM1_ANT,Antenna,U1,,HEX,SCI_DDM,25,6,2,,,,"DDM Track Header, byte 48"
+DDMI_DDM1_COMP_DELAY,Compression algorithm delay shift,I1,,HEX,SCI_DDM,26,0,5,,,,Compression Algorithm Variable
+DDMI_DDM1_COMP_DOPP,Compression algorithm doppler shift,I1,,HEX,SCI_DDM,26,5,3,,,,Compression Algorithm Variable
+DDMI_DDM1_COMP,Delay Doppler Map (1696 bits for compressed DDM),U1,,HEX,SCI_DDM,27,0,1696,,,,"Using non-BB DDM for size, rounded to 1696 bits for byte alignment"
+DDMI_DDM2_TEST_DDM,Set if DDM is a Test DDM,U1,,HEX,SCI_DDM,239,0,1,,,,"0=Regular DDM, 1=Test DDM"
+DDMI_DDM2_CRC_INVALID,CRC Valid/Invalid Flag (from SpW DDM packet),U1,,HEX,SCI_DDM,239,1,1,,,,
+DDMI_DDM2_LNA_SW,Low-Noise Amplifier (LNA) Switch State,U1,,HEX,SCI_DDM,239,2,1,,,,"DDM Track Header, Calibration RF Front-End State"
+DDMI_DDM2_RECONFIG,Reconfiguration Flag,U1,,HEX,SCI_DDM,239,3,1,,,,"DDM Packet, byte 8"
+SCI_DDM_DDM2_SPARE1,Spare bit,U1,,HEX,SCI_DDM,239,4,1,,,,
+SCI_DDM_DDM2_SPARE2,Spare bit,U1,,HEX,SCI_DDM,239,5,1,,,,
+DDMI_DDM2_PRN_MODE,Pseudo-Random Noise (PRN) Code/Antenna Selection Mode,U1,,HEX,SCI_DDM,239,6,2,,,,"DDM Track Header, byte 43"
+DDMI_DDM2_PRN_CODE,PRN Code,U12,,HEX,SCI_DDM,240,0,6,,,,"DDM Track Header, byte 47, Satellite Selection (PRN)"
+DDMI_DDM2_ANT,Antenna,U1,,HEX,SCI_DDM,240,6,2,,,,"DDM Track Header, byte 48"
+DDMI_DDM2_COMP_DELAY,Compression algorithm delay shift,I1,,HEX,SCI_DDM,241,0,5,,,,Compression Algorithm Variable
+DDMI_DDM2_COMP_DOPP,Compression algorithm doppler shift,I1,,HEX,SCI_DDM,241,5,3,,,,Compression Algorithm Variable
+DDMI_DDM2_COMP,Delay Doppler Map (1696 bits for compressed DDM),U1,,HEX,SCI_DDM,242,0,1696,,,,"Using non-BB DDM for size, rounded to 1696 bits for byte alignment"
+DDMI_DDM3_TEST_DDM,Set if DDM is a Test DDM,U1,,HEX,SCI_DDM,454,0,1,,,,"0=Regular DDM, 1=Test DDM"
+DDMI_DDM3_CRC_INVALID,CRC Valid/Invalid Flag (from SpW DDM packet),U1,,HEX,SCI_DDM,454,1,1,,,,
+DDMI_DDM3_LNA_SW,Low-Noise Amplifier (LNA) Switch State,U1,,HEX,SCI_DDM,454,2,1,,,,"DDM Track Header, Calibration RF Front-End State"
+DDMI_DDM3_RECONFIG,Reconfiguration Flag,U1,,HEX,SCI_DDM,454,3,1,,,,"DDM Packet, byte 8"
+SCI_DDM_DDM3_SPARE1,Spare bit,U1,,HEX,SCI_DDM,454,4,1,,,,
+SCI_DDM_DDM3_SPARE2,Spare bit,U1,,HEX,SCI_DDM,454,5,1,,,,
+DDMI_DDM3_PRN_MODE,Pseudo-Random Noise (PRN) Code/Antenna Selection Mode,U1,,HEX,SCI_DDM,454,6,2,,,,"DDM Track Header, byte 43"
+DDMI_DDM3_PRN_CODE,PRN Code,U12,,HEX,SCI_DDM,455,0,6,,,,"DDM Track Header, byte 47, Satellite Selection (PRN)"
+DDMI_DDM3_ANT,Antenna,U1,,HEX,SCI_DDM,455,6,2,,,,"DDM Track Header, byte 48"
+DDMI_DDM3_COMP_DELAY,Compression algorithm delay shift,I1,,HEX,SCI_DDM,456,0,5,,,,Compression Algorithm Variable
+DDMI_DDM3_COMP_DOPP,Compression algorithm doppler shift,I1,,HEX,SCI_DDM,456,5,3,,,,Compression Algorithm Variable
+DDMI_DDM3_COMP,Delay Doppler Map (1696 bits for compressed DDM),U1,,HEX,SCI_DDM,457,0,1696,,,,"Using non-BB DDM for size, rounded to 1696 bits for byte alignment"
+DDMI_DDM4_TEST_DDM,Set if DDM is a Test DDM,U1,,HEX,SCI_DDM,669,0,1,,,,"0=Regular DDM, 1=Test DDM"
+DDMI_DDM4_CRC_INVALID,CRC Valid/Invalid Flag (from SpW DDM packet),U1,,HEX,SCI_DDM,669,1,1,,,,
+DDMI_DDM4_LNA_SW,Low-Noise Amplifier (LNA) Switch State,U1,,HEX,SCI_DDM,669,2,1,,,,"DDM Track Header, Calibration RF Front-End State"
+DDMI_DDM4_RECONFIG,Reconfiguration Flag,U1,,HEX,SCI_DDM,669,3,1,,,,"DDM Packet, byte 8"
+SCI_DDM_DDM4_SPARE1,Spare bit,U1,,HEX,SCI_DDM,669,4,1,,,,
+SCI_DDM_DDM4_SPARE2,Spare bit,U1,,HEX,SCI_DDM,669,5,1,,,,
+DDMI_DDM4_PRN_MODE,Pseudo-Random Noise (PRN) Code/Antenna Selection Mode,U1,,HEX,SCI_DDM,669,6,2,,,,"DDM Track Header, byte 43"
+DDMI_DDM4_PRN_CODE,PRN Code,U12,,HEX,SCI_DDM,670,0,6,,,,"DDM Track Header, byte 47, Satellite Selection (PRN)"
+DDMI_DDM4_ANT,Antenna,U1,,HEX,SCI_DDM,670,6,2,,,,"DDM Track Header, byte 48"
+DDMI_DDM4_COMP_DELAY,Compression algorithm delay shift,I1,,HEX,SCI_DDM,671,0,5,,,,Compression Algorithm Variable
+DDMI_DDM4_COMP_DOPP,Compression algorithm doppler shift,I1,,HEX,SCI_DDM,671,5,3,,,,Compression Algorithm Variable
+DDMI_DDM4_COMP,Delay Doppler Map (1696 bits for compressed DDM),U1,,HEX,SCI_DDM,672,0,1696,,,,"Using non-BB DDM for size, rounded to 1696 bits for byte alignment"
+SCI_DDM_PADDING,Padding to ensure 4-byte alignment,U12,,HEX,SCI_DDM,884,0,16,,,,
+SCI_DDM_CKSUM,Sum of all prior bytes (including headers) with carry,U12,,HEX,SCI_DDM,886,0,16,,,,
