@@ -1,6 +1,9 @@
 import numpy as np
+import os
 
 from .. import FixedLength, PacketField
+
+TEST_FILENAME = "ccsds_test.bin"
 
 
 def create_simple_ccsds_packet(n=1):
@@ -33,7 +36,7 @@ def create_simple_ccsds_packet(n=1):
         packet[4 + i * total_packet_length] = 512
         packet[6 + i * total_packet_length] = 10000
 
-    packet.tofile("ccsds_test.bin")
+    packet.tofile(TEST_FILENAME)
     return packet
 
 
@@ -61,6 +64,7 @@ def test_primary_header_contents_no_offset():
     assert(result["BOO"] == 314 * np.ones(num_packets, dtype="uint")).all()
     assert (result["FOO"] == 512 * np.ones(num_packets, dtype="uint")).all()
     assert (result["BLAH"] == 10000 * np.ones(num_packets, dtype="uint")).all()
+    os.remove(TEST_FILENAME)
 
 
 def test_primary_header_contents_offset():
@@ -87,3 +91,4 @@ def test_primary_header_contents_offset():
     assert(result["BOO"] == 314 * np.ones(num_packets, dtype="uint")).all()
     assert (result["FOO"] == 512 * np.ones(num_packets, dtype="uint")).all()
     assert (result["BLAH"] == 10000 * np.ones(num_packets, dtype="uint")).all()
+    os.remove(TEST_FILENAME)
