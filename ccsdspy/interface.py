@@ -97,7 +97,12 @@ class FixedLength(object):
         ----------
         file: str
            Path to file on the local file system that defines the packet fields.
-           Suports csv files.
+           Currently only suports csv files.  See :download:`simple_csv_3col.csv <../../ccsdspy/tests/data/packet_def/simple_csv_3col.csv>`
+           and :download:`simple_csv_4col.csv <../../ccsdspy/tests/data/packet_def/simple_csv_4col.csv>`
+        
+        Returns
+        -------
+        An instance of FixedLength.
         """
         file_extension = os.path.splitext(file)
         if file_extension[1] == ".csv":
