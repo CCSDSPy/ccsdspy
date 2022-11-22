@@ -1,6 +1,7 @@
 """High level Object-Oriented interface methods for the package."""
 
 __author__ = "Daniel da Silva <mail@danieldasilva.org>"
+import os.path
 
 import numpy as np
 
@@ -89,6 +90,23 @@ class FixedLength(object):
         """
         self._fields = fields[:]
 
+    @classmethod
+    def from_file(cls, file):
+        """
+        Parameters
+        ----------
+        file: str
+           Path to file on the local file system that defines the packet fields.
+           Suports csv files.
+        """
+        file_extension = os.path.splitext(file)
+        if file_extension[1] == ".csv":
+            fields = _get_fields_csv_file(file)
+        else:
+            raise ValueError(f"File type {file_extension[1]} not supported.")
+
+        return cls(fields)
+
     def load(self, file, include_primary_header=False):
         """Decode a file-like object containing a sequence of these packets.
 
@@ -121,3 +139,34 @@ class FixedLength(object):
 
         field_arrays = _decode_fixed_length(file_bytes, self._fields)
         return field_arrays
+
+
+def _get_fields_csv_file(csv_file):
+    """Parse a simple comma-delimiated file that define a packet. Should not include the CCSDS header.
+    Accepts 3 column files (name, data_type, bit_length) or 4 column files (name, data_type, bit_length, bit_offset).
+    A header line is required.
+
+    Parameters
+    ----------
+    csv_file: str
+        Path to file on the local file system, or file-like object
+
+    Returns
+    -------
+    fields: list
+        A list of `PacketField` objects.
+    """
+
+    with open(csv_file, "r") as fp:
+        fields = []
+        lines = fp.readlines()
+        num_cols = len(lines[0].split(','))
+        for line in lines[1:]:  # skip the header row
+            cols = line.split(',')
+            if num_cols == 3:  # 3 col csv file
+                fields.append(PacketField(name=cols[0].strip(), data_type=cols[1].strip(), bit_length=int(cols[2])))
+            if num_cols == 4:  # 4 col csv file provides bit offsets
+                # TODO: Check the consistency of bit_offsets versus past bit_lengths
+                fields.append(PacketField(name=cols[0].strip(), data_type=cols[1].strip(), bit_length=int(cols[2]), bit_offset=int(cols[3])))
+
+    return fields
