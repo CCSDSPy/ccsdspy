@@ -2,6 +2,7 @@
 
 __author__ = "Daniel da Silva <mail@danieldasilva.org>"
 import os.path
+import csv
 
 import numpy as np
 
@@ -147,31 +148,32 @@ class FixedLength(object):
 
 
 def _get_fields_csv_file(csv_file):
-    """Parse a simple comma-delimiated file that define a packet. Should not include the CCSDS header.
-    Accepts 3 column files (name, data_type, bit_length) or 4 column files (name, data_type, bit_length, bit_offset).
-    A header line is required.
+    """Parse a simple comma-delimited file that defines a packet. Should not include the CCSDS header.
+    The minimum set of columns are (name, data_type, bit_length). An optional bit_offset can also be provided.
 
     Parameters
     ----------
     csv_file: str
-        Path to file on the local file system, or file-like object
+        Path to file on the local file system
 
     Returns
     -------
     fields: list
         A list of `PacketField` objects.
     """
+    req_columns = ['name', 'data_type', 'bit_length']
 
     with open(csv_file, "r") as fp:
         fields = []
-        lines = fp.readlines()
-        num_cols = len(lines[0].split(','))
-        for line in lines[1:]:  # skip the header row
-            cols = line.split(',')
-            if num_cols == 3:  # 3 col csv file
-                fields.append(PacketField(name=cols[0].strip(), data_type=cols[1].strip(), bit_length=int(cols[2])))
-            if num_cols == 4:  # 4 col csv file provides bit offsets
-                # TODO: Check the consistency of bit_offsets versus past bit_lengths
-                fields.append(PacketField(name=cols[0].strip(), data_type=cols[1].strip(), bit_length=int(cols[2]), bit_offset=int(cols[3])))
+        reader = csv.DictReader(fp, skipinitialspace=True)
+        headers = reader.fieldnames
+        if not all(req_col in headers for req_col in req_columns):
+            raise ValueError(f"Minimum required columns are {req_columns}.")
+        for row in reader:  # skip the header row
+            if 'bit_offset' not in headers:  # 3 col csv file
+                fields.append(PacketField(name=row['name'], data_type=row['data_type'], bit_length=int(row['bit_length'])))
+            if 'bit_offset' in headers:  # 4 col csv file provides bit offsets
+                # TODO: Check the consistency of bit_offsets versus previous bit_lengths
+                fields.append(PacketField(name=row['name'], data_type=row['data_type'], bit_length=int(row['bit_length']), bit_offset=int(row['bit_offset'])))
 
     return fields
