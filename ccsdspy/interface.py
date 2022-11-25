@@ -1,6 +1,8 @@
 """High level Object-Oriented interface methods for the package."""
 
 __author__ = "Daniel da Silva <mail@danieldasilva.org>"
+import os.path
+import csv
 
 import numpy as np
 
@@ -89,6 +91,28 @@ class FixedLength(object):
         """
         self._fields = fields[:]
 
+    @classmethod
+    def from_file(cls, file):
+        """
+        Parameters
+        ----------
+        file: str
+           Path to file on the local file system that defines the packet fields.
+           Currently only suports csv files.  See :download:`simple_csv_3col.csv <../../ccsdspy/tests/data/packet_def/simple_csv_3col.csv>`
+           and :download:`simple_csv_4col.csv <../../ccsdspy/tests/data/packet_def/simple_csv_4col.csv>`
+        
+        Returns
+        -------
+        An instance of FixedLength.
+        """
+        file_extension = os.path.splitext(file)
+        if file_extension[1] == ".csv":
+            fields = _get_fields_csv_file(file)
+        else:
+            raise ValueError(f"File type {file_extension[1]} not supported.")
+
+        return cls(fields)
+
     def load(self, file, include_primary_header=False):
         """Decode a file-like object containing a sequence of these packets.
 
@@ -121,3 +145,35 @@ class FixedLength(object):
 
         field_arrays = _decode_fixed_length(file_bytes, self._fields)
         return field_arrays
+
+
+def _get_fields_csv_file(csv_file):
+    """Parse a simple comma-delimited file that defines a packet. Should not include the CCSDS header.
+    The minimum set of columns are (name, data_type, bit_length). An optional bit_offset can also be provided.
+
+    Parameters
+    ----------
+    csv_file: str
+        Path to file on the local file system
+
+    Returns
+    -------
+    fields: list
+        A list of `PacketField` objects.
+    """
+    req_columns = ['name', 'data_type', 'bit_length']
+
+    with open(csv_file, "r") as fp:
+        fields = []
+        reader = csv.DictReader(fp, skipinitialspace=True)
+        headers = reader.fieldnames
+        if not all(req_col in headers for req_col in req_columns):
+            raise ValueError(f"Minimum required columns are {req_columns}.")
+        for row in reader:  # skip the header row
+            if 'bit_offset' not in headers:  # 3 col csv file
+                fields.append(PacketField(name=row['name'], data_type=row['data_type'], bit_length=int(row['bit_length'])))
+            if 'bit_offset' in headers:  # 4 col csv file provides bit offsets
+                # TODO: Check the consistency of bit_offsets versus previous bit_lengths
+                fields.append(PacketField(name=row['name'], data_type=row['data_type'], bit_length=int(row['bit_length']), bit_offset=int(row['bit_offset'])))
+
+    return fields
