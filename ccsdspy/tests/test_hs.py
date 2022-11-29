@@ -25,7 +25,7 @@ def _run_apid_test(apid):
     # Setup paths for the definitions, truth, and CCSDS files
     # in the APID directory.
     dir_path = os.path.dirname(os.path.realpath(__file__))
-    apid_dir = os.path.join(dir_path, 'data', 'hs', 'apid{:03d}'.format(apid))
+    apid_dir = os.path.join(dir_path, 'data', 'hs', f'apid{apid:03d}')
     
     defs_file_path = os.path.join(apid_dir, 'defs.csv')
     truth_file_path = glob.glob(os.path.join(apid_dir, '*.cvt.csv')).pop()
@@ -93,7 +93,7 @@ def _load_apid_truth(truth_file_path, defs):
         elif data_type == 'float':
             table_dict[key] = np.array(table_dict[key], dtype=float)
         else:
-            raise RuntimeError('Type {} implemented'.format(data_type))
+            raise RuntimeError(f'Type {data_type} implemented')
         
     return table_dict
 

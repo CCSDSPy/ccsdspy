@@ -48,13 +48,13 @@ if __name__ == '__main__':
                     bit_length = int(bit_length / dim)
                     
                 for j in range(dim):
-                    defs['name'].append('{}[{}]'.format(name, j))
+                    defs['name'].append(f'{name}[{j}]')
                     defs['data_type'].append(data_type)
                     defs['bit_offset'].append(bit_offset)
                     defs['bit_length'].append(bit_length)
                     defs['calibration'].append(calibration)                
 
-        out_filename = 'apid{:03d}/defs.csv'.format(apid)
+        out_filename = f'apid{apid:03d}/defs.csv'
         pd.DataFrame(defs).to_csv(out_filename, index=0)
         print
 

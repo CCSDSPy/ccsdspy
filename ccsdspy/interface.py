@@ -50,13 +50,11 @@ class PacketField(object):
 
         valid_data_types = ('uint', 'int', 'float', 'str', 'fill')
         if data_type not in valid_data_types:
-            raise ValueError('data_type must be one of {valids}'.format(
-                valids=repr(valid_data_types)))
+            raise ValueError(f'data_type must be one of {valid_data_types}')
 
         valid_byte_orders = ('big', 'little')
         if byte_order not in valid_byte_orders:
-            raise ValueError('byte_order must be one of {valids}'.format(
-                valids=repr(valid_byte_orders)))
+            raise ValueError(f'byte_order must be one of {valid_byte_orders}')
 
         self._name = name
         self._data_type = data_type

@@ -53,16 +53,16 @@ def _decode_fixed_length(file_bytes, fields):
             bit_offset[field._name] = field._bit_offset
             counter = field._bit_offset + field._bit_length
         else:
-            raise RuntimeError(("Unexpected case: could not compare"
-                                " bit_offset {} with counter {} for field {}"
-                                ).format(field._bit_offset, counter, field._name))
+            raise RuntimeError(f"Unexpected case: could not compare"
+                                f" bit_offset {field._bit_offset} with "
+                                f"counter {counter} for field {field._name}")
 
     if all(field._bit_offset is None for field in fields):
         assert counter == packet_nbytes * 8, \
             'Field definition != packet length'.format(n=counter-packet_nbytes*8)
     elif counter > packet_nbytes * 8:
         raise RuntimeError(("Packet definition larger than packet length"
-                            " by {} bits").format(counter-(packet_nbytes*8)))
+                            f" by {counter-(packet_nbytes*8)} bits"))
 
     # Setup metadata for each field, consiting of where to look for the field in
     # the file and how to parse it.
