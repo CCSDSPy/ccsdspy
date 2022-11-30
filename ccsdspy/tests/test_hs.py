@@ -21,24 +21,26 @@ def _run_apid_test(apid):
             xxxx.cvt.csv -- CSV holding contents of what CCSDS file should
                             decode to after conversions.
     """
-    
+
     # Setup paths for the definitions, truth, and CCSDS files
     # in the APID directory.
     dir_path = os.path.dirname(os.path.realpath(__file__))
-    apid_dir = os.path.join(dir_path, 'data', 'hs', f'apid{apid:03d}')
-    
-    defs_file_path = os.path.join(apid_dir, 'defs.csv')
-    truth_file_path = glob.glob(os.path.join(apid_dir, '*.cvt.csv')).pop()
-    ccsds_file_path = glob.glob(os.path.join(apid_dir, '*.tlm')).pop()
+    apid_dir = os.path.join(dir_path, "data", "hs", f"apid{apid:03d}")
 
-    assert all(os.path.exists(path) for path in (
-        apid_dir,
-        defs_file_path,
-        truth_file_path,
-        ccsds_file_path,
-    ))
+    defs_file_path = os.path.join(apid_dir, "defs.csv")
+    truth_file_path = glob.glob(os.path.join(apid_dir, "*.cvt.csv")).pop()
+    ccsds_file_path = glob.glob(os.path.join(apid_dir, "*.tlm")).pop()
 
-    
+    assert all(
+        os.path.exists(path)
+        for path in (
+            apid_dir,
+            defs_file_path,
+            truth_file_path,
+            ccsds_file_path,
+        )
+    )
+
     # Load the definitions, the truth data (in CSV format), and the
     # decoded file.
     defs = _load_apid_defs(defs_file_path)
@@ -47,14 +49,14 @@ def _run_apid_test(apid):
 
     # That's it for now. We just test that it runs without
     # exception.
-    
-    
+
+
 def _load_apid_truth(truth_file_path, defs):
     """Load APID truth CSV and return a Table"""
     with open(truth_file_path) as fh:
         lines = fh.readlines()
 
-    colnames = lines[0][:-1].split(',')
+    colnames = lines[0][:-1].split(",")
     table_dict = {colname: [] for colname in colnames}
 
     # Loop through CSV lines, read all as string
@@ -63,7 +65,7 @@ def _load_apid_truth(truth_file_path, defs):
         first_line = True
 
         for row in reader:
-            if first_line:                
+            if first_line:
                 first_line = False
                 continue
 
@@ -72,40 +74,42 @@ def _load_apid_truth(truth_file_path, defs):
 
     # Drop columns we don't need. We only need the columns we decode,
     # taken from the defs.
-    keep_cols = set(defs['name'])
+    keep_cols = set(defs["name"])
 
     for colname in colnames:
         if colname not in keep_cols:
             del table_dict[colname]
-    
+
     # Set the correct types using types from defs.
-    for key, data_type, cal in zip(defs["name"], defs["data_type"], defs["calibration"]):
+    for key, data_type, cal in zip(
+        defs["name"], defs["data_type"], defs["calibration"]
+    ):
 
         if cal:
             dtype = np.array(cal.values()).dtype
             table_dict[key] = np.array(table_dict[key], dtype=dtype)
-        elif data_type == 'uint':
+        elif data_type == "uint":
             table_dict[key] = np.array(table_dict[key], dtype=np.uint)
-        elif data_type == 'int':
+        elif data_type == "int":
             table_dict[key] = np.array(table_dict[key], dtype=int)
-        elif data_type == 'str':
+        elif data_type == "str":
             table_dict[key] = np.array(table_dict[key], dtype=str)
-        elif data_type == 'float':
+        elif data_type == "float":
             table_dict[key] = np.array(table_dict[key], dtype=float)
         else:
-            raise RuntimeError(f'Type {data_type} implemented')
-        
+            raise RuntimeError(f"Type {data_type} implemented")
+
     return table_dict
 
-    
+
 def _load_apid_defs(defs_file_path):
     """Load APID definitions (defs.csv) and return a Table"""
     table_dict = {
-        'name': [],
-        'data_type': [],
-        'bit_offset': [],
-        'bit_length': [],
-        'calibration': []
+        "name": [],
+        "data_type": [],
+        "bit_offset": [],
+        "bit_length": [],
+        "calibration": [],
     }
 
     # Loop through CSV lines, read all as strings.
@@ -114,7 +118,7 @@ def _load_apid_defs(defs_file_path):
         first_line = True
 
         for row in reader:
-            if first_line:                
+            if first_line:
                 first_line = False
                 continue
 
@@ -122,13 +126,12 @@ def _load_apid_defs(defs_file_path):
                 table_dict[key].append(row_value)
 
     # Change from string to final type.
-    table_dict['name'] = [name.upper() for name in table_dict['name']]
-    table_dict['bit_offset'] = [int(n) for n in table_dict['bit_offset']]
-    table_dict['bit_length'] = [int(n) for n in table_dict['bit_length']]
-    
+    table_dict["name"] = [name.upper() for name in table_dict["name"]]
+    table_dict["bit_offset"] = [int(n) for n in table_dict["bit_offset"]]
+    table_dict["bit_length"] = [int(n) for n in table_dict["bit_length"]]
+
     decode_cal = lambda cal: json.loads(cal) if cal else None
-    table_dict['calibration'] = [decode_cal(v) for v
-                                 in table_dict['calibration']]
+    table_dict["calibration"] = [decode_cal(v) for v in table_dict["calibration"]]
 
     return table_dict
 
@@ -136,35 +139,38 @@ def _load_apid_defs(defs_file_path):
 def _decode_ccsds_file(ccsds_file_path, defs):
     pkt_fields = []
 
-    for key, data_type, bit_length in zip(defs["name"], defs["data_type"], defs["bit_length"]):
+    for key, data_type, bit_length in zip(
+        defs["name"], defs["data_type"], defs["bit_length"]
+    ):
         pkt_fields.append(
-            PacketField(name=key,
-                        data_type=data_type,
-                        bit_length=bit_length)
+            PacketField(name=key, data_type=data_type, bit_length=bit_length)
         )
 
     pkt = FixedLength(pkt_fields)
     decoded = pkt.load(ccsds_file_path)
-  
+
     return decoded
 
 
 def test_hs_apid001():
     _run_apid_test(1)
-    
+
+
 def test_hs_apid010():
     _run_apid_test(10)
+
 
 def test_hs_apid035():
     _run_apid_test(35)
 
+
 def test_hs_apid130():
     _run_apid_test(130)
+
 
 def test_hs_apid251():
     _run_apid_test(251)
 
+
 def test_hs_apid895():
     _run_apid_test(895)
-    
-    
