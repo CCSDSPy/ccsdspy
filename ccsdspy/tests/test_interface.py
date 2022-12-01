@@ -1,6 +1,6 @@
 """Tests for the ccsdspy.interface module.
 """
-__author__ = 'Daniel da Silva'
+__author__ = "Daniel da Silva"
 
 import os.path
 
@@ -9,9 +9,9 @@ import pytest
 from ..interface import FixedLength, PacketField, _get_fields_csv_file
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-packet_def_dir = os.path.join(dir_path, 'data', 'packet_def')
-csv_file_4col = os.path.join(packet_def_dir, 'simple_csv_4col.csv')
-csv_file_3col = os.path.join(packet_def_dir, 'simple_csv_3col.csv')
+packet_def_dir = os.path.join(dir_path, "data", "packet_def")
+csv_file_4col = os.path.join(packet_def_dir, "simple_csv_4col.csv")
+csv_file_3col = os.path.join(packet_def_dir, "simple_csv_3col.csv")
 
 
 def test_PacketField_initializer_raises_ValueError_on_bad_data_type():
@@ -19,10 +19,9 @@ def test_PacketField_initializer_raises_ValueError_on_bad_data_type():
     data_type is provided.
     """
     with pytest.raises(ValueError):
-        PacketField(name='mnemonic', data_type='fizz', bit_length=1)
+        PacketField(name="mnemonic", data_type="fizz", bit_length=1)
     with pytest.raises(ValueError):
-        PacketField(name='mnemonic', data_type='uint', bit_length=1,
-                    byte_order='bloop')
+        PacketField(name="mnemonic", data_type="uint", bit_length=1, byte_order="bloop")
 
 
 def test_PacketField_initializer_raises_TypeError_on_bad_types():
@@ -30,34 +29,33 @@ def test_PacketField_initializer_raises_TypeError_on_bad_types():
     when arguments are of the wrong type.
     """
     with pytest.raises(TypeError):
-        PacketField(name=1, data_type='uint', bit_length=1)
+        PacketField(name=1, data_type="uint", bit_length=1)
     with pytest.raises(TypeError):
-        PacketField(name='mnemonic', data_type=1, bit_length=1)
+        PacketField(name="mnemonic", data_type=1, bit_length=1)
     with pytest.raises(TypeError):
-        PacketField(name='mnemonic', data_type='uint', bit_length='foobar')
+        PacketField(name="mnemonic", data_type="uint", bit_length="foobar")
     with pytest.raises(TypeError):
-        PacketField(name='mnemonic', data_type='uint', bit_length=4,
-                    bit_offset='foo')
+        PacketField(name="mnemonic", data_type="uint", bit_length=4, bit_offset="foo")
 
 
 def test_PacketField_repr():
-    field = PacketField(name='MyField', data_type='uint', bit_length=1)
+    field = PacketField(name="MyField", data_type="uint", bit_length=1)
 
-    assert 'PacketField' in repr(field)
-    assert 'MyField' in repr(field)
+    assert "PacketField" in repr(field)
+    assert "MyField" in repr(field)
 
 
 def test_PacketField_iter():
-    field = PacketField(name='MyField', data_type='uint', bit_length=1)
-    assert dict(field)['name'] == 'MyField'
-    assert dict(field)['dataType'] == 'uint'
+    field = PacketField(name="MyField", data_type="uint", bit_length=1)
+    assert dict(field)["name"] == "MyField"
+    assert dict(field)["dataType"] == "uint"
 
 
 def test_FixedLength_initializer_copies_field_list():
-    """Tests that the FixedLengthPacket initializer stores a copy of the 
+    """Tests that the FixedLengthPacket initializer stores a copy of the
     provided fields list.
     """
-    fields = [PacketField(name='mnemonic', data_type='uint', bit_length=8)]
+    fields = [PacketField(name="mnemonic", data_type="uint", bit_length=8)]
     pkt = FixedLength(fields)
     assert pkt._fields is not fields
 
@@ -72,7 +70,7 @@ def test_get_fields_csv_file_3col():
         lines = fp.readlines()
         num_lines = len(lines)
         for line in lines[1:]:  # skip the header row
-            cols = line.split(',')
+            cols = line.split(",")
             names.append(cols[0].strip())
             data_types.append(cols[1].strip())
             bit_lengths.append(int(cols[2]))
@@ -97,7 +95,7 @@ def test_get_fields_csv_file_4col():
         lines = fp.readlines()
         num_lines = len(lines)
         for line in lines[1:]:  # skip the header row
-            cols = line.split(',')
+            cols = line.split(",")
             names.append(cols[0].strip())
             data_types.append(cols[1].strip())
             bit_lengths.append(int(cols[2]))
@@ -124,4 +122,3 @@ def test_FixedLength_from_file_not_supported(filename):
     """Test that if given an unsupported filetype raises an error"""
     with pytest.raises(ValueError):
         FixedLength.from_file(filename)
-

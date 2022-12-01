@@ -3,7 +3,7 @@ from __future__ import division
 from collections import namedtuple
 import numpy as np
 
-__author__ = 'Daniel da Silva <mail@danieldasilva.org>'
+__author__ = "Daniel da Silva <mail@danieldasilva.org>"
 
 
 def _decode_fixed_length(file_bytes, fields):
@@ -53,31 +53,41 @@ def _decode_fixed_length(file_bytes, fields):
             bit_offset[field._name] = field._bit_offset
             counter = field._bit_offset + field._bit_length
         else:
-            raise RuntimeError(f"Unexpected case: could not compare"
-                                f" bit_offset {field._bit_offset} with "
-                                f"counter {counter} for field {field._name}")
+            raise RuntimeError(
+                f"Unexpected case: could not compare"
+                f" bit_offset {field._bit_offset} with "
+                f"counter {counter} for field {field._name}"
+            )
 
     if all(field._bit_offset is None for field in fields):
-        assert counter == packet_nbytes * 8, \
-            'Field definition != packet length'.format(n=counter-packet_nbytes*8)
+        assert counter == packet_nbytes * 8, "Field definition != packet length".format(
+            n=counter - packet_nbytes * 8
+        )
     elif counter > packet_nbytes * 8:
-        raise RuntimeError(("Packet definition larger than packet length"
-                            f" by {counter-(packet_nbytes*8)} bits"))
+        raise RuntimeError(
+            (
+                "Packet definition larger than packet length"
+                f" by {counter-(packet_nbytes*8)} bits"
+            )
+        )
 
     # Setup metadata for each field, consiting of where to look for the field in
     # the file and how to parse it.
-    FieldMeta = namedtuple('Meta', ['nbytes_file', 'start_byte_file',
-                                    'nbytes_final', 'np_dtype'])
+    FieldMeta = namedtuple(
+        "Meta", ["nbytes_file", "start_byte_file", "nbytes_final", "np_dtype"]
+    )
     field_meta = {}
 
     for field in fields:
-        nbytes_file = np.ceil(field._bit_length/8.).astype(int)
+        nbytes_file = np.ceil(field._bit_length / 8.0).astype(int)
 
-        if (bit_offset[field._name] % 8 and
-             bit_offset[field._name] % 8 + field._bit_length > 8):
+        if (
+            bit_offset[field._name] % 8
+            and bit_offset[field._name] % 8 + field._bit_length > 8
+        ):
             nbytes_file += 1
 
-        nbytes_final = {3: 4, 5: 8, 6: 8, 7: 8}.get(nbytes_file,  nbytes_file)
+        nbytes_final = {3: 4, 5: 8, 6: 8, 7: 8}.get(nbytes_file, nbytes_file)
         start_byte_file = bit_offset[field._name] // 8
 
         # byte_order_symbol is only used to control float types here.
@@ -86,15 +96,16 @@ def _decode_fixed_length(file_bytes, fields):
         #  - byte order is not applicable to str types
         byte_order_symbol = "<" if field._byte_order == "little" else ">"
         np_dtype = {
-            'uint': '>u%d' % nbytes_final,
-            'int':  '>i%d' % nbytes_final,
-            'fill': 'S%d' % nbytes_final,
-            'float': '%sf%d' % (byte_order_symbol, nbytes_final),
-            'str':   'S%d' % nbytes_final,
+            "uint": ">u%d" % nbytes_final,
+            "int": ">i%d" % nbytes_final,
+            "fill": "S%d" % nbytes_final,
+            "float": "%sf%d" % (byte_order_symbol, nbytes_final),
+            "str": "S%d" % nbytes_final,
         }[field._data_type]
 
         field_meta[field] = FieldMeta(
-            nbytes_file, start_byte_file, nbytes_final, np_dtype)
+            nbytes_file, start_byte_file, nbytes_final, np_dtype
+        )
 
     # Read the file and calculate length of packet and number of packets in the
     # file. Trim extra bytes that may have occurred by a break in the downlink
@@ -112,13 +123,13 @@ def _decode_fixed_length(file_bytes, fields):
 
     for field in fields:
         meta = field_meta[field]
-        arr = np.zeros(packet_count * meta.nbytes_final, 'u1')
+        arr = np.zeros(packet_count * meta.nbytes_final, "u1")
         xbytes = meta.nbytes_final - meta.nbytes_file
 
         for i in range(xbytes, meta.nbytes_final):
-            arr[i::meta.nbytes_final] = (
-                file_bytes[meta.start_byte_file + i - xbytes::packet_nbytes]
-            )
+            arr[i :: meta.nbytes_final] = file_bytes[
+                meta.start_byte_file + i - xbytes :: packet_nbytes
+            ]
             field_bytes[field] = arr
 
     # Switch dtype of byte arrays to the final dtype, and apply masks and shifts
@@ -130,20 +141,18 @@ def _decode_fixed_length(file_bytes, fields):
         arr = field_bytes[field]
         arr.dtype = meta.np_dtype
 
-        if field._data_type in ('int', 'uint'):
+        if field._data_type in ("int", "uint"):
             xbytes = meta.nbytes_final - meta.nbytes_file
 
-            bitmask_left = (bit_offset[field._name]
-                            + 8 * xbytes
-                            - 8 * meta.start_byte_file)
-
-            bitmask_right = (8 * meta.nbytes_final
-                             - bitmask_left
-                             - field._bit_length)
-
-            bitmask_left, bitmask_right = (
-                np.array([bitmask_left, bitmask_right]).astype(meta.np_dtype)
+            bitmask_left = (
+                bit_offset[field._name] + 8 * xbytes - 8 * meta.start_byte_file
             )
+
+            bitmask_right = 8 * meta.nbytes_final - bitmask_left - field._bit_length
+
+            bitmask_left, bitmask_right = np.array(
+                [bitmask_left, bitmask_right]
+            ).astype(meta.np_dtype)
 
             bitmask = np.zeros(arr.shape, meta.np_dtype)
             bitmask |= (1 << int(8 * meta.nbytes_final - bitmask_left)) - 1
@@ -153,7 +162,7 @@ def _decode_fixed_length(file_bytes, fields):
             arr &= bitmask
             arr >>= bitmask_right
 
-            if field._byte_order == 'little':
+            if field._byte_order == "little":
                 arr.byteswap(inplace=True)
 
         field_arrays[field._name] = arr

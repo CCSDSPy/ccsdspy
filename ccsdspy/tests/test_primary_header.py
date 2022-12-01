@@ -59,9 +59,13 @@ def test_primary_header_contents_no_offset():
     assert (result["CCSDS_SECONDARY_FLAG"] == np.zeros(num_packets, dtype="uint")).all()
     assert (result["CCSDS_APID"] == 10 * np.ones(num_packets, dtype="uint")).all()
     assert (result["CCSDS_SEQUENCE_FLAG"] == np.ones(num_packets, dtype="uint")).all()
-    assert (result["CCSDS_SEQUENCE_COUNT"] == np.arange(num_packets, dtype="uint")).all()
-    assert (result["CCSDS_PACKET_LENGTH"] == 7 * np.ones(num_packets, dtype="uint")).all()
-    assert(result["BOO"] == 314 * np.ones(num_packets, dtype="uint")).all()
+    assert (
+        result["CCSDS_SEQUENCE_COUNT"] == np.arange(num_packets, dtype="uint")
+    ).all()
+    assert (
+        result["CCSDS_PACKET_LENGTH"] == 7 * np.ones(num_packets, dtype="uint")
+    ).all()
+    assert (result["BOO"] == 314 * np.ones(num_packets, dtype="uint")).all()
     assert (result["FOO"] == 512 * np.ones(num_packets, dtype="uint")).all()
     assert (result["BLAH"] == 10000 * np.ones(num_packets, dtype="uint")).all()
     os.remove(TEST_FILENAME)
@@ -86,9 +90,13 @@ def test_primary_header_contents_offset():
     assert (result["CCSDS_SECONDARY_FLAG"] == np.zeros(num_packets, dtype="uint")).all()
     assert (result["CCSDS_APID"] == 10 * np.ones(num_packets, dtype="uint")).all()
     assert (result["CCSDS_SEQUENCE_FLAG"] == np.ones(num_packets, dtype="uint")).all()
-    assert (result["CCSDS_SEQUENCE_COUNT"] == np.arange(num_packets, dtype="uint")).all()
-    assert (result["CCSDS_PACKET_LENGTH"] == 7 * np.ones(num_packets, dtype="uint")).all()
-    assert(result["BOO"] == 314 * np.ones(num_packets, dtype="uint")).all()
+    assert (
+        result["CCSDS_SEQUENCE_COUNT"] == np.arange(num_packets, dtype="uint")
+    ).all()
+    assert (
+        result["CCSDS_PACKET_LENGTH"] == 7 * np.ones(num_packets, dtype="uint")
+    ).all()
+    assert (result["BOO"] == 314 * np.ones(num_packets, dtype="uint")).all()
     assert (result["FOO"] == 512 * np.ones(num_packets, dtype="uint")).all()
     assert (result["BLAH"] == 10000 * np.ones(num_packets, dtype="uint")).all()
     os.remove(TEST_FILENAME)
