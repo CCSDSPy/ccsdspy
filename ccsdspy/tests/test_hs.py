@@ -6,7 +6,7 @@ import glob
 import json
 import os
 import numpy as np
-from .. import FixedLength, PacketField
+from .. import FixedLength, PacketField, PacketArray
 
 
 def _run_apid_test(apid):
@@ -46,7 +46,6 @@ def _load_apid_defs(defs_file_path):
         "data_type": [],
         "bit_offset": [],
         "bit_length": [],
-        "calibration": [],
     }
 
     # Loop through CSV lines, read all as strings.
@@ -108,3 +107,49 @@ def test_hs_apid251():
 
 def test_hs_apid895():
     _run_apid_test(895)
+
+
+def test_hs_apid035_PacketArray():
+    # Make FixedLength for normal packet
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    apid_dir = os.path.join(dir_path, "data", "hs", "apid035")
+    defs_file_path = os.path.join(apid_dir, "defs.csv")
+    dict_normal_defs = _load_apid_defs(defs_file_path)
+
+    pkt_fields = []
+    tmp = (
+        dict_normal_defs["name"],
+        dict_normal_defs["data_type"],
+        dict_normal_defs["bit_length"],
+    )
+
+    for key, data_type, bit_length in zip(*tmp):
+        pkt_fields.append(
+            PacketField(name=key, data_type=data_type, bit_length=bit_length)
+        )
+
+    normal_pkt = FixedLength(pkt_fields)
+
+    # Make FixedLength for array packet
+    fill_length = sum(dict_normal_defs["bit_length"])
+    fill_length = 8 * 32  # 8 float32s at end
+
+    array_pkt = FixedLength(
+        [
+            PacketField(name="unused", data_type="fill", bit_length=fill_length),
+            PacketArray(
+                name="PKT35_FLT_SIN_2H", data_type="float", bit_length=32, array_shape=8
+            ),
+        ]
+    )
+
+    # Compare data
+    ccsds_file_path = glob.glob(os.path.join(apid_dir, "*.tlm")).pop()
+    normal_result = normal_pkt.load(ccsds_file_path)
+    array_result = array_pkt.load(ccsds_file_path)
+
+    for i in range(8):
+        assert np.all(
+            normal_result[f"PKT35_FLT_SIN_2H[{i}]"]
+            == array_result["PKT35_FLT_SIN_2H"][:, i]
+        )
