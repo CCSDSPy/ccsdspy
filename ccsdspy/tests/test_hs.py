@@ -7,7 +7,6 @@ import json
 import os
 import numpy as np
 from .. import FixedLength, PacketField
-from .. import utils
 
 
 def _run_apid_test(apid):
@@ -67,9 +66,6 @@ def _load_apid_defs(defs_file_path):
     table_dict["name"] = [name.upper() for name in table_dict["name"]]
     table_dict["bit_offset"] = [int(n) for n in table_dict["bit_offset"]]
     table_dict["bit_length"] = [int(n) for n in table_dict["bit_length"]]
-
-    decode_cal = lambda cal: json.loads(cal) if cal else None
-    table_dict["calibration"] = [decode_cal(v) for v in table_dict["calibration"]]
 
     return table_dict
 
