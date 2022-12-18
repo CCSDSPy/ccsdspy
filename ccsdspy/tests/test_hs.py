@@ -4,9 +4,7 @@ using the test data in the data/hs directory.
 import csv
 import glob
 import json
-import io
 import os
-import random
 import numpy as np
 from .. import FixedLength, PacketField
 from .. import utils
@@ -18,17 +16,13 @@ def _run_apid_test(apid):
 
             defs.csv     -- packet definition with conversions.
             xxxx.tlm     -- binary CCSDS file
-            xxxx.cvt.csv -- CSV holding contents of what CCSDS file should
-                            decode to after conversions.
     """
-
     # Setup paths for the definitions, truth, and CCSDS files
     # in the APID directory.
     dir_path = os.path.dirname(os.path.realpath(__file__))
     apid_dir = os.path.join(dir_path, "data", "hs", f"apid{apid:03d}")
 
     defs_file_path = os.path.join(apid_dir, "defs.csv")
-    truth_file_path = glob.glob(os.path.join(apid_dir, "*.cvt.csv")).pop()
     ccsds_file_path = glob.glob(os.path.join(apid_dir, "*.tlm")).pop()
 
     assert all(
@@ -36,70 +30,14 @@ def _run_apid_test(apid):
         for path in (
             apid_dir,
             defs_file_path,
-            truth_file_path,
             ccsds_file_path,
         )
     )
 
-    # Load the definitions, the truth data (in CSV format), and the
-    # decoded file.
+    # Load the definitions, and test that they parse.  We have not prepared
+    # a truth reference for this set of test data.
     defs = _load_apid_defs(defs_file_path)
-    truth = _load_apid_truth(truth_file_path, defs)
-    decoded = _decode_ccsds_file(ccsds_file_path, defs)
-
-    # That's it for now. We just test that it runs without
-    # exception.
-
-
-def _load_apid_truth(truth_file_path, defs):
-    """Load APID truth CSV and return a Table"""
-    with open(truth_file_path) as fh:
-        lines = fh.readlines()
-
-    colnames = lines[0][:-1].split(",")
-    table_dict = {colname: [] for colname in colnames}
-
-    # Loop through CSV lines, read all as string
-    with open(truth_file_path) as fh:
-        reader = csv.reader(fh)
-        first_line = True
-
-        for row in reader:
-            if first_line:
-                first_line = False
-                continue
-
-            for key, row_value in zip(table_dict.keys(), row):
-                table_dict[key].append(row_value)
-
-    # Drop columns we don't need. We only need the columns we decode,
-    # taken from the defs.
-    keep_cols = set(defs["name"])
-
-    for colname in colnames:
-        if colname not in keep_cols:
-            del table_dict[colname]
-
-    # Set the correct types using types from defs.
-    for key, data_type, cal in zip(
-        defs["name"], defs["data_type"], defs["calibration"]
-    ):
-
-        if cal:
-            dtype = np.array(cal.values()).dtype
-            table_dict[key] = np.array(table_dict[key], dtype=dtype)
-        elif data_type == "uint":
-            table_dict[key] = np.array(table_dict[key], dtype=np.uint)
-        elif data_type == "int":
-            table_dict[key] = np.array(table_dict[key], dtype=int)
-        elif data_type == "str":
-            table_dict[key] = np.array(table_dict[key], dtype=str)
-        elif data_type == "float":
-            table_dict[key] = np.array(table_dict[key], dtype=float)
-        else:
-            raise RuntimeError(f"Type {data_type} implemented")
-
-    return table_dict
+    _decode_ccsds_file(ccsds_file_path, defs)
 
 
 def _load_apid_defs(defs_file_path):
