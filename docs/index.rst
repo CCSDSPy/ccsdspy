@@ -46,8 +46,11 @@ The result is returned as a dictionary, containing PacketField names as keys and
         PacketField(name='SPACER',   data_type='fill', bit_length=1),
         PacketField(name='VOLTAGE',  data_type='int',  bit_length=8),
 	PacketArray(
-	    name='SENSOR_GRID', data_type='uint', bit_length=16,
-            array_shape=(32, 32), array_order='C'
+            name='SENSOR_GRID',
+            data_type='uint',
+            bit_length=16,
+            array_shape=(32, 32),
+            array_order='C'
 	),
    ])
    
