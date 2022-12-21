@@ -13,6 +13,19 @@ CCSDSPy provides an IO Interface for reading CCSDS_ data in Python. The CCSDS fo
 
 .. _CCSDS: https://public.ccsds.org/default.aspx
 
+Used By
+-------
+.. image:: _static/used-by/small/goes-r.png
+    :target: https://www.goes-r.gov/
+.. image:: _static/used-by/small/hermes.png
+    :target: https://science.nasa.gov/missions/hermes
+.. image:: _static/used-by/small/punch.png
+    :target: https://punch.space.swri.edu/
+
+Are you using it too? Let us know `through a github issue`_!
+
+.. _through a github issue: https://github.com/ddasilva/ccsdspy/issues/new
+
 Install ccsdspy
 ---------------
 To install ccsdspy from source, you can use
