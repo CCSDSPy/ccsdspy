@@ -9,7 +9,7 @@ PACKET_ID = int("0001100000000000", 2) + AP_ID
 
 packet = b""
 
-data_length = [2, 3, 5, 7, 11, 13, 17, 19, 23,  29]
+data_length = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
 
 for packet_num in range(num_packets):
     packet_length = 2 * data_length[packet_num] - 1
