@@ -139,7 +139,13 @@ def _decode_fixed_length(file_bytes, fields):
     for field in fields:
         meta = field_meta[field]
         arr = field_bytes[field]
-        arr.dtype = meta.np_dtype
+        # ========================== rstrub change to accomodate arrays
+        if meta.nbytes_final > 10:
+            field_arrays[field._name] = arr
+            continue
+        else:
+            arr.dtype = meta.np_dtype
+        # ========================== rstrub change to accomodate arrays
 
         if field._data_type in ("int", "uint"):
             xbytes = meta.nbytes_final - meta.nbytes_file
