@@ -33,7 +33,7 @@ class _BasePacket:
         """
         Parameters
         ----------
-        file: str
+        file : str
            Path to file on the local file system that defines the packet fields.
            Currently only suports csv files.  See :download:`simple_csv_3col.csv <../../ccsdspy/tests/data/packet_def/simple_csv_3col.csv>`
            and :download:`simple_csv_4col.csv <../../ccsdspy/tests/data/packet_def/simple_csv_4col.csv>`
@@ -54,17 +54,18 @@ class _BasePacket:
 class FixedLength(_BasePacket):
     """Define a fixed length packet to decode binary data.
 
-    In the context of engineering and science, fixed length packets correspond
-    to data that is of the same layout every time. Examples of this include
-    sensor time series, status codes, or error messages.
+    Fixed length packets correspond to packats that are the same length and
+    layout every time. A common example of this is housekeeping or status
+    messages.
     """
 
     def __init__(self, fields):
         """
         Parameters
         ----------
-        fields : list of `ccsdspy.PacketField` or `ccsdspy.PacketArray`
+        fields : list of :py:class:`~ccsdspy.PacketField` or :py:class:`~ccsdspy.PacketArray`
             Layout of packet fields contained in the definition.
+
         Raises
         ------
         ValueError
@@ -84,15 +85,16 @@ class FixedLength(_BasePacket):
 
         Parameters
         ----------
-        file: str
+        file : str
            Path to file on the local file system, or file-like object
-        include_primary_header: bool
+        include_primary_header : bool
            If True, provides the primary header in the output
 
         Returns
         -------
-        dictionary mapping field names to NumPy arrays, with key order matching
-        the order fields in the packet.
+        field_arrays : dict, string to NumPy array
+            dictionary mapping field names to NumPy arrays, with key order matching
+            the order of fields in the packet.
         """
         return _load(
             file, self._fields, 'fixed_length',
@@ -103,30 +105,36 @@ class FixedLength(_BasePacket):
 class VariableLength(_BasePacket):
     """Define a variable length packet to decode binary data.    
 
-    Variable length packets are packets which may have a different length each
+    Variable length packets are packets which have a different length each
     time. Each variable length packet should have a single `PacketArray` with
-    the array_shape='expand', which will grow to fill the packet.
+    the `array_shape='expand'`, which will grow to fill the packet.
+
+    Please note that while this class is able to parse fixed length packets, it
+    is much slower. Use the :py:class:`~ccsdspy.FixedLength` class instead.
 
     Rules for variable length packets:
-    - Only one expanding PacketArray (array_shape='expand') is allowed
-    - The expanding array must occur at the end
-    - The expanding array must be of data_type='uint'
-    - All fields must be specified with no bit_offsets (they will be computed
-      automatically)
+        - Do provide only one one expanding PacketArray with
+          `array_shape='expand'`. It must be at the end of of the packet.
+        - Do not specify the primary header fields manually         
+        - Do not specify explicit bit_offsets (they will be computed
+         automatically)
+
     """
     def __init__(self, fields):
         """
         Parameters
         ----------
-        fields : list of `ccsdspy.PacketField` or `ccsdspy.PacketArray`
+        fields : list of :py:class:`~ccsdspy.PacketField` or :py:class:`~ccsdspy.PacketArray`
             Layout of packet fields contained in the definition. No more than  
             one field should have array_shape="expand", and it must occur at
             the end. The field must have no bit_offset's. Do not include the
             primary header fields. 
+
         Raises
         ------
-        ValueError
-            one or more of the arguments are invalid
+        ValueError 
+            one or more of the arguments are invalid, or do not follow the
+            specified rules.
         """
         expand_arrays = [
             field for field in fields
@@ -159,15 +167,16 @@ class VariableLength(_BasePacket):
 
         Parameters
         ----------
-        file: str
+        file : str
            Path to file on the local file system, or file-like object
-        include_primary_header: bool
+        include_primary_header : bool
            If True, provides the primary header in the output
 
         Returns
         -------
-        dictionary mapping field names to NumPy arrays, with key order matching
-        the order fields in the packet.
+        field_arrays : dict, string to NumPy array
+            dictionary mapping field names to NumPy arrays, with key order matching
+            the order of fields in the packet.
         """
         # The variable length decoder requires the full packet definition, so if
         # they didn't want the primary header fields, we parse for them and then
@@ -268,7 +277,7 @@ def _unexpand_field_arrays(field_arrays, expand_history):
 
     Parameters
     ----------
-    field_arrays : dict, str to array
+    field_arrays : dict, str to numpy array
       Dictionary mapping field names to NumPy arrays, with key order matching
       the order fields in the packet. Has a key for each array element.
     expand_history : dict
@@ -303,7 +312,7 @@ def _prepend_primary_header_fields(existing_fields):
 
     Parameters
     ----------
-    existing_fields: list of `ccsdspy.PacketField`
+    existing_fields : list of `ccsdspy.PacketField`
       Non-primary header fields defined by the packet.
 
     Returns
@@ -363,12 +372,12 @@ def _get_fields_csv_file(csv_file):
 
     Parameters
     ----------
-    csv_file: str
+    csv_file : str
         Path to file on the local file system
 
     Returns
     -------
-    fields: list
+    fields : list
         A list of `PacketField` objects.
     """
     req_columns = ["name", "data_type", "bit_length"]

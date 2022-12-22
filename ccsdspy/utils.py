@@ -21,6 +21,7 @@ def split_by_apid(mixed_file, valid_apids=None):
 
     Returns
     -------
+    stream_by_apid : dict, int to :py:class:`~io.BytesIO`
       Dictionary mapping integer apid number to BytesIO instance with the file
       pointer at the beginning of the stream.
     """

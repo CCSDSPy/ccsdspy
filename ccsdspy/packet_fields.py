@@ -103,11 +103,11 @@ class PacketArray(PacketField):
             Data type of the field.
         bit_length : int
             Number of bits contained in the field.
-        array_shape: int or tuple of ints or 'expand'
+        array_shape : int, tuple of ints, or 'expand'
             Shape of the array as a tuple. For a 1-dimensional array, a single integer
-            can be supplied. For detials on expanding arrays, see the VariableLength
+            can be supplied. For detials on expanding arrays, see the :py:class:`~ccsdspy.VariableLength`
             class.
-        array_order: {'C', 'F'}
+        array_order  {'C', 'F'}
             Row-major (C-style) or column-major (Fortran-style) order.
         bit_offset : int, optional
             Bit offset into packet, including the primary header which is 48 bits long.
@@ -123,7 +123,6 @@ class PacketArray(PacketField):
         ValueError
              data_type or byte_order is invalid
         """
-
         if array_shape == 'expand':
             if kwargs['data_type'] is None:
                 kwargs['data_type'] = 'uint'
