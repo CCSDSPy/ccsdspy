@@ -1,6 +1,8 @@
 """Internal decoding routines."""
 from __future__ import division
 from collections import namedtuple
+import warnings
+
 import numpy as np
 
 __author__ = "Daniel da Silva <mail@danieldasilva.org>"
@@ -142,6 +144,7 @@ def _decode_fixed_length(file_bytes, fields):
         arr.dtype = meta.np_dtype
 
         if field._data_type in ("int", "uint"):
+            
             xbytes = meta.nbytes_final - meta.nbytes_file
 
             bitmask_left = (
@@ -195,6 +198,7 @@ def _decode_variable_length(file_bytes, fields):
         packet_starts.append(offset)
         offset += file_bytes[offset + 4] * 256 + file_bytes[offset + 5] + 7
 
+    assert offset == len(file_bytes)
     npackets = len(packet_starts)
         
     # Setup a dictionary mapping a bit offset to each field. It is assumed
@@ -215,23 +219,23 @@ def _decode_variable_length(file_bytes, fields):
             counter += field._bit_length
         else:
             bit_offsets[field._name] = field._bit_offset
-            if field._bit_offset > 48:
-                counter += field._bit_offset
-            
+            counter = max(field._bit_offset + field._bit_length, counter)
+
     # Initialize output dicitonary of field arrays. Expanding fields will be
     # an array of dtype=object (jagged array), which will be an array refrence
-    # at each index. Non-expanding fields are the most suitable data type.
+    # at each index. Non-expanding fields are the matched to the most suitable
+    # data type.
     # ------------------------------------------------------------------------
-    field_arrays = {}
+    field_arrays = {}  # return value of this function
     numpy_dtypes = {}
 
     for field in fields:
         # Number of bytes that the field spans in the file
-        nbytes_file = np.ceil(field._bit_length / 8.0).astype(int)
-
-        if (bit_offsets[field._name] % 8
-            and bit_offsets[field._name] % 8 + field._bit_length > 8):
-            nbytes_file += 1
+        bit_offset = bit_offsets[field._name]
+        nbytes_file = (
+            (bit_offset + field._bit_length - 1) // 8
+            - bit_offset // 8 + 1
+        )
 
         # NumPy only has 2-byte, 4-byte and 8-byte variants (eg, float16, float32,
         # float64, but not float48). Map them to an nbytes for the output.
@@ -257,73 +261,63 @@ def _decode_variable_length(file_bytes, fields):
         else:
             field_arrays[field._name] = np.zeros(npackets, dtype=np_dtype)
 
-        
     # Loop through packets
     # ----------------------------------------------------------------------------
     for pkt_num, packet_start in enumerate(packet_starts):
         packet_nbytes = file_bytes[packet_start + 4] * 256 + \
             file_bytes[packet_start + 5] + 7
-
+        
         for field in fields:
             field_raw_data = None  # will be array of uint8
-
+            start_byte = packet_start + bit_offsets[field._name] // 8
+            
             if field._array_shape == 'expand':
-                start_byte = packet_start + bit_offsets[field._name] // 8
                 stop_byte = packet_start + packet_nbytes
                 field_raw_data = file_bytes[start_byte:stop_byte]
             else:
                 # Get field_raw_data, which are the bytes of the field as uint8 for this
-                # packet
-                
-                nbytes_file = np.ceil(field._bit_length / 8.0).astype(int)                
-                if (bit_offsets[field._name] % 8
-                    and bit_offsets[field._name] % 8 + field._bit_length > 8):
-                    nbytes_file += 1
-
+                # packet                
+                bit_offset = bit_offsets[field._name]
+                nbytes_file = (
+                    (bit_offset + field._bit_length - 1) // 8
+                    - bit_offset // 8 + 1
+                )
+                    
                 nbytes_final = {3: 4, 5: 8, 6: 8, 7: 8}.get(nbytes_file, nbytes_file)
-                start_byte = bit_offsets[field._name] // 8
                 xbytes = nbytes_final - nbytes_file                
                 field_raw_data = np.zeros(nbytes_final, "u1")
                 inds = []
                 for i in range(xbytes, nbytes_final):
-                    field_raw_data[i] = file_bytes[start_byte + i - xbytes]
+                    idx = start_byte + i - xbytes
+                    field_raw_data[i] = file_bytes[idx]
 
-                
             # Switch dtype of byte arrays to the final dtype, and apply masks and shifts
             # to interpret the correct bits.
-            field_raw_data.dtype = numpy_dtypes[field._name]
 
+            field_raw_data.dtype = numpy_dtypes[field._name]               
             if field._data_type in ("int", "uint"):
-                xbytes = nbytes_final - nbytes_file
-                
-                bitmask_left = (
-                    bit_offsets[field._name] + 8 * xbytes - 8 * bit_offsets[field._name]//8
+                 
+                last_byte = start_byte + nbytes_file
+                end_last_parent_byte = last_byte * 8
+                last_occupied_bit = (
+                    packet_start*8 + bit_offsets[field._name] + field._bit_length
                 )
-
-                bitmask_right = 8 * nbytes_final - bitmask_left - field._bit_length
-
-                bitmask_left, bitmask_right = np.array(
-                    [bitmask_left, bitmask_right]
-                ).astype(numpy_dtypes[field._name])
-
-                bitmask = np.zeros(field_raw_data.shape, numpy_dtypes[field._name])
-                bitmask |= (1 << int(8 * nbytes_final - bitmask_left)) - 1                    
-                tmp = np.left_shift([1], bitmask_right)
-
-                bitmask &= np.bitwise_not(tmp[0] - 1).astype(numpy_dtypes[field._name])
-
-                if field._name == 'CCSDS_APID':
-                    import pdb
-                    pdb.set_trace()
-
                 
-                field_raw_data &= bitmask
-                field_raw_data >>= bitmask_right
+                left_bits_before_shift = bit_offsets[field._name] % 8
+                right_shift = end_last_parent_byte - last_occupied_bit        
 
+                assert right_shift >= 0
+                    
+                if left_bits_before_shift > 0:
+                    mask = int('1'*left_bits_before_shift, 2)
+                    field_raw_data &= mask
+
+                if right_shift > 0:
+                    field_raw_data >>= right_shift                
+                    
                 if field._byte_order == "little":
                     field_raw_data.byteswap(inplace=True)
 
-                    
             # Set the field in the final array
             if field._array_shape == 'expand':
                 field_arrays[field._name][pkt_num] = field_raw_data

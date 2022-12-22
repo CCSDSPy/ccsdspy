@@ -3,11 +3,13 @@
 import os
 
 import numpy as np
+import pytest
 
 from .. import VariableLength, PacketField, PacketArray
 
 
-def test_var_length_data():
+@pytest.mark.parametrize("include_primary_header", [True, False])
+def test_var_length_data(include_primary_header):
     dir_path = os.path.dirname(os.path.realpath(__file__))
     bin_path = os.path.join(
         dir_path, "data", "var_length", "var_length_packets.bin"
@@ -22,10 +24,13 @@ def test_var_length_data():
         )
     ])
 
-    field_arrays = pkt.load(bin_path)
-
+    field_arrays = pkt.load(
+        bin_path, include_primary_header=include_primary_header
+    )
+    
     assert field_arrays['data'].dtype == object
-
+    assert field_arrays['data'].size == 10
+    
     sizes = [2, 3, 5, 7, 11, 13, 17, 19, 23,  29]
     
     for i in range(10):
