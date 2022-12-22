@@ -6,10 +6,13 @@ import glob
 import json
 import os
 import numpy as np
-from .. import FixedLength, PacketField, PacketArray
+
+import pytest
+
+from .. import FixedLength, VariableLength, PacketField, PacketArray
 
 
-def _run_apid_test(apid):
+def _run_apid_test(apid, cls):
     """Driver for running an APID test. Each apidXXX directory under
     `data/hs` contains:
 
@@ -36,7 +39,7 @@ def _run_apid_test(apid):
     # Load the definitions, and test that they parse.  We have not prepared
     # a truth reference for this set of test data.
     defs = _load_apid_defs(defs_file_path)
-    _decode_ccsds_file(ccsds_file_path, defs)
+    _decode_ccsds_file(ccsds_file_path, defs, cls)
 
 
 def _load_apid_defs(defs_file_path):
@@ -69,7 +72,7 @@ def _load_apid_defs(defs_file_path):
     return table_dict
 
 
-def _decode_ccsds_file(ccsds_file_path, defs):
+def _decode_ccsds_file(ccsds_file_path, defs, cls):
     pkt_fields = []
 
     for key, data_type, bit_length in zip(
@@ -79,34 +82,40 @@ def _decode_ccsds_file(ccsds_file_path, defs):
             PacketField(name=key, data_type=data_type, bit_length=bit_length)
         )
 
-    pkt = FixedLength(pkt_fields)
+    pkt = cls(pkt_fields)
     decoded = pkt.load(ccsds_file_path)
 
     return decoded
 
 
-def test_hs_apid001():
-    _run_apid_test(1)
+@pytest.mark.parametrize("cls", [FixedLength, VariableLength])
+def test_hs_apid001(cls):
+    _run_apid_test(1, cls)
 
 
-def test_hs_apid010():
-    _run_apid_test(10)
+@pytest.mark.parametrize("cls", [FixedLength, VariableLength])
+def test_hs_apid010(cls):
+    _run_apid_test(10, cls)
 
 
-def test_hs_apid035():
-    _run_apid_test(35)
+@pytest.mark.parametrize("cls", [FixedLength, VariableLength])
+def test_hs_apid035(cls):
+    _run_apid_test(35, cls)
 
 
-def test_hs_apid130():
-    _run_apid_test(130)
+@pytest.mark.parametrize("cls", [FixedLength, VariableLength])
+def test_hs_apid130(cls):
+    _run_apid_test(130, cls)
 
 
-def test_hs_apid251():
-    _run_apid_test(251)
+@pytest.mark.parametrize("cls", [FixedLength, VariableLength])
+def test_hs_apid251(cls):
+    _run_apid_test(251, cls)
 
 
-def test_hs_apid895():
-    _run_apid_test(895)
+@pytest.mark.parametrize("cls", [FixedLength, VariableLength])
+def test_hs_apid895(cls):
+    _run_apid_test(895, cls)
 
 
 def test_hs_apid035_PacketArray():

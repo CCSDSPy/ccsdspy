@@ -8,7 +8,7 @@ __author__ = "Daniel da Silva <mail@danieldasilva.org>"
 
 def _decode_fixed_length(file_bytes, fields):
 
-    """Decode a fixed length APID.
+    """Decode a fixed length packet stream of a single APID.
 
     Parameters
     ----------
@@ -158,7 +158,7 @@ def _decode_fixed_length(file_bytes, fields):
             bitmask |= (1 << int(8 * meta.nbytes_final - bitmask_left)) - 1
             tmp = np.left_shift([1], bitmask_right)
             bitmask &= np.bitwise_not(tmp[0] - 1).astype(meta.np_dtype)
-
+            
             arr &= bitmask
             arr >>= bitmask_right
 
@@ -168,3 +168,168 @@ def _decode_fixed_length(file_bytes, fields):
         field_arrays[field._name] = arr
 
     return field_arrays
+
+    
+def _decode_variable_length(file_bytes, fields):
+
+    """Decode a variable length packet stream of a single APID. 
+
+    Parameters
+    ----------
+    file_bytes : array
+       A NumPy array of uint8 type, holding the bytes of the file to decode.
+    fields : list of ccsdspy.interface.PacketField
+       A list of fields, including the secondary header but excluding the
+       primary header.
+
+    Returns
+    -------
+    dictionary mapping field names to NumPy arrays, stored in the same order as
+    the fields array passed.
+    """
+    # Get start indeces of each packet -------------------------------------
+    packet_starts = []
+    offset = 0
+
+    while offset < len(file_bytes):
+        packet_starts.append(offset)
+        offset += file_bytes[offset + 4] * 256 + file_bytes[offset + 5] + 7
+
+    npackets = len(packet_starts)
+        
+    # Setup a dictionary mapping a bit offset to each field. It is assumed
+    # that the `fields` array contains entries for the secondary header.
+    # ------------------------------------------------------------------------
+    bit_offsets = {}
+    counter = 48
+    
+    for i, field in enumerate(fields):
+        if field._bit_offset is None:
+            if field._array_shape == "expand" and counter % 8 != 0:
+                raise RuntimeError(
+                    "Expanding fields must be byte aligned. Found an instance "
+                    f"where not in field named '{field._name}'"
+                )
+            
+            bit_offsets[field._name] = counter
+            counter += field._bit_length
+        else:
+            bit_offsets[field._name] = field._bit_offset
+            if field._bit_offset > 48:
+                counter += field._bit_offset
+            
+    # Initialize output dicitonary of field arrays. Expanding fields will be
+    # an array of dtype=object (jagged array), which will be an array refrence
+    # at each index. Non-expanding fields are the most suitable data type.
+    # ------------------------------------------------------------------------
+    field_arrays = {}
+    numpy_dtypes = {}
+
+    for field in fields:
+        # Number of bytes that the field spans in the file
+        nbytes_file = np.ceil(field._bit_length / 8.0).astype(int)
+
+        if (bit_offsets[field._name] % 8
+            and bit_offsets[field._name] % 8 + field._bit_length > 8):
+            nbytes_file += 1
+
+        # NumPy only has 2-byte, 4-byte and 8-byte variants (eg, float16, float32,
+        # float64, but not float48). Map them to an nbytes for the output.
+        nbytes_final = {3: 4, 5: 8, 6: 8, 7: 8}.get(nbytes_file, nbytes_file)
+
+        # byte_order_symbol is only used to control float types here.
+        #  - uint and int byte order are handled with byteswap later
+        #  - fill is independent of byte order (all 1's)
+        #  - byte order is not applicable to str types
+        byte_order_symbol = "<" if field._byte_order == "little" else ">"
+        np_dtype = {
+            "uint": ">u%d" % nbytes_final,
+            "int": ">i%d" % nbytes_final,
+            "fill": "S%d" % nbytes_final,
+            "float": "%sf%d" % (byte_order_symbol, nbytes_final),
+            "str": "S%d" % nbytes_final,
+        }[field._data_type]
+
+        numpy_dtypes[field._name] = np_dtype
+
+        if field._array_shape == 'expand':
+            field_arrays[field._name] = np.zeros(npackets, dtype=object)
+        else:
+            field_arrays[field._name] = np.zeros(npackets, dtype=np_dtype)
+
+        
+    # Loop through packets
+    # ----------------------------------------------------------------------------
+    for pkt_num, packet_start in enumerate(packet_starts):
+        packet_nbytes = file_bytes[packet_start + 4] * 256 + \
+            file_bytes[packet_start + 5] + 7
+
+        for field in fields:
+            field_raw_data = None  # will be array of uint8
+
+            if field._array_shape == 'expand':
+                start_byte = packet_start + bit_offsets[field._name] // 8
+                stop_byte = packet_start + packet_nbytes
+                field_raw_data = file_bytes[start_byte:stop_byte]
+            else:
+                # Get field_raw_data, which are the bytes of the field as uint8 for this
+                # packet
+                
+                nbytes_file = np.ceil(field._bit_length / 8.0).astype(int)                
+                if (bit_offsets[field._name] % 8
+                    and bit_offsets[field._name] % 8 + field._bit_length > 8):
+                    nbytes_file += 1
+
+                nbytes_final = {3: 4, 5: 8, 6: 8, 7: 8}.get(nbytes_file, nbytes_file)
+                start_byte = bit_offsets[field._name] // 8
+                xbytes = nbytes_final - nbytes_file                
+                field_raw_data = np.zeros(nbytes_final, "u1")
+                inds = []
+                for i in range(xbytes, nbytes_final):
+                    field_raw_data[i] = file_bytes[start_byte + i - xbytes]
+
+                
+            # Switch dtype of byte arrays to the final dtype, and apply masks and shifts
+            # to interpret the correct bits.
+            field_raw_data.dtype = numpy_dtypes[field._name]
+
+            if field._data_type in ("int", "uint"):
+                xbytes = nbytes_final - nbytes_file
+                
+                bitmask_left = (
+                    bit_offsets[field._name] + 8 * xbytes - 8 * bit_offsets[field._name]//8
+                )
+
+                bitmask_right = 8 * nbytes_final - bitmask_left - field._bit_length
+
+                bitmask_left, bitmask_right = np.array(
+                    [bitmask_left, bitmask_right]
+                ).astype(numpy_dtypes[field._name])
+
+                bitmask = np.zeros(field_raw_data.shape, numpy_dtypes[field._name])
+                bitmask |= (1 << int(8 * nbytes_final - bitmask_left)) - 1                    
+                tmp = np.left_shift([1], bitmask_right)
+
+                bitmask &= np.bitwise_not(tmp[0] - 1).astype(numpy_dtypes[field._name])
+
+                if field._name == 'CCSDS_APID':
+                    import pdb
+                    pdb.set_trace()
+
+                
+                field_raw_data &= bitmask
+                field_raw_data >>= bitmask_right
+
+                if field._byte_order == "little":
+                    field_raw_data.byteswap(inplace=True)
+
+                    
+            # Set the field in the final array
+            if field._array_shape == 'expand':
+                field_arrays[field._name][pkt_num] = field_raw_data
+            else:
+                field_arrays[field._name][pkt_num] = field_raw_data[0]
+
+    return field_arrays
+
+                    
