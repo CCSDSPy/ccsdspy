@@ -22,7 +22,7 @@ Used By
 .. image:: _static/used-by/small/punch.png
     :target: https://punch.space.swri.edu/
 
-Are you using it too? Let us know `through a github issue`_!
+Do you know of other missions that use CCSDSPy? Let us know `through a github issue`_!
 
 .. _through a github issue: https://github.com/ddasilva/ccsdspy/issues/new
 
