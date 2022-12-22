@@ -67,7 +67,8 @@ def test_split_by_apid_and_decode(cls):
             )
             fields.append(field)
 
-            packet_by_apid[apid] = cls(fields)
+        # drop first seven because are they primary header
+        packet_by_apid[apid] = cls(fields[7:])
 
     # Do split and test result to ground truth
     mixed_stream = os.path.join(

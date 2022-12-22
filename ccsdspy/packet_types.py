@@ -1,4 +1,3 @@
-
 """High-level Object-oriented API for the different types of packets
 (FixedLength and VariableLength) supported by the package.
 """
@@ -122,7 +121,8 @@ class VariableLength(_BasePacket):
         fields : list of `ccsdspy.PacketField` or `ccsdspy.PacketArray`
             Layout of packet fields contained in the definition. No more than  
             one field should have array_shape="expand", and it must occur at
-            the end. The field must have no bit_offset's.
+            the end. The field must have no bit_offset's. Do not include the
+            primary header fields. 
         Raises
         ------
         ValueError
@@ -169,10 +169,34 @@ class VariableLength(_BasePacket):
         dictionary mapping field names to NumPy arrays, with key order matching
         the order fields in the packet.
         """
-        return _load(
+        # The variable length decoder requires the full packet definition, so if
+        # they didn't want the primary header fields, we parse for them and then
+        # remove them after.
+        packet_arrays = _load(
             file, self._fields, 'variable_length',
-            include_primary_header=include_primary_header
+            include_primary_header=True
         )
+
+        if not include_primary_header:
+            _delete_primary_header_fields(packet_arrays)
+
+        return packet_arrays
+
+
+def _delete_primary_header_fields(packet_arrays):
+    """Modifies in place the packet arrays dictionary to delete primary    
+    header fields.
+    
+    Parameters
+    -----------
+    packet_arrays
+        dictionary mapping field names to NumPy arrays, with key order matching
+        the order fields in the packet. Modified in place
+    """
+    header_fields = _prepend_primary_header_fields([])
+
+    for header_field in header_fields:
+        del packet_arrays[header_field._name]
 
     
 def _expand_array_fields(existing_fields):
@@ -218,13 +242,18 @@ def _expand_array_fields(existing_fields):
             "fields": {},
         }
 
-        for indeces in zip(*indeces_flat):
+        for i, indeces in enumerate(zip(*indeces_flat)):
             name = f"{existing_field._name}[{','.join(map(str,indeces))}]"
+            if existing_field._bit_offset is None:
+                bit_offset = None
+            else:
+                bit_offset = existing_field._bit_offset + i * existing_field._bit_length
+
             return_field = PacketField(
                 name=name,
                 data_type=existing_field._data_type,
                 bit_length=existing_field._bit_length,
-                bit_offset=existing_field._bit_offset,
+                bit_offset=bit_offset,
                 byte_order=existing_field._byte_order,
             )
 

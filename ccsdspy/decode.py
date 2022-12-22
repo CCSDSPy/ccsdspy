@@ -30,7 +30,7 @@ def _decode_fixed_length(file_bytes, fields):
     packet_nbytes = file_bytes[4] * 256 + file_bytes[5] + 7
     body_nbytes = sum(field._bit_length for field in fields) // 8
     counter = (packet_nbytes - body_nbytes) * 8
-
+    
     bit_offset = {}
 
     for i, field in enumerate(fields):
@@ -205,7 +205,7 @@ def _decode_variable_length(file_bytes, fields):
     # that the `fields` array contains entries for the secondary header.
     # ------------------------------------------------------------------------
     bit_offsets = {}
-    counter = 48
+    counter = 0
     
     for i, field in enumerate(fields):
         if field._bit_offset is None:

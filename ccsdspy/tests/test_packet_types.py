@@ -9,7 +9,7 @@ import struct
 import numpy as np
 import pytest
 
-from .. import FixedLength, PacketField, PacketArray
+from .. import FixedLength, VariableLength, PacketField, PacketArray
 from ..packet_types import _get_fields_csv_file
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -92,20 +92,30 @@ def test_FixedLength_from_file_not_supported(filename):
 
 
 @pytest.mark.parametrize(
-    "cls,numpy_dtype,ccsdspy_data_type,ccsdspy_bit_length,array_order",
+    "cls,numpy_dtype,ccsdspy_data_type,ccsdspy_bit_length,array_order,include_bit_offset",
     [
-        (FixedLength, ">f4", "float", 32, "C"),
-        (FixedLength, ">f4", "float", 32, "F"),
-        (FixedLength, ">u2", "uint", 16, "C"),
-        (FixedLength, ">u2", "uint", 16, "F"),
-        (FixedLength, ">u8", "uint", 64, "C"),
-        (FixedLength, ">u8", "uint", 64, "F"),
-        (FixedLength, ">i4", "int", 32, "C"),
-        (FixedLength, ">i4", "int", 32, "F"),
+        (FixedLength, ">f4", "float", 32, "C", False),
+        (FixedLength, ">f4", "float", 32, "F", False),
+        (FixedLength, ">u2", "uint", 16, "C", False),
+        (FixedLength, ">u2", "uint", 16, "F", False),
+        (FixedLength, ">u8", "uint", 64, "C", False),
+        (FixedLength, ">u8", "uint", 64, "F", False),
+        (FixedLength, ">i4", "int", 32, "C", False),
+        (FixedLength, ">i4", "int", 32, "F", False),        
+        (FixedLength, ">i4", "int", 32, "F", True),
+
+        (VariableLength, ">f4", "float", 32, "C", False),
+        (VariableLength, ">f4", "float", 32, "F", False),
+        (VariableLength, ">u2", "uint", 16, "C", False),
+        (VariableLength, ">u2", "uint", 16, "F", False),
+        (VariableLength, ">u8", "uint", 64, "C", False),
+        (VariableLength, ">u8", "uint", 64, "F", False),
+        (VariableLength, ">i4", "int", 32, "C", False),
+        (VariableLength, ">i4", "int", 32, "F", False),        
     ],
 )
 def test_multidimensional_array(
-    cls, numpy_dtype, ccsdspy_data_type, ccsdspy_bit_length, array_order
+    cls, numpy_dtype, ccsdspy_data_type, ccsdspy_bit_length, array_order, include_bit_offset
 ):
     """Test the PacketArray class with a multidimensional array.
 
@@ -137,6 +147,11 @@ def test_multidimensional_array(
     assert len(packet_stream) == num_packets * (6 + arrays[0].nbytes)
 
     # Build fixed length parse packet stream
+    if include_bit_offset:
+        bit_offset = 48
+    else:
+        bit_offset = None
+
     pkt = cls(
         [
             PacketArray(
@@ -145,6 +160,7 @@ def test_multidimensional_array(
                 bit_length=ccsdspy_bit_length,
                 array_shape=(32, 4),
                 array_order=array_order,
+                bit_offset=bit_offset,
             )
         ]
     )

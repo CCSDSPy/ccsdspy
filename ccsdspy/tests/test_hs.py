@@ -82,7 +82,8 @@ def _decode_ccsds_file(ccsds_file_path, defs, cls):
             PacketField(name=key, data_type=data_type, bit_length=bit_length)
         )
 
-    pkt = cls(pkt_fields)
+    # Skip first two, which specify the primary header
+    pkt = cls(pkt_fields[2:])
     decoded = pkt.load(ccsds_file_path)
 
     return decoded

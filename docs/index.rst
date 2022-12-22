@@ -21,6 +21,8 @@ Used By
     :target: https://science.nasa.gov/missions/hermes
 .. image:: _static/used-by/small/punch.png
     :target: https://punch.space.swri.edu/
+.. image:: _static/used-by/small/mms.jpg
+    :target: https://mms.gsfc.nasa.gov/
 
 Do you know of other missions that use CCSDSPy? Let us know `through a github issue`_!
 
