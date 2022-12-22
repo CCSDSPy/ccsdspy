@@ -255,13 +255,18 @@ def _expand_array_fields(existing_fields):
             "fields": {},
         }
 
-        for indeces in zip(*indeces_flat):
+        for i, indeces in enumerate(zip(*indeces_flat)):
             name = f"{existing_field._name}[{','.join(map(str,indeces))}]"
+            if existing_field._bit_offset is None:
+                bit_offset = None
+            else:
+                bit_offset = existing_field._bit_offset + i * existing_field._bit_length
+
             return_field = PacketField(
                 name=name,
                 data_type=existing_field._data_type,
                 bit_length=existing_field._bit_length,
-                bit_offset=existing_field._bit_offset,
+                bit_offset=bit_offset,
                 byte_order=existing_field._byte_order,
             )
 

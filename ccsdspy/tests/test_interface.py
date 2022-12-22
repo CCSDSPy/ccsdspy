@@ -128,20 +128,21 @@ def test_FixedLength_from_file_not_supported(filename):
 
 
 @pytest.mark.parametrize(
-    "numpy_dtype,ccsdspy_data_type,ccsdspy_bit_length,array_order",
+    "numpy_dtype,ccsdspy_data_type,ccsdspy_bit_length,array_order,include_bit_offset",
     [
-        (">f4", "float", 32, "C"),
-        (">f4", "float", 32, "F"),
-        (">u2", "uint", 16, "C"),
-        (">u2", "uint", 16, "F"),
-        (">u8", "uint", 64, "C"),
-        (">u8", "uint", 64, "F"),
-        (">i4", "int", 32, "C"),
-        (">i4", "int", 32, "F"),
+        (">f4", "float", 32, "C", False),
+        (">f4", "float", 32, "F", False),
+        (">u2", "uint", 16, "C", False),
+        (">u2", "uint", 16, "F", False),
+        (">u8", "uint", 64, "C", False),
+        (">u8", "uint", 64, "F", False),
+        (">i4", "int", 32, "C", False),
+        (">i4", "int", 32, "F", False),
+        (">i4", "int", 32, "F", True),
     ],
 )
 def test_multidimensional_array(
-    numpy_dtype, ccsdspy_data_type, ccsdspy_bit_length, array_order
+    numpy_dtype, ccsdspy_data_type, ccsdspy_bit_length, array_order, include_bit_offset
 ):
     """Test the PacketArray class with a multidimensional array.
 
@@ -173,6 +174,11 @@ def test_multidimensional_array(
     assert len(packet_stream) == num_packets * (6 + arrays[0].nbytes)
 
     # Build fixed length parse packet stream
+    if include_bit_offset:
+        bit_offset = 48
+    else:
+        bit_offset = None
+
     pkt = FixedLength(
         [
             PacketArray(
@@ -181,6 +187,7 @@ def test_multidimensional_array(
                 bit_length=ccsdspy_bit_length,
                 array_shape=(32, 4),
                 array_order=array_order,
+                bit_offset=bit_offset,
             )
         ]
     )
