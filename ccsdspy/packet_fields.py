@@ -65,7 +65,6 @@ class PacketField:
         self._array_shape = None
         self._array_order = None
 
-        
     def __repr__(self):
         values = {k: repr(v) for (k, v) in self.__dict__.items()}
 
@@ -123,16 +122,14 @@ class PacketArray(PacketField):
         ValueError
              data_type or byte_order is invalid
         """
-        if array_shape == 'expand':
-            if kwargs['data_type'] is None:
-                kwargs['data_type'] = 'uint'
-            elif kwargs['data_type'] != 'uint':
-                raise ValueError(
-                    "Expanding arrays must be data_type='uint'"
-                )
+        if array_shape == "expand":
+            if kwargs["data_type"] is None:
+                kwargs["data_type"] = "uint"
+            elif kwargs["data_type"] != "uint":
+                raise ValueError("Expanding arrays must be data_type='uint'")
         else:
             if isinstance(array_shape, int):
-                array_shape = (array_shape,)            
+                array_shape = (array_shape,)
             if not isinstance(array_shape, tuple):
                 raise TypeError("array_shape parameter must be a tuple of ints")
             if not all(isinstance(dim, int) for dim in array_shape):
@@ -152,4 +149,3 @@ class PacketArray(PacketField):
         self._field_type = "array"
         self._array_shape = array_shape
         self._array_order = array_order
-

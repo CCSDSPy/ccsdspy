@@ -101,9 +101,8 @@ def test_FixedLength_from_file_not_supported(filename):
         (FixedLength, ">u8", "uint", 64, "C", False),
         (FixedLength, ">u8", "uint", 64, "F", False),
         (FixedLength, ">i4", "int", 32, "C", False),
-        (FixedLength, ">i4", "int", 32, "F", False),        
+        (FixedLength, ">i4", "int", 32, "F", False),
         (FixedLength, ">i4", "int", 32, "F", True),
-
         (VariableLength, ">f4", "float", 32, "C", False),
         (VariableLength, ">f4", "float", 32, "F", False),
         (VariableLength, ">u2", "uint", 16, "C", False),
@@ -111,11 +110,16 @@ def test_FixedLength_from_file_not_supported(filename):
         (VariableLength, ">u8", "uint", 64, "C", False),
         (VariableLength, ">u8", "uint", 64, "F", False),
         (VariableLength, ">i4", "int", 32, "C", False),
-        (VariableLength, ">i4", "int", 32, "F", False),        
+        (VariableLength, ">i4", "int", 32, "F", False),
     ],
 )
 def test_multidimensional_array(
-    cls, numpy_dtype, ccsdspy_data_type, ccsdspy_bit_length, array_order, include_bit_offset
+    cls,
+    numpy_dtype,
+    ccsdspy_data_type,
+    ccsdspy_bit_length,
+    array_order,
+    include_bit_offset,
 ):
     """Test the PacketArray class with a multidimensional array.
 

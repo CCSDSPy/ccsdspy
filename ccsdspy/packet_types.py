@@ -18,7 +18,7 @@ class _BasePacket:
     """Base class of FixedLength and VariableLength. Not to be instantiated
     directly.
     """
-    
+
     def _init(self, fields):
         """
         Parameters
@@ -77,9 +77,9 @@ class FixedLength(_BasePacket):
                 "bit_length='expand'. Instead, use the VariableLength "
                 "class."
             )
-        
+
         self._init(fields)
-        
+
     def load(self, file, include_primary_header=False):
         """Decode a file-like object containing a sequence of these packets.
 
@@ -97,13 +97,15 @@ class FixedLength(_BasePacket):
             the order of fields in the packet.
         """
         return _load(
-            file, self._fields, 'fixed_length',
-            include_primary_header=include_primary_header
+            file,
+            self._fields,
+            "fixed_length",
+            include_primary_header=include_primary_header,
         )
 
 
 class VariableLength(_BasePacket):
-    """Define a variable length packet to decode binary data.    
+    """Define a variable length packet to decode binary data.
 
     Variable length packets are packets which have a different length each
     time. Each variable length packet should have a single `PacketArray` with
@@ -115,32 +117,34 @@ class VariableLength(_BasePacket):
     Rules for variable length packets:
         - Do provide only one one expanding PacketArray with
           `array_shape='expand'`. It must be at the end of of the packet.
-        - Do not specify the primary header fields manually         
+        - Do not specify the primary header fields manually
         - Do not specify explicit bit_offsets (they will be computed
          automatically)
 
     """
+
     def __init__(self, fields):
         """
         Parameters
         ----------
         fields : list of :py:class:`~ccsdspy.PacketField` or :py:class:`~ccsdspy.PacketArray`
-            Layout of packet fields contained in the definition. No more than  
+            Layout of packet fields contained in the definition. No more than
             one field should have array_shape="expand", and it must occur at
             the end. The field must have no bit_offset's. Do not include the
-            primary header fields. 
+            primary header fields.
 
         Raises
         ------
-        ValueError 
+        ValueError
             one or more of the arguments are invalid, or do not follow the
             specified rules.
         """
         expand_arrays = [
-            field for field in fields
+            field
+            for field in fields
             if isinstance(field, PacketArray) and field._array_shape == "expand"
         ]
-        
+
         if len(expand_arrays) > 1:
             raise ValueError(
                 "The VariableLength class does not support more than one field "
@@ -152,7 +156,7 @@ class VariableLength(_BasePacket):
             raise ValueError(
                 "Expanding array with array_shape='expand' must be the last field"
             )
-        
+
         if not all(field._bit_offset is None for field in fields):
             raise ValueError(
                 "The VariableLength class does not support explicit bit "
@@ -161,7 +165,7 @@ class VariableLength(_BasePacket):
             )
 
         self._init(fields)
-        
+
     def load(self, file, include_primary_header=False):
         """Decode a file-like object containing a sequence of these packets.
 
@@ -182,8 +186,7 @@ class VariableLength(_BasePacket):
         # they didn't want the primary header fields, we parse for them and then
         # remove them after.
         packet_arrays = _load(
-            file, self._fields, 'variable_length',
-            include_primary_header=True
+            file, self._fields, "variable_length", include_primary_header=True
         )
 
         if not include_primary_header:
@@ -193,9 +196,9 @@ class VariableLength(_BasePacket):
 
 
 def _delete_primary_header_fields(packet_arrays):
-    """Modifies in place the packet arrays dictionary to delete primary    
+    """Modifies in place the packet arrays dictionary to delete primary
     header fields.
-    
+
     Parameters
     -----------
     packet_arrays
@@ -207,7 +210,7 @@ def _delete_primary_header_fields(packet_arrays):
     for header_field in header_fields:
         del packet_arrays[header_field._name]
 
-    
+
 def _expand_array_fields(existing_fields):
     """Expand arrays into multiple fields, one for each element.
 
@@ -231,8 +234,10 @@ def _expand_array_fields(existing_fields):
     expand_history = {}
 
     for existing_field in existing_fields:
-        if (existing_field._field_type != "array" or
-            existing_field._array_shape == "expand"):
+        if (
+            existing_field._field_type != "array"
+            or existing_field._array_shape == "expand"
+        ):
             return_fields.append(existing_field)
             continue
 
@@ -450,15 +455,15 @@ def _load(file, fields, decoder_name, include_primary_header=False):
 
     fields, expand_history = _expand_array_fields(fields)
 
-    if decoder_name == 'fixed_length':        
+    if decoder_name == "fixed_length":
         field_arrays = _decode_fixed_length(file_bytes, fields)
-    elif decoder_name == 'variable_length':
+    elif decoder_name == "variable_length":
         field_arrays = _decode_variable_length(file_bytes, fields)
     else:
         raise ValueError(
             f"Invalid decoder_name 'f{decoder_name}' specified. Must be "
             "either 'fixed_length', or 'variable_length'"
-        )                
+        )
 
     field_arrays = _unexpand_field_arrays(field_arrays, expand_history)
 
