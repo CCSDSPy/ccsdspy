@@ -2,11 +2,14 @@
 """
 __author__ = "Daniel da Silva"
 
+import io
 import os.path
+import struct
 
+import numpy as np
 import pytest
 
-from ..interface import FixedLength, PacketField, _get_fields_csv_file
+from ..interface import FixedLength, PacketField, PacketArray, _get_fields_csv_file
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 packet_def_dir = os.path.join(dir_path, "data", "packet_def")
@@ -122,3 +125,69 @@ def test_FixedLength_from_file_not_supported(filename):
     """Test that if given an unsupported filetype raises an error"""
     with pytest.raises(ValueError):
         FixedLength.from_file(filename)
+
+
+@pytest.mark.parametrize(
+    "numpy_dtype,ccsdspy_data_type,ccsdspy_bit_length,array_order",
+    [
+        (">f4", "float", 32, "C"),
+        (">f4", "float", 32, "F"),
+        (">u2", "uint", 16, "C"),
+        (">u2", "uint", 16, "F"),
+        (">u8", "uint", 64, "C"),
+        (">u8", "uint", 64, "F"),
+        (">i4", "int", 32, "C"),
+        (">i4", "int", 32, "F"),
+    ],
+)
+def test_multidimensional_array(
+    numpy_dtype, ccsdspy_data_type, ccsdspy_bit_length, array_order
+):
+    """Test the PacketArray class with a multidimensional array.
+
+    See test_hs.py for a test with a 1-dimensional array
+    """
+    # Each packet holds a 32x4 array where the array of the k'th packet has:
+    #   arr[i, j] = k * (2 * i + j)
+    num_packets = 10
+    arrays = {}
+
+    for k in range(num_packets):
+        arrays[k] = np.zeros((32, 4), dtype=numpy_dtype)
+
+        for i in range(32):
+            for j in range(4):
+                arrays[k][i, j] = k * (2 * i + j)
+
+    # Generate packets
+    apid = 0x08E2
+    packet_id = int("0001100000000000", 2) + apid
+    packet_stream = b""
+
+    for packet_num in range(num_packets):
+        packet_length = arrays[packet_num].nbytes - 1
+        this_packet = struct.pack(">HHH", packet_id, packet_num, packet_length)
+        this_packet += arrays[packet_num].tobytes(order=array_order)
+        packet_stream += this_packet
+
+    assert len(packet_stream) == num_packets * (6 + arrays[0].nbytes)
+
+    # Build fixed length parse packet stream
+    pkt = FixedLength(
+        [
+            PacketArray(
+                name="array",
+                data_type=ccsdspy_data_type,
+                bit_length=ccsdspy_bit_length,
+                array_shape=(32, 4),
+                array_order=array_order,
+            )
+        ]
+    )
+    results = pkt.load(io.BytesIO(packet_stream))
+
+    # Check results
+    for k in range(num_packets):
+        for i in range(32):
+            for j in range(4):
+                assert results["array"][k, i, j] == k * (2 * i + j)
