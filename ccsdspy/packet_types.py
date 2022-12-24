@@ -116,7 +116,7 @@ class VariableLength(_BasePacket):
 
     Rules for variable length packets:
         - Do provide only one one expanding PacketArray with
-          `array_shape='expand'`. 
+          `array_shape='expand'`.
         - Do not specify the primary header fields manually
         - Do not specify explicit bit_offsets (they will be computed
          automatically)
