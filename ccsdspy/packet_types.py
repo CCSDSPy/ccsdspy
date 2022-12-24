@@ -116,7 +116,7 @@ class VariableLength(_BasePacket):
 
     Rules for variable length packets:
         - Do provide only one one expanding PacketArray with
-          `array_shape='expand'`. It must be at the end of of the packet.
+          `array_shape='expand'`. 
         - Do not specify the primary header fields manually
         - Do not specify explicit bit_offsets (they will be computed
          automatically)
@@ -129,9 +129,8 @@ class VariableLength(_BasePacket):
         ----------
         fields : list of :py:class:`~ccsdspy.PacketField` or :py:class:`~ccsdspy.PacketArray`
             Layout of packet fields contained in the definition. No more than
-            one field should have array_shape="expand", and it must occur at
-            the end. The field must have no bit_offset's. Do not include the
-            primary header fields.
+            one field should have array_shape="expand". The field must have no
+            bit_offset's. Do not include the primary header fields.
 
         Raises
         ------

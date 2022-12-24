@@ -265,12 +265,14 @@ def _decode_variable_length(file_bytes, fields):
             file_bytes[packet_start + 4] * 256 + file_bytes[packet_start + 5] + 7
         )
 
-        for field in fields:
+        for i, field in enumerate(fields):
             field_raw_data = None  # will be array of uint8
             start_byte = packet_start + bit_offsets[field._name] // 8
 
             if field._array_shape == "expand":
-                stop_byte = packet_start + packet_nbytes
+                footer_bits = sum(field._bit_length for field in fields[i+1:])
+                assert footer_bits % 8 == 0, 'Expanding field must be byte aligned'
+                stop_byte = packet_start + packet_nbytes - footer_bits // 8
                 field_raw_data = file_bytes[start_byte:stop_byte]
             else:
                 # Get field_raw_data, which are the bytes of the field as uint8 for this
