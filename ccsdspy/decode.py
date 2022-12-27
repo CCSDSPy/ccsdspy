@@ -203,9 +203,11 @@ def _decode_variable_length(file_bytes, fields):
 
     # Setup a dictionary mapping a bit offset to each field. It is assumed
     # that the `fields` array contains entries for the secondary header.
+    # Negative bit offsets are referenced from the end of the packet.
     # ------------------------------------------------------------------------
     bit_offsets = {}
     counter = 0
+    expand_idx = None
 
     for i, field in enumerate(fields):
         if field._bit_offset is None:
@@ -217,9 +219,20 @@ def _decode_variable_length(file_bytes, fields):
 
             bit_offsets[field._name] = counter
             counter += field._bit_length
+
+            if field._array_shape == "expand":
+                expand_idx = i
+                break
         else:
             bit_offsets[field._name] = field._bit_offset
             counter = max(field._bit_offset + field._bit_length, counter)
+
+    if expand_idx is not None:
+        counter = 0
+        footer_fields = fields[expand_idx + 1 :]
+        for i, field in enumerate(reversed(footer_fields)):
+            bit_offsets[field._name] = counter - field._bit_length
+            counter -= field._bit_length
 
     # Initialize output dicitonary of field arrays. Expanding fields will be
     # an array of dtype=object (jagged array), which will be an array refrence
@@ -267,7 +280,14 @@ def _decode_variable_length(file_bytes, fields):
 
         for i, field in enumerate(fields):
             field_raw_data = None  # will be array of uint8
-            start_byte = packet_start + bit_offsets[field._name] // 8
+            if bit_offsets[field._name] < 0:
+                # Footer byte after expanding field: Referenced from end of packet
+                start_byte = (
+                    packet_start + packet_nbytes + bit_offsets[field._name] // 8
+                )
+            else:
+                # Header byte before expanding field: Referenced from start of packet
+                start_byte = packet_start + bit_offsets[field._name] // 8
 
             if field._array_shape == "expand":
                 footer_bits = sum(field._bit_length for field in fields[i + 1 :])
@@ -286,6 +306,7 @@ def _decode_variable_length(file_bytes, fields):
                 xbytes = nbytes_final - nbytes_file
                 field_raw_data = np.zeros(nbytes_final, "u1")
                 inds = []
+
                 for i in range(xbytes, nbytes_final):
                     idx = start_byte + i - xbytes
                     field_raw_data[i] = file_bytes[idx]
@@ -297,11 +318,13 @@ def _decode_variable_length(file_bytes, fields):
             if field._data_type in ("int", "uint"):
                 last_byte = start_byte + nbytes_file
                 end_last_parent_byte = last_byte * 8
-                last_occupied_bit = (
-                    packet_start * 8 + bit_offsets[field._name] + field._bit_length
-                )
 
-                left_bits_before_shift = bit_offsets[field._name] % 8
+                b = bit_offsets[field._name]
+                if b < 0:
+                    b = packet_nbytes * 8 + bit_offsets[field._name]
+
+                last_occupied_bit = packet_start * 8 + b + field._bit_length
+                left_bits_before_shift = b % 8
                 right_shift = end_last_parent_byte - last_occupied_bit
 
                 assert right_shift >= 0

@@ -151,11 +151,6 @@ class VariableLength(_BasePacket):
                 "ambiguous."
             )
 
-        if expand_arrays and expand_arrays[0] is not fields[-1]:
-            raise ValueError(
-                "Expanding array with array_shape='expand' must be the last field"
-            )
-
         if not all(field._bit_offset is None for field in fields):
             raise ValueError(
                 "The VariableLength class does not support explicit bit "
