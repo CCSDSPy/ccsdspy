@@ -1,11 +1,61 @@
 import csv
 import glob
 import os
+import shutil
+import tempfile
 
 import numpy as np
 
 from .. import FixedLength, PacketField
+from ..__main__ import module_main
 from ..utils import split_by_apid
+
+
+def test_command_line_split():
+    """Tests command line interface to the code"""
+    # TemporaryDirectory() will delete itself when its garbage collected
+    # or when the program ends
+    tmp_dir = tempfile.TemporaryDirectory()
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    data_path = os.path.join(dir_path, "data", "split")
+    mixed_stream = os.path.join(
+        data_path, "CYGNSS_F7_L0_2022_086_10_15_V01_F__first100pkts.tlm"
+    )
+    shutil.copy(mixed_stream, tmp_dir.name)
+
+    # Call module_main() with fake argv and custom working directory
+    module_main(
+        argv=[
+            "__tests__",
+            "split",
+            mixed_stream,
+        ],
+        cwd=tmp_dir.name,
+    )
+
+    # Check files in output directory
+    expected_files = [
+        "apid00384.tlm",
+        "apid00386.tlm",
+        "apid00391.tlm",
+        "apid00392.tlm",
+        "apid00393.tlm",
+        "apid00394.tlm",
+        "apid01313.tlm",
+    ]
+
+    for expected_file in expected_files:
+        expected_path = os.path.join(data_path, expected_file)
+        got_path = os.path.join(tmp_dir.name, expected_file)
+
+        assert os.path.exists(got_path), got_path
+
+        with open(expected_path, "rb") as fh:
+            expected_bytes = fh.read()
+        with open(got_path, "rb") as fh:
+            got_bytes = fh.read()
+
+        assert expected_bytes == got_bytes
 
 
 def test_split_by_apid_and_decode():
