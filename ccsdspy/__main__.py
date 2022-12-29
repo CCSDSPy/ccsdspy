@@ -6,11 +6,13 @@ This is called with `python -m ccsdspy`
 __author__ = "Daniel da Silva <mail@danieldasilva.org>"
 
 import argparse
+import os
+import sys
 
 from .utils import split_by_apid
 
 
-def module_main():
+def module_main(argv=sys.argv, cwd=os.getcwd()):
     """Main method of the module, run with `python -m ccsdspy [..]"""
     # Parse command line arguments
     parser = argparse.ArgumentParser()
@@ -27,7 +29,7 @@ def module_main():
     split_parser.add_argument("file")
     split_parser.add_argument("--valid-apids", help="Valid APIDs seperated by comma")
 
-    args = parser.parse_args()
+    args = parser.parse_args(argv[1:])
 
     # Implemention of split command, which splits a mixed stream and writes
     # to the current directory.
@@ -46,7 +48,7 @@ def module_main():
             if valid_apids and apid not in valid_apids:
                 continue
 
-            out_file_name = f"./apid{apid:05d}.tlm"
+            out_file_name = f"{cwd}/apid{apid:05d}.tlm"
             print(f"Writing {out_file_name}")
 
             with open(out_file_name, "wb") as file_out:
