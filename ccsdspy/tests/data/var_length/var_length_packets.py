@@ -19,7 +19,7 @@ for packet_num in range(num_packets):
         packet_length += 2
 
     this_packet = struct.pack(">HHH", PACKET_ID, packet_num, packet_length)
-#  data array contents start with the array size value and increment by one (e.g. [2, 3], [3, 4, 5])
+    #  data array contents start with the array size value and increment by one (e.g. [2, 3], [3, 4, 5])
     for j in range(data_length[packet_num]):
         this_packet += struct.pack(">H", data_length[packet_num] + j)
 

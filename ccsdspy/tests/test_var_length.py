@@ -28,12 +28,13 @@ def test_var_length_data(include_primary_header):
 
     assert field_arrays["data"].dtype == object
     assert field_arrays["data"].size == 10
-
+    assert all([arr.itemsize == 2 for arr in field_arrays["data"]])
+    
     sizes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
 
     for i in range(len(sizes)):
         assert field_arrays["data"][i].shape == (sizes[i],)
-        expected = np.arange(sizes[i], dtype='uint16') + sizes[i]
+        expected = np.arange(sizes[i], dtype="uint16") + sizes[i]
         assert np.all(field_arrays["data"][i] == expected)
 
 
@@ -66,5 +67,5 @@ def test_var_length_data_with_footer(include_primary_header):
 
     for i in range(10):
         assert field_arrays["data"][i].shape == (sizes[i],)
-        expected = np.arange(sizes[i], dtype='uint16') + sizes[i]
+        expected = np.arange(sizes[i], dtype="uint16") + sizes[i]
         assert np.all(field_arrays["data"][i] == expected)
