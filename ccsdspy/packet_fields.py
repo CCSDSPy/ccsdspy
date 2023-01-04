@@ -88,7 +88,7 @@ class PacketField:
 
 class PacketArray(PacketField):
     """An array contained in a packet, similar to :py:class:`~ccsdspy.PacketField` but with multiple
-    elements.
+    elements of the same size (e.g. image).
     """
 
     def __init__(self, *args, array_shape=None, array_order="C", **kwargs):
