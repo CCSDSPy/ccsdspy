@@ -187,7 +187,7 @@ def _decode_variable_length(file_bytes, fields):
 
     Returns
     -------
-    dictionary mapping field names to NumPy arrays, stored in the same order as
+    dict
     the fields array passed.
     """
     # Get start indeces of each packet -------------------------------------
