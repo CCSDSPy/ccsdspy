@@ -12,7 +12,7 @@ AUTHOR_EMAIL = 'mail@danieldasilva.org'
 LICENSE = 'BSD-3'
 URL = 'https://ccsdspy.readthedocs.io/en/latest/'
 # VERSION should be PEP440 compatible (http://www.python.org/dev/peps/pep-0440)
-VERSION = '0.0.13'
+VERSION = '0.0.14'
 
 setup(
     name=PACKAGENAME,
