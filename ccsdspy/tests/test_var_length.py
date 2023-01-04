@@ -33,7 +33,7 @@ def test_var_length_data(include_primary_header):
 
     for i in range(len(sizes)):
         assert field_arrays["data"][i].shape == (sizes[i],)
-        expected = np.arange(sizes[i], 2 * sizes[i])
+        expected = np.arange(sizes[i], dtype='uint16') + sizes[i]
         assert np.all(field_arrays["data"][i] == expected)
 
 
