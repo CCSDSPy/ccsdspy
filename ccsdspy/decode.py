@@ -1,6 +1,8 @@
 """Internal decoding routines."""
 from __future__ import division
 from collections import namedtuple
+import warnings
+
 import numpy as np
 
 __author__ = "Daniel da Silva <mail@danieldasilva.org>"
@@ -8,13 +10,13 @@ __author__ = "Daniel da Silva <mail@danieldasilva.org>"
 
 def _decode_fixed_length(file_bytes, fields):
 
-    """Decode a fixed length APID.
+    """Decode a fixed length packet stream of a single APID.
 
     Parameters
     ----------
     file_bytes : array
        A NumPy array of uint8 type, holding the bytes of the file to decode.
-    fields : list of ccsdspy.interface.PacketField
+    fields : list of ccsdspy.PacketField
        A list of fields, including the secondary header but excluding the
        primary header.
 
@@ -142,6 +144,7 @@ def _decode_fixed_length(file_bytes, fields):
         arr.dtype = meta.np_dtype
 
         if field._data_type in ("int", "uint"):
+
             xbytes = meta.nbytes_final - meta.nbytes_file
 
             bitmask_left = (
@@ -166,5 +169,180 @@ def _decode_fixed_length(file_bytes, fields):
                 arr.byteswap(inplace=True)
 
         field_arrays[field._name] = arr
+
+    return field_arrays
+
+
+def _decode_variable_length(file_bytes, fields):
+
+    """Decode a variable length packet stream of a single APID.
+
+    Parameters
+    ----------
+    file_bytes : array
+       A NumPy array of uint8 type, holding the bytes of the file to decode.
+    fields : list of ccsdspy.PacketField
+       A list of fields, excluding the
+       primary header.
+
+    Returns
+    -------
+    dict
+    A dictionary mapping field names to NumPy arrays, stored in the same order as the fields.
+    """
+    # Get start indeces of each packet -------------------------------------
+    packet_starts = []
+    offset = 0
+
+    while offset < len(file_bytes):
+        packet_starts.append(offset)
+        offset += file_bytes[offset + 4] * 256 + file_bytes[offset + 5] + 7
+
+    assert offset == len(file_bytes)
+    npackets = len(packet_starts)
+
+    # Setup a dictionary mapping a bit offset to each field. It is assumed
+    # that the `fields` array contains entries for the secondary header.
+    # Negative bit offsets are referenced from the end of the packet.
+    # ------------------------------------------------------------------------
+    bit_offsets = {}
+    counter = 0
+    expand_idx = None
+
+    for i, field in enumerate(fields):
+        if field._bit_offset is None:
+            if field._array_shape == "expand" and counter % 8 != 0:
+                raise RuntimeError(
+                    "Expanding fields must be byte aligned. Found an instance "
+                    f"where not in field named '{field._name}'"
+                )
+
+            bit_offsets[field._name] = counter
+            counter += field._bit_length
+
+            if field._array_shape == "expand":
+                expand_idx = i
+                break
+        else:
+            bit_offsets[field._name] = field._bit_offset
+            counter = max(field._bit_offset + field._bit_length, counter)
+
+    if expand_idx is not None:
+        counter = 0
+        footer_fields = fields[expand_idx + 1 :]
+        for i, field in enumerate(reversed(footer_fields)):
+            bit_offsets[field._name] = counter - field._bit_length
+            counter -= field._bit_length
+
+    # Initialize output dicitonary of field arrays. Expanding fields will be
+    # an array of dtype=object (jagged array), which will be an array refrence
+    # at each index. Non-expanding fields are the matched to the most suitable
+    # data type.
+    # ------------------------------------------------------------------------
+    field_arrays = {}  # return value of this function
+    numpy_dtypes = {}
+
+    for field in fields:
+        # Number of bytes that the field spans in the file
+        bit_offset = bit_offsets[field._name]
+        nbytes_file = (bit_offset + field._bit_length - 1) // 8 - bit_offset // 8 + 1
+
+        # NumPy only has 2-byte, 4-byte and 8-byte variants (eg, float16, float32,
+        # float64, but not float48). Map them to an nbytes for the output.
+        nbytes_final = {3: 4, 5: 8, 6: 8, 7: 8}.get(nbytes_file, nbytes_file)
+
+        # byte_order_symbol is only used to control float types here.
+        #  - uint and int byte order are handled with byteswap later
+        #  - fill is independent of byte order (all 1's)
+        #  - byte order is not applicable to str types
+        byte_order_symbol = "<" if field._byte_order == "little" else ">"
+        np_dtype = {
+            "uint": ">u%d" % nbytes_final,
+            "int": ">i%d" % nbytes_final,
+            "fill": "S%d" % nbytes_final,
+            "float": "%sf%d" % (byte_order_symbol, nbytes_final),
+            "str": "S%d" % nbytes_final,
+        }[field._data_type]
+
+        numpy_dtypes[field._name] = np_dtype
+
+        if field._array_shape == "expand":
+            field_arrays[field._name] = np.zeros(npackets, dtype=object)
+        else:
+            field_arrays[field._name] = np.zeros(npackets, dtype=np_dtype)
+
+    # Loop through packets
+    # ----------------------------------------------------------------------------
+    for pkt_num, packet_start in enumerate(packet_starts):
+        packet_nbytes = (
+            file_bytes[packet_start + 4] * 256 + file_bytes[packet_start + 5] + 7
+        )
+
+        for i, field in enumerate(fields):
+            field_raw_data = None  # will be array of uint8
+            if bit_offsets[field._name] < 0:
+                # Footer byte after expanding field: Referenced from end of packet
+                start_byte = (
+                    packet_start + packet_nbytes + bit_offsets[field._name] // 8
+                )
+            else:
+                # Header byte before expanding field: Referenced from start of packet
+                start_byte = packet_start + bit_offsets[field._name] // 8
+
+            if field._array_shape == "expand":
+                footer_bits = sum(field._bit_length for field in fields[i + 1 :])
+                assert footer_bits % 8 == 0, "Expanding field must be byte aligned"
+                stop_byte = packet_start + packet_nbytes - footer_bits // 8
+                field_raw_data = file_bytes[start_byte:stop_byte]
+            else:
+                # Get field_raw_data, which are the bytes of the field as uint8 for this
+                # packet
+                bit_offset = bit_offsets[field._name]
+                nbytes_file = (
+                    (bit_offset + field._bit_length - 1) // 8 - bit_offset // 8 + 1
+                )
+
+                nbytes_final = {3: 4, 5: 8, 6: 8, 7: 8}.get(nbytes_file, nbytes_file)
+                xbytes = nbytes_final - nbytes_file
+                field_raw_data = np.zeros(nbytes_final, "u1")
+                inds = []
+
+                for i in range(xbytes, nbytes_final):
+                    idx = start_byte + i - xbytes
+                    field_raw_data[i] = file_bytes[idx]
+
+            # Switch dtype of byte arrays to the final dtype, and apply masks and shifts
+            # to interpret the correct bits.
+            field_raw_data.dtype = numpy_dtypes[field._name]
+
+            if field._data_type in ("int", "uint"):
+                last_byte = start_byte + nbytes_file
+                end_last_parent_byte = last_byte * 8
+
+                b = bit_offsets[field._name]
+                if b < 0:
+                    b = packet_nbytes * 8 + bit_offsets[field._name]
+
+                last_occupied_bit = packet_start * 8 + b + field._bit_length
+                left_bits_before_shift = b % 8
+                right_shift = end_last_parent_byte - last_occupied_bit
+
+                assert right_shift >= 0
+
+                if left_bits_before_shift > 0:
+                    mask = int("1" * left_bits_before_shift, 2)
+                    field_raw_data &= mask
+
+                if right_shift > 0:
+                    field_raw_data >>= right_shift
+
+                if field._byte_order == "little":
+                    field_raw_data.byteswap(inplace=True)
+
+            # Set the field in the final array
+            if field._array_shape == "expand":
+                field_arrays[field._name][pkt_num] = field_raw_data
+            else:
+                field_arrays[field._name][pkt_num] = field_raw_data[0]
 
     return field_arrays

@@ -5,8 +5,9 @@ import shutil
 import tempfile
 
 import numpy as np
+import pytest
 
-from .. import FixedLength, PacketField
+from .. import FixedLength, VariableLength, PacketField
 from ..__main__ import module_main
 from ..utils import split_by_apid
 
@@ -58,7 +59,8 @@ def test_command_line_split():
         assert expected_bytes == got_bytes
 
 
-def test_split_by_apid_and_decode():
+@pytest.mark.parametrize("cls", [FixedLength, VariableLength])
+def test_split_by_apid_and_decode(cls):
     # Read each CSV file in the data directory
     dir_path = os.path.dirname(os.path.realpath(__file__))
     data_path = os.path.join(dir_path, "data", "split")
@@ -72,7 +74,7 @@ def test_split_by_apid_and_decode():
         with open(file_name) as csv_file:
             csv_tables[key] = list(csv.DictReader(csv_file))
 
-    # Create a FixedLength for each packet
+    # Create a FixedLength of VariableLength for each packet
     packet_by_apid = {}
 
     for row_overview in csv_tables["Overview"]:
@@ -114,7 +116,8 @@ def test_split_by_apid_and_decode():
             )
             fields.append(field)
 
-            packet_by_apid[apid] = FixedLength(fields)
+        # drop first seven because are they primary header
+        packet_by_apid[apid] = cls(fields[7:])
 
     # Do split and test result to ground truth
     mixed_stream = os.path.join(
@@ -125,11 +128,13 @@ def test_split_by_apid_and_decode():
     )
 
     for apid, stream_from_split in stream_by_apid.items():
-        if apid in [132, 134, 389]:
+        if apid in [132, 134, 389, 391]:
             # Known to have problems for acceptable reasons (insufficient packet definition)
             continue
 
-        split_result = packet_by_apid[apid].load(stream_from_split)
+        split_result = packet_by_apid[apid].load(
+            stream_from_split,
+        )
 
         truth_file = os.path.join(data_path, f"apid{str(apid).zfill(5)}.tlm")
         true_result = packet_by_apid[apid].load(truth_file)

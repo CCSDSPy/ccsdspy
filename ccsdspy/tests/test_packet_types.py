@@ -1,5 +1,5 @@
-"""Tests for the ccsdspy.interface module.
-"""
+"""Tests for the ccsdspy.packet_types module"""
+
 __author__ = "Daniel da Silva"
 
 import io
@@ -9,49 +9,13 @@ import struct
 import numpy as np
 import pytest
 
-from ..interface import FixedLength, PacketField, PacketArray, _get_fields_csv_file
+from .. import FixedLength, VariableLength, PacketField, PacketArray
+from ..packet_types import _get_fields_csv_file
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 packet_def_dir = os.path.join(dir_path, "data", "packet_def")
 csv_file_4col = os.path.join(packet_def_dir, "simple_csv_4col.csv")
 csv_file_3col = os.path.join(packet_def_dir, "simple_csv_3col.csv")
-
-
-def test_PacketField_initializer_raises_ValueError_on_bad_data_type():
-    """Asserts that the PacketField class raises a ValueError when an invalid
-    data_type is provided.
-    """
-    with pytest.raises(ValueError):
-        PacketField(name="mnemonic", data_type="fizz", bit_length=1)
-    with pytest.raises(ValueError):
-        PacketField(name="mnemonic", data_type="uint", bit_length=1, byte_order="bloop")
-
-
-def test_PacketField_initializer_raises_TypeError_on_bad_types():
-    """Asserts that the PacketField class raises a TypeError
-    when arguments are of the wrong type.
-    """
-    with pytest.raises(TypeError):
-        PacketField(name=1, data_type="uint", bit_length=1)
-    with pytest.raises(TypeError):
-        PacketField(name="mnemonic", data_type=1, bit_length=1)
-    with pytest.raises(TypeError):
-        PacketField(name="mnemonic", data_type="uint", bit_length="foobar")
-    with pytest.raises(TypeError):
-        PacketField(name="mnemonic", data_type="uint", bit_length=4, bit_offset="foo")
-
-
-def test_PacketField_repr():
-    field = PacketField(name="MyField", data_type="uint", bit_length=1)
-
-    assert "PacketField" in repr(field)
-    assert "MyField" in repr(field)
-
-
-def test_PacketField_iter():
-    field = PacketField(name="MyField", data_type="uint", bit_length=1)
-    assert dict(field)["name"] == "MyField"
-    assert dict(field)["dataType"] == "uint"
 
 
 def test_FixedLength_initializer_copies_field_list():
@@ -128,21 +92,34 @@ def test_FixedLength_from_file_not_supported(filename):
 
 
 @pytest.mark.parametrize(
-    "numpy_dtype,ccsdspy_data_type,ccsdspy_bit_length,array_order,include_bit_offset",
+    "cls,numpy_dtype,ccsdspy_data_type,ccsdspy_bit_length,array_order,include_bit_offset",
     [
-        (">f4", "float", 32, "C", False),
-        (">f4", "float", 32, "F", False),
-        (">u2", "uint", 16, "C", False),
-        (">u2", "uint", 16, "F", False),
-        (">u8", "uint", 64, "C", False),
-        (">u8", "uint", 64, "F", False),
-        (">i4", "int", 32, "C", False),
-        (">i4", "int", 32, "F", False),
-        (">i4", "int", 32, "F", True),
+        (FixedLength, ">f4", "float", 32, "C", False),
+        (FixedLength, ">f4", "float", 32, "F", False),
+        (FixedLength, ">u2", "uint", 16, "C", False),
+        (FixedLength, ">u2", "uint", 16, "F", False),
+        (FixedLength, ">u8", "uint", 64, "C", False),
+        (FixedLength, ">u8", "uint", 64, "F", False),
+        (FixedLength, ">i4", "int", 32, "C", False),
+        (FixedLength, ">i4", "int", 32, "F", False),
+        (FixedLength, ">i4", "int", 32, "F", True),
+        (VariableLength, ">f4", "float", 32, "C", False),
+        (VariableLength, ">f4", "float", 32, "F", False),
+        (VariableLength, ">u2", "uint", 16, "C", False),
+        (VariableLength, ">u2", "uint", 16, "F", False),
+        (VariableLength, ">u8", "uint", 64, "C", False),
+        (VariableLength, ">u8", "uint", 64, "F", False),
+        (VariableLength, ">i4", "int", 32, "C", False),
+        (VariableLength, ">i4", "int", 32, "F", False),
     ],
 )
 def test_multidimensional_array(
-    numpy_dtype, ccsdspy_data_type, ccsdspy_bit_length, array_order, include_bit_offset
+    cls,
+    numpy_dtype,
+    ccsdspy_data_type,
+    ccsdspy_bit_length,
+    array_order,
+    include_bit_offset,
 ):
     """Test the PacketArray class with a multidimensional array.
 
@@ -179,7 +156,7 @@ def test_multidimensional_array(
     else:
         bit_offset = None
 
-    pkt = FixedLength(
+    pkt = cls(
         [
             PacketArray(
                 name="array",
