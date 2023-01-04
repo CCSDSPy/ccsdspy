@@ -182,7 +182,7 @@ def _decode_variable_length(file_bytes, fields):
     file_bytes : array
        A NumPy array of uint8 type, holding the bytes of the file to decode.
     fields : list of ccsdspy.PacketField
-       A list of fields, including the secondary header but excluding the
+       A list of fields, excluding the
        primary header.
 
     Returns
