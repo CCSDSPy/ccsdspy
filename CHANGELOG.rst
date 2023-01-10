@@ -3,14 +3,15 @@ The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`
 
 Dev
 ===
-
   * Major new documentation added and re-organization.
+  * Started tracking coverage percentage
+
+Version 0.0.13 - 2022-01-03
+===========================
   * Added the ability to parse variable length files
-  * Added ability to split files if containing multiple APIDs
   * Added the ability to specify packet field that are arrays
   * Added the ability to define a packet through a csv file
   * Added github actions to perform continuous intergration
-  * Started tracking coverage percentage
   * Specified black as the only accepted code formatter
 
 Version 0.0.12 - 2022-08-06
