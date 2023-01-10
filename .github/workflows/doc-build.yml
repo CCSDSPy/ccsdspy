@@ -23,7 +23,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
-          apt-get install graphviz -y
+          sudo apt-get install graphviz -y
           python -m pip install --upgrade pip
           python -m pip install sphinx sphinx-automodapi numpydoc graphviz
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
