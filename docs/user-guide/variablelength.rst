@@ -19,14 +19,16 @@ An example is provided below.
 
     pkt = VariableLength(
             [
-                PacketField(name='SHCOARSE', data_type='uint', bit_length=32),
+                PacketField(name='SHCOARSE', data_type='uint',
+                            bit_length=32),
                 PacketArray(
                     name="data",
                     data_type="uint",
                     bit_length=16,
                     array_shape="expand",
                 ),
-                PacketField(name="checksum", data_type="uint", bit_length=16),
+                PacketField(name="checksum", data_type="uint",
+                            bit_length=16),
             ]
         )
 

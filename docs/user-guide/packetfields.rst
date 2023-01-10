@@ -27,12 +27,14 @@ PacketArray
 The `~ccsdspy.PacketArray` provides a simple way to define multiple repeating packet fields.
 It is defined similarly to `~ccsdspy.PacketField` but adds a few new keywords, for example::
 
-    PacketArray(name='SENSOR_GRID', data_type='uint', bit_length=16, array_shape=(32, 32), array_order='C')
+    PacketArray(name='SENSOR_GRID', data_type='uint', bit_length=16,
+                array_shape=(32, 32), array_order='C')
 
 The bit length is the value for each element in the array.
 Defining it this way makes it a fixed length field.
 It is also possible to use it to define a field that can have a variable size.::
 
-    PacketArray(name="data", data_type="uint", bit_length=16, array_shape="expand")
+    PacketArray(name="data", data_type="uint", bit_length=16,
+                array_shape="expand")
 
 This enables the parsing of variable length packets using the `~ccsdspy.VariableLength`.
