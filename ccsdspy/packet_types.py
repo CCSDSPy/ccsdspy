@@ -108,19 +108,16 @@ class VariableLength(_BasePacket):
     """Define a variable length packet to decode binary data.
 
     Variable length packets are packets which have a different length each
-    time. Each variable length packet should have a single `PacketArray` with
+    time. Each variable length packet should have a single `~ccsdspy.PacketArray` with
     the `array_shape='expand'`, which will grow to fill the packet.
 
     Please note that while this class is able to parse fixed length packets, it
     is much slower. Use the :py:class:`~ccsdspy.FixedLength` class instead.
 
     Rules for variable length packets:
-        - Do provide only one one expanding PacketArray with
-          `array_shape='expand'`.
-        - Do not specify the primary header fields manually
-        - Do not specify explicit bit_offsets (they will be computed
-         automatically)
-
+      * Do provide only one one expanding `~ccsdspy.PacketArray` with `array_shape='expand'`.
+      * Do not specify the primary header fields manually
+      * Do not specify explicit bit_offsets (they will be computed automatically)
     """
 
     def __init__(self, fields):

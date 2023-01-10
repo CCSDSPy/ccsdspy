@@ -32,10 +32,13 @@ rawfiles = ['images/logo.png']
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    "sphinx.ext.viewcode",
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.doctest",
     'sphinx_automodapi.automodapi',
+    "sphinx_automodapi.smart_resolver",
     'sphinx.ext.autodoc',
     'sphinx.ext.todo',
-    'sphinx.ext.viewcode',
     'sphinx.ext.coverage',
     'sphinx.ext.githubpages',
     'numpydoc',
@@ -53,6 +56,10 @@ source_suffix = '.rst'
 
 # The master toctree document.
 master_doc = 'index'
+
+# The reST default role (used for this markup: `text`) to use for all
+# documents. Set to the "smart" one.
+default_role = "obj"
 
 # General information about the project.
 project = u'CCSDSPy'
@@ -106,22 +113,35 @@ html_theme_options = {
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+html_logo = '_static/logo.png'
 
+
+# Example configuration for intersphinx: refer to the Python standard library.
+intersphinx_mapping = {
+    "python": (
+        "https://docs.python.org/3/",
+        (None, "http://data.astropy.org/intersphinx/python3.inv"),
+    ),
+    "numpy": (
+        "https://docs.scipy.org/doc/numpy/",
+        (None, "http://data.astropy.org/intersphinx/numpy.inv"),
+    ),
+}
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.
 #
 # This is required for the alabaster theme
 # refs: http://alabaster.readthedocs.io/en/latest/installation.html#sidebars
-html_sidebars = {
-    '**': [
-        'logo.html',
-        'about.html',
-        'github.html',
-        'navigation.html',
+#html_sidebars = {
+#    '**': [
+#        'logo.html',
+#        'about.html',
+#        'github.html',
+#        'navigation.html',
  #       'relations.html',  # needs 'show_related': True theme option to display
-        'searchbox.html',
-    ]
-}
+#        'searchbox.html',
+#    ]
+#}
 
 
 # -- Options for HTMLHelp output ------------------------------------------
@@ -205,3 +225,16 @@ epub_exclude_files = ['search.html']
 autoclass_content = 'both'
 numpydoc_show_class_members = False
 numpydoc_class_members_toctree   = False
+
+
+# Render inheritance diagrams in SVG
+graphviz_output_format = "svg"
+
+graphviz_dot_args = [
+    "-Nfontsize=10",
+    "-Nfontname=Helvetica Neue, Helvetica, Arial, sans-serif",
+    "-Efontsize=10",
+    "-Efontname=Helvetica Neue, Helvetica, Arial, sans-serif",
+    "-Gfontsize=10",
+    "-Gfontname=Helvetica Neue, Helvetica, Arial, sans-serif",
+]
