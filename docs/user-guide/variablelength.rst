@@ -15,22 +15,26 @@ An example is provided below.
 .. code-block:: python
 
    import ccsdspy
-   from ccsdspy import PacketField, PacketArray, VariableLength
+   from ccsdspy import PacketField, PacketArray
 
-    pkt = VariableLength(
-            [
-                PacketField(name='SHCOARSE', data_type='uint',
-                            bit_length=32),
-                PacketArray(
-                    name="data",
-                    data_type="uint",
-                    bit_length=16,
-                    array_shape="expand",
-                ),
-                PacketField(name="checksum", data_type="uint",
-                            bit_length=16),
-            ]
-        )
+    pkt = ccsdspy.VariableLength([
+         PacketField(
+              name='SHCOARSE',
+              data_type='uint',
+              bit_length=32
+         ),
+         PacketArray(
+              name="data",
+              data_type="uint",
+              bit_length=16,
+              array_shape="expand",
+         ),
+         PacketField(
+              name="checksum",
+              data_type="uint",
+              bit_length=16
+         ),
+    ])
 
 The efficiency of parsing variable length packets is significantly decreased compared to fixed length packets.
 Parsing the packets is done in the same way as `~ccsdspy.FixedLength`::
