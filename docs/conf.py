@@ -106,7 +106,11 @@ html_theme = 'alabaster'
 # documentation.
 #
 html_theme_options = {
-    'show_related': True
+    'show_related': True,
+    'github_banner': True,
+    'github_button': True,
+    'github_user': 'ddasilva',
+    'github_repo': 'ccsdspy',
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
