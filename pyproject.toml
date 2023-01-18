@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ccsdpy"
-version = "0.0.14"
+version = "0.0.15dev"
 description = "IO Interface for Reading CCSDS Data in Python."
 authors = ["Daniel da Silva <mail@danieldasilva.org>"]
 readme = "README.rst"
@@ -25,7 +25,7 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.6"    # see https://github.com/python-poetry/poetry/issues/4316
+python = ">=3.6, <=3.10"    # see https://github.com/python-poetry/poetry/issues/4316
 numpy = "^1.8.0"
 
 [tool.poetry.group.dev.dependencies]
