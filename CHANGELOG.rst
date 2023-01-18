@@ -5,6 +5,7 @@ Dev
 ===
   * Major new documentation added and re-organization.
   * Started tracking coverage percentage
+  * Moved packaging to use [Poetry](https://python-poetry.org)
 
 Version 0.0.13 - 2022-01-03
 ===========================
