@@ -330,11 +330,11 @@ def _decode_variable_length(file_bytes, fields):
                 assert right_shift >= 0
 
                 if left_bits_before_shift > 0:
-                    #mask = int("1" * left_bits_before_shift, 2) rstrub
+                    #mask = int("1" * left_bits_before_shift, 2)  rstrub
                     mask = int("1" * ((nbytes_file * 8) - left_bits_before_shift), 2)
                     field_raw_data &= mask
 
-                #if right_shift > 0: rstrub
+                #if right_shift > 0:  rstrub
                 if right_shift > 0 and field._array_shape != "expand":  # we want the msb
                     field_raw_data >>= right_shift
 
