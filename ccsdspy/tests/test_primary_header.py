@@ -1,7 +1,9 @@
 import numpy as np
 import os
 
-from .. import FixedLength, PacketField
+import pytest
+
+from .. import FixedLength, VariableLength, PacketField
 
 TEST_FILENAME = "ccsds_test.bin"
 
@@ -40,12 +42,13 @@ def create_simple_ccsds_packet(n=1):
     return packet
 
 
-def test_primary_header_contents_no_offset():
+@pytest.mark.parametrize("cls", [FixedLength, VariableLength])
+def test_primary_header_contents_no_offset(cls):
     """Test if the primary header is output correctly along with the data without defining bit offsets"""
     num_packets = 3
     packet = create_simple_ccsds_packet(num_packets)
 
-    pkt = FixedLength(
+    pkt = cls(
         [
             PacketField(name="BOO", data_type="uint", bit_length=16),
             PacketField(name="FOO", data_type="uint", bit_length=16),
