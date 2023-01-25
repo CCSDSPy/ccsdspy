@@ -391,10 +391,14 @@ def _get_fields_csv_file(csv_file):
 
         for row in reader:  # skip the header row
             if "bit_offset" not in headers:  # 3 col csv file
-                if (row['data_type'].count('(') == 1) and (row['data_type'].count(')') == 1):
-                    data_type = row['data_type'].split('(')[0]
-                    array_shape_str = row['data_type'][row['data_type'].find('(')+1:row['data_type'].find(')')]
-                    array_shape = tuple(map(int, array_shape_str.split(', ')))
+                if (row["data_type"].count("(") == 1) and (
+                    row["data_type"].count(")") == 1
+                ):
+                    data_type = row["data_type"].split("(")[0]
+                    array_shape_str = row["data_type"][
+                        row["data_type"].find("(") + 1 : row["data_type"].find(")")
+                    ]
+                    array_shape = tuple(map(int, array_shape_str.split(", ")))
                     fields.append(
                         PacketArray(
                             name=row["name"],
@@ -413,10 +417,14 @@ def _get_fields_csv_file(csv_file):
                     )
             if "bit_offset" in headers:  # 4 col csv file provides bit offsets
                 # TODO: Check the consistency of bit_offsets versus previous bit_lengths
-                if (row['data_type'].count('(') == 1) and (row['data_type'].count(')') == 1):
-                    data_type = row['data_type'].split('(')[0]
-                    array_shape_str = row['data_type'][row['data_type'].find('(')+1:row['data_type'].find(')')]
-                    array_shape = tuple(map(int, array_shape_str.split(', ')))
+                if (row["data_type"].count("(") == 1) and (
+                    row["data_type"].count(")") == 1
+                ):
+                    data_type = row["data_type"].split("(")[0]
+                    array_shape_str = row["data_type"][
+                        row["data_type"].find("(") + 1 : row["data_type"].find(")")
+                    ]
+                    array_shape = tuple(map(int, array_shape_str.split(", ")))
                     fields.append(
                         PacketArray(
                             name=row["name"],
