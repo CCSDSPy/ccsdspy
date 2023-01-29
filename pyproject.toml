@@ -37,7 +37,7 @@ dev = [
   'pytest-astropy',
   'pytest-cov',
   'black>=22.10.0',
-  'flake8>=5.04',
+  'flake8>=5.0.4',
   'coverage[toml]'
 ]
 
