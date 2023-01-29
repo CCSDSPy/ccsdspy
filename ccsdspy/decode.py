@@ -1,7 +1,6 @@
 """Internal decoding routines."""
 from __future__ import division
 from collections import namedtuple
-import warnings
 
 import numpy as np
 
@@ -62,31 +61,21 @@ def _decode_fixed_length(file_bytes, fields):
             )
 
     if all(field._bit_offset is None for field in fields):
-        assert counter == packet_nbytes * 8, "Field definition != packet length".format(
-            n=counter - packet_nbytes * 8
-        )
+        assert counter == packet_nbytes * 8, "Field definition != packet length"
     elif counter > packet_nbytes * 8:
         raise RuntimeError(
-            (
-                "Packet definition larger than packet length"
-                f" by {counter-(packet_nbytes*8)} bits"
-            )
+            ("Packet definition larger than packet length" f" by {counter-(packet_nbytes*8)} bits")
         )
 
     # Setup metadata for each field, consiting of where to look for the field in
     # the file and how to parse it.
-    FieldMeta = namedtuple(
-        "Meta", ["nbytes_file", "start_byte_file", "nbytes_final", "np_dtype"]
-    )
+    FieldMeta = namedtuple("Meta", ["nbytes_file", "start_byte_file", "nbytes_final", "np_dtype"])
     field_meta = {}
 
     for field in fields:
         nbytes_file = np.ceil(field._bit_length / 8.0).astype(int)
 
-        if (
-            bit_offset[field._name] % 8
-            and bit_offset[field._name] % 8 + field._bit_length > 8
-        ):
+        if bit_offset[field._name] % 8 and bit_offset[field._name] % 8 + field._bit_length > 8:
             nbytes_file += 1
 
         nbytes_final = {3: 4, 5: 8, 6: 8, 7: 8}.get(nbytes_file, nbytes_file)
@@ -105,9 +94,7 @@ def _decode_fixed_length(file_bytes, fields):
             "str": "S%d" % nbytes_final,
         }[field._data_type]
 
-        field_meta[field] = FieldMeta(
-            nbytes_file, start_byte_file, nbytes_final, np_dtype
-        )
+        field_meta[field] = FieldMeta(nbytes_file, start_byte_file, nbytes_final, np_dtype)
 
     # Read the file and calculate length of packet and number of packets in the
     # file. Trim extra bytes that may have occurred by a break in the downlink
@@ -129,8 +116,8 @@ def _decode_fixed_length(file_bytes, fields):
         xbytes = meta.nbytes_final - meta.nbytes_file
 
         for i in range(xbytes, meta.nbytes_final):
-            arr[i :: meta.nbytes_final] = file_bytes[
-                meta.start_byte_file + i - xbytes :: packet_nbytes
+            arr[i:: meta.nbytes_final] = file_bytes[
+                meta.start_byte_file + i - xbytes:: packet_nbytes
             ]
             field_bytes[field] = arr
 
@@ -147,15 +134,13 @@ def _decode_fixed_length(file_bytes, fields):
 
             xbytes = meta.nbytes_final - meta.nbytes_file
 
-            bitmask_left = (
-                bit_offset[field._name] + 8 * xbytes - 8 * meta.start_byte_file
-            )
+            bitmask_left = bit_offset[field._name] + 8 * xbytes - 8 * meta.start_byte_file
 
             bitmask_right = 8 * meta.nbytes_final - bitmask_left - field._bit_length
 
-            bitmask_left, bitmask_right = np.array(
-                [bitmask_left, bitmask_right]
-            ).astype(meta.np_dtype)
+            bitmask_left, bitmask_right = np.array([bitmask_left, bitmask_right]).astype(
+                meta.np_dtype
+            )
 
             bitmask = np.zeros(arr.shape, meta.np_dtype)
             bitmask |= (1 << int(8 * meta.nbytes_final - bitmask_left)) - 1
@@ -229,7 +214,7 @@ def _decode_variable_length(file_bytes, fields):
 
     if expand_idx is not None:
         counter = 0
-        footer_fields = fields[expand_idx + 1 :]
+        footer_fields = fields[expand_idx + 1:]
         for i, field in enumerate(reversed(footer_fields)):
             bit_offsets[field._name] = counter - field._bit_length
             counter -= field._bit_length
@@ -274,23 +259,19 @@ def _decode_variable_length(file_bytes, fields):
     # Loop through packets
     # ----------------------------------------------------------------------------
     for pkt_num, packet_start in enumerate(packet_starts):
-        packet_nbytes = (
-            file_bytes[packet_start + 4] * 256 + file_bytes[packet_start + 5] + 7
-        )
+        packet_nbytes = file_bytes[packet_start + 4] * 256 + file_bytes[packet_start + 5] + 7
 
         for i, field in enumerate(fields):
             field_raw_data = None  # will be array of uint8
             if bit_offsets[field._name] < 0:
                 # Footer byte after expanding field: Referenced from end of packet
-                start_byte = (
-                    packet_start + packet_nbytes + bit_offsets[field._name] // 8
-                )
+                start_byte = packet_start + packet_nbytes + bit_offsets[field._name] // 8
             else:
                 # Header byte before expanding field: Referenced from start of packet
                 start_byte = packet_start + bit_offsets[field._name] // 8
 
             if field._array_shape == "expand":
-                footer_bits = sum(field._bit_length for field in fields[i + 1 :])
+                footer_bits = sum(field._bit_length for field in fields[i + 1:])
                 assert footer_bits % 8 == 0, "Expanding field must be byte aligned"
                 stop_byte = packet_start + packet_nbytes - footer_bits // 8
                 field_raw_data = file_bytes[start_byte:stop_byte]
@@ -298,14 +279,12 @@ def _decode_variable_length(file_bytes, fields):
                 # Get field_raw_data, which are the bytes of the field as uint8 for this
                 # packet
                 bit_offset = bit_offsets[field._name]
-                nbytes_file = (
-                    (bit_offset + field._bit_length - 1) // 8 - bit_offset // 8 + 1
-                )
+                nbytes_file = (bit_offset + field._bit_length - 1) // 8 - bit_offset // 8 + 1
 
                 nbytes_final = {3: 4, 5: 8, 6: 8, 7: 8}.get(nbytes_file, nbytes_file)
                 xbytes = nbytes_final - nbytes_file
                 field_raw_data = np.zeros(nbytes_final, "u1")
-                inds = []
+                # inds = []
 
                 for i in range(xbytes, nbytes_final):
                     idx = start_byte + i - xbytes

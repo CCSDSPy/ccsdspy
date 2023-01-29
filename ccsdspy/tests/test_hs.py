@@ -3,7 +3,6 @@ using the test data in the data/hs directory.
 """
 import csv
 import glob
-import json
 import os
 import numpy as np
 
@@ -75,12 +74,8 @@ def _load_apid_defs(defs_file_path):
 def _decode_ccsds_file(ccsds_file_path, defs, cls):
     pkt_fields = []
 
-    for key, data_type, bit_length in zip(
-        defs["name"], defs["data_type"], defs["bit_length"]
-    ):
-        pkt_fields.append(
-            PacketField(name=key, data_type=data_type, bit_length=bit_length)
-        )
+    for key, data_type, bit_length in zip(defs["name"], defs["data_type"], defs["bit_length"]):
+        pkt_fields.append(PacketField(name=key, data_type=data_type, bit_length=bit_length))
 
     # Skip first two, which specify the primary header
     pkt = cls(pkt_fields[2:])
@@ -134,9 +129,7 @@ def test_hs_apid035_PacketArray():
     )
 
     for key, data_type, bit_length in zip(*tmp):
-        pkt_fields.append(
-            PacketField(name=key, data_type=data_type, bit_length=bit_length)
-        )
+        pkt_fields.append(PacketField(name=key, data_type=data_type, bit_length=bit_length))
 
     normal_pkt = FixedLength(pkt_fields)
 
@@ -147,9 +140,7 @@ def test_hs_apid035_PacketArray():
     array_pkt = FixedLength(
         [
             PacketField(name="unused", data_type="fill", bit_length=fill_length),
-            PacketArray(
-                name="PKT35_FLT_SIN_2H", data_type="float", bit_length=32, array_shape=8
-            ),
+            PacketArray(name="PKT35_FLT_SIN_2H", data_type="float", bit_length=32, array_shape=8),
         ]
     )
 
@@ -160,6 +151,5 @@ def test_hs_apid035_PacketArray():
 
     for i in range(8):
         assert np.all(
-            normal_result[f"PKT35_FLT_SIN_2H[{i}]"]
-            == array_result["PKT35_FLT_SIN_2H"][:, i]
+            normal_result[f"PKT35_FLT_SIN_2H[{i}]"] == array_result["PKT35_FLT_SIN_2H"][:, i]
         )

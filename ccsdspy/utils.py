@@ -47,14 +47,13 @@ def split_by_apid(mixed_file, valid_apids=None):
         if apid not in stream_by_apid:
             stream_by_apid[apid] = BytesIO()
 
-        stream_by_apid[apid].write(file_bytes[offset : offset + packet_nbytes])
+        stream_by_apid[apid].write(file_bytes[offset: offset + packet_nbytes])
         offset += packet_nbytes
 
     if offset != len(file_bytes):
         missing_bytes = offset - len(file_bytes)
         message = (
-            f"File appears truncated-- missing {missing_bytes} byte (or "
-            "maybe garbage at end)"
+            f"File appears truncated-- missing {missing_bytes} byte (or " "maybe garbage at end)"
         )
         warnings.warn(message)
 

@@ -19,9 +19,7 @@ def test_command_line_split():
     tmp_dir = tempfile.TemporaryDirectory()
     dir_path = os.path.dirname(os.path.realpath(__file__))
     data_path = os.path.join(dir_path, "data", "split")
-    mixed_stream = os.path.join(
-        data_path, "CYGNSS_F7_L0_2022_086_10_15_V01_F__first100pkts.tlm"
-    )
+    mixed_stream = os.path.join(data_path, "CYGNSS_F7_L0_2022_086_10_15_V01_F__first100pkts.tlm")
     shutil.copy(mixed_stream, tmp_dir.name)
 
     # Call module_main() with fake argv and custom working directory
@@ -120,12 +118,8 @@ def test_split_by_apid_and_decode(cls):
         packet_by_apid[apid] = cls(fields[7:])
 
     # Do split and test result to ground truth
-    mixed_stream = os.path.join(
-        data_path, "CYGNSS_F7_L0_2022_086_10_15_V01_F__first100pkts.tlm"
-    )
-    stream_by_apid = split_by_apid(
-        mixed_stream, valid_apids=list(packet_by_apid.keys())
-    )
+    mixed_stream = os.path.join(data_path, "CYGNSS_F7_L0_2022_086_10_15_V01_F__first100pkts.tlm")
+    stream_by_apid = split_by_apid(mixed_stream, valid_apids=list(packet_by_apid.keys()))
 
     for apid, stream_from_split in stream_by_apid.items():
         if apid in [132, 134, 389, 391]:

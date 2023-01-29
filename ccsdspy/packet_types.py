@@ -35,8 +35,9 @@ class _BasePacket:
         ----------
         file : str
            Path to file on the local file system that defines the packet fields.
-           Currently only suports csv files.  See :download:`simple_csv_3col.csv <../../ccsdspy/tests/data/packet_def/simple_csv_3col.csv>`
-           and :download:`simple_csv_4col.csv <../../ccsdspy/tests/data/packet_def/simple_csv_4col.csv>`
+           Currently only suports csv files.
+           See :download:`simple_csv_3col.csv <../../ccsdspy/tests/data/packet_def/simple_csv_3col.csv>`  # noqa: E501
+           and :download:`simple_csv_4col.csv <../../ccsdspy/tests/data/packet_def/simple_csv_4col.csv>`  # noqa: E501
 
         Returns
         -------
@@ -176,9 +177,7 @@ class VariableLength(_BasePacket):
         # The variable length decoder requires the full packet definition, so if
         # they didn't want the primary header fields, we parse for them and then
         # remove them after.
-        packet_arrays = _load(
-            file, self._fields, "variable_length", include_primary_header=True
-        )
+        packet_arrays = _load(file, self._fields, "variable_length", include_primary_header=True)
 
         if not include_primary_header:
             _delete_primary_header_fields(packet_arrays)
@@ -225,10 +224,7 @@ def _expand_array_fields(existing_fields):
     expand_history = {}
 
     for existing_field in existing_fields:
-        if (
-            existing_field._field_type != "array"
-            or existing_field._array_shape == "expand"
-        ):
+        if existing_field._field_type != "array" or existing_field._array_shape == "expand":
             return_fields.append(existing_field)
             continue
 
@@ -237,9 +233,7 @@ def _expand_array_fields(existing_fields):
 
         index_vecs = [np.arange(dim) for dim in array_shape]
         index_grids = np.meshgrid(*index_vecs, indexing="ij")
-        indeces_flat = [
-            index_grid.flatten(order=array_order) for index_grid in index_grids
-        ]
+        indeces_flat = [index_grid.flatten(order=array_order) for index_grid in index_grids]
 
         expand_history[existing_field._name] = {
             "shape": array_shape,
@@ -391,12 +385,10 @@ def _get_fields_csv_file(csv_file):
 
         for row in reader:  # skip the header row
             if "bit_offset" not in headers:  # 3 col csv file
-                if (row["data_type"].count("(") == 1) and (
-                    row["data_type"].count(")") == 1
-                ):
+                if (row["data_type"].count("(") == 1) and (row["data_type"].count(")") == 1):
                     data_type = row["data_type"].split("(")[0]
                     array_shape_str = row["data_type"][
-                        row["data_type"].find("(") + 1 : row["data_type"].find(")")
+                        row["data_type"].find("(") + 1: row["data_type"].find(")")
                     ]
                     array_shape = tuple(map(int, array_shape_str.split(", ")))
                     fields.append(
@@ -417,12 +409,10 @@ def _get_fields_csv_file(csv_file):
                     )
             if "bit_offset" in headers:  # 4 col csv file provides bit offsets
                 # TODO: Check the consistency of bit_offsets versus previous bit_lengths
-                if (row["data_type"].count("(") == 1) and (
-                    row["data_type"].count(")") == 1
-                ):
+                if (row["data_type"].count("(") == 1) and (row["data_type"].count(")") == 1):
                     data_type = row["data_type"].split("(")[0]
                     array_shape_str = row["data_type"][
-                        row["data_type"].find("(") + 1 : row["data_type"].find(")")
+                        row["data_type"].find("(") + 1: row["data_type"].find(")")
                     ]
                     array_shape = tuple(map(int, array_shape_str.split(", ")))
                     fields.append(

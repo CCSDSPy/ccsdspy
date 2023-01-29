@@ -104,8 +104,8 @@ class PacketArray(PacketField):
             Number of bits contained in the field.
         array_shape : int, tuple of ints, or 'expand'
             Shape of the array as a tuple. For a 1-dimensional array, a single integer
-            can be supplied. For details on expanding arrays, see the :py:class:`~ccsdspy.VariableLength`
-            class.
+            can be supplied. For details on expanding arrays, see the
+            :py:class:`~ccsdspy.VariableLength` class.
         array_order  {'C', 'F'}
             Row-major (C-style) or column-major (Fortran-style) order.
         bit_offset : int, optional

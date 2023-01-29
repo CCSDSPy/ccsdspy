@@ -2,7 +2,7 @@
 
 import pytest
 
-from .. import PacketField, PacketArray
+from .. import PacketField
 
 
 def test_PacketField_initializer_raises_ValueError_on_bad_data_type():
