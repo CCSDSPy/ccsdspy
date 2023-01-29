@@ -25,9 +25,7 @@ jobs:
         run: |
           sudo apt-get install graphviz -y
           python -m pip install --upgrade pip
-          python -m pip install sphinx sphinx-automodapi numpydoc graphviz
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-          python -m pip install -e .
+          python -m pip install -e .[docs]
       - name: Build the docs
         run: sphinx-build docs docs/_build/html -W -b html
         env:
