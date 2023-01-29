@@ -8,6 +8,21 @@ Welcome to the Developer Guide. Thank you for your interest in contributing to t
 The following standards are based on those provided by the `sunpy <https://github.com/sunpy/sunpy>`__.
 We would like to thank their contribution to the community.
 
+Installing for development
+==========================
+To install this package for local development, first clone this package from github using your favorite git gui or with the command::
+
+    git clone git@github.com:ddasilva/ccsdspy.git
+
+Then go into the directory and install the package for editing with the following command::
+
+    pip install -e '.[dev]'
+
+This will include all of the development dependencies. 
+If you also need to build the documentation locally use the following command::
+
+    pip install -e '.[docs]'
+
 Code Standards
 ==============
 All developers should read and abide by the following standards.
