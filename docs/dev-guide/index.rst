@@ -113,3 +113,57 @@ Documentation
 * Write usage examples in the docstrings of all classes and functions whenever possible.
   These examples should be short and simple to reproduce.
   These examples should, whenever possible, be in the `doctests <https://docs.python.org/3/library/doctest.html>`__ format and will be executed as part of the test suite.
+
+
+Releases
+========
+
+Incrementing Version Numbers
+----------------------------
+
+This package uses `Semantic Versioning <https://semver.org/>`__.
+A version number for a release should be of the form ``X.Y.Z``.
+This package is configured to use `setuptools_scm <https://pypi.org/project/setuptools-scm/>`__ to manage version numbers which uses git tags 
+The version information is stored in a automatically generated file called `_version.py`.
+This file is only generated when the package is imported (or re-imported).
+
+Assuming that your new release is 0.2.0, to mark a new release of your package in your git history run:
+
+.. code-block:: console
+
+   $ git tag -a v0.2.0 -m "Release version 0.2.0"
+
+Here we use the convention of prepending release tags with ``v``.
+
+If you now re-import your package (to regenerate ``_version.py``) and print ``ccsdspy.__version__`` it should say
+``0.2.0``.
+
+Do not make any other commits at this point because as soon as you do, the version will be automatically incremented to ``0.2.1.dev``.
+
+Building Source Distributions
+-----------------------------
+
+Now that have tagged your release, you need to build what is called a "source
+distribution" to upload to `PyPI <https://pypi.org/>`__ or the Python Package
+Index. To create this, you can run the following command which uses `pypa-build <https://pypa-build.readthedocs.io/en/latest/>`__ to
+build your sdist in the isolated environment specified in `pyproject.toml`:
+
+.. code-block:: console
+
+   $ pip install build
+   $ python -m build --sdist --outdir dist .
+
+
+Publishing to PyPI
+------------------
+
+Now you have created the sdist to be uploaded to PyPI you can upload it with the
+`twine <https://pypi.org/project/twine/>`__ package:
+
+.. code-block:: console
+
+   $ pip install twine
+   $ twine upload dist/my_package*.tar.gz
+
+This should ask you for your PyPI account details, and will create your project
+on PyPI if it doesn't already exist.
