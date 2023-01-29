@@ -68,12 +68,10 @@ default_role = "obj"
 #
 # contents of docs/conf.py
 from importlib.metadata import version
-release = version('ccsdspy')
+version = version('ccsdspy')
 # for example take major/minor
-version = '.'.join(release.split('.')[:2])
 # The short X.Y version.
 # The full version, including alpha/beta/rc tags.
-release = '.'.join(release.split('.')[:2])
 
 # General information about the project.
 project = "CCSDSPy"
