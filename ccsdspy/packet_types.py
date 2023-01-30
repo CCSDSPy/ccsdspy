@@ -388,7 +388,7 @@ def _get_fields_csv_file(csv_file):
                 if (row["data_type"].count("(") == 1) and (row["data_type"].count(")") == 1):
                     data_type = row["data_type"].split("(")[0]
                     array_shape_str = row["data_type"][
-                        row["data_type"].find("(") + 1: row["data_type"].find(")")
+                        row["data_type"].find("(") + 1 : row["data_type"].find(")")
                     ]
                     array_shape = tuple(map(int, array_shape_str.split(", ")))
                     fields.append(
@@ -412,7 +412,7 @@ def _get_fields_csv_file(csv_file):
                 if (row["data_type"].count("(") == 1) and (row["data_type"].count(")") == 1):
                     data_type = row["data_type"].split("(")[0]
                     array_shape_str = row["data_type"][
-                        row["data_type"].find("(") + 1: row["data_type"].find(")")
+                        row["data_type"].find("(") + 1 : row["data_type"].find(")")
                     ]
                     array_shape = tuple(map(int, array_shape_str.split(", ")))
                     fields.append(

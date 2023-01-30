@@ -116,8 +116,8 @@ def _decode_fixed_length(file_bytes, fields):
         xbytes = meta.nbytes_final - meta.nbytes_file
 
         for i in range(xbytes, meta.nbytes_final):
-            arr[i:: meta.nbytes_final] = file_bytes[
-                meta.start_byte_file + i - xbytes:: packet_nbytes
+            arr[i :: meta.nbytes_final] = file_bytes[
+                meta.start_byte_file + i - xbytes :: packet_nbytes
             ]
             field_bytes[field] = arr
 
@@ -214,7 +214,7 @@ def _decode_variable_length(file_bytes, fields):
 
     if expand_idx is not None:
         counter = 0
-        footer_fields = fields[expand_idx + 1:]
+        footer_fields = fields[expand_idx + 1 :]
         for i, field in enumerate(reversed(footer_fields)):
             bit_offsets[field._name] = counter - field._bit_length
             counter -= field._bit_length
@@ -271,7 +271,7 @@ def _decode_variable_length(file_bytes, fields):
                 start_byte = packet_start + bit_offsets[field._name] // 8
 
             if field._array_shape == "expand":
-                footer_bits = sum(field._bit_length for field in fields[i + 1:])
+                footer_bits = sum(field._bit_length for field in fields[i + 1 :])
                 assert footer_bits % 8 == 0, "Expanding field must be byte aligned"
                 stop_byte = packet_start + packet_nbytes - footer_bits // 8
                 field_raw_data = file_bytes[start_byte:stop_byte]
