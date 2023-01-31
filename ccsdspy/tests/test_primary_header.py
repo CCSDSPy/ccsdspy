@@ -44,9 +44,10 @@ def create_simple_ccsds_packet(n=1):
 
 @pytest.mark.parametrize("cls", [FixedLength, VariableLength])
 def test_primary_header_contents_no_offset(cls):
-    """Test if the primary header is output correctly along with the data without defining bit offsets"""
+    """Test if the primary header is output correctly along with the data without
+    defining bit offsets"""
     num_packets = 3
-    packet = create_simple_ccsds_packet(num_packets)
+    packet = create_simple_ccsds_packet(num_packets)  # noqa: F841
 
     pkt = cls(
         [
@@ -62,12 +63,8 @@ def test_primary_header_contents_no_offset(cls):
     assert (result["CCSDS_SECONDARY_FLAG"] == np.zeros(num_packets, dtype="uint")).all()
     assert (result["CCSDS_APID"] == 10 * np.ones(num_packets, dtype="uint")).all()
     assert (result["CCSDS_SEQUENCE_FLAG"] == np.ones(num_packets, dtype="uint")).all()
-    assert (
-        result["CCSDS_SEQUENCE_COUNT"] == np.arange(num_packets, dtype="uint")
-    ).all()
-    assert (
-        result["CCSDS_PACKET_LENGTH"] == 7 * np.ones(num_packets, dtype="uint")
-    ).all()
+    assert (result["CCSDS_SEQUENCE_COUNT"] == np.arange(num_packets, dtype="uint")).all()
+    assert (result["CCSDS_PACKET_LENGTH"] == 7 * np.ones(num_packets, dtype="uint")).all()
     assert (result["BOO"] == 314 * np.ones(num_packets, dtype="uint")).all()
     assert (result["FOO"] == 512 * np.ones(num_packets, dtype="uint")).all()
     assert (result["BLAH"] == 10000 * np.ones(num_packets, dtype="uint")).all()
@@ -75,9 +72,10 @@ def test_primary_header_contents_no_offset(cls):
 
 
 def test_primary_header_contents_offset():
-    """Test if the primary header is output correctly along with the data with defining bit offsets"""
+    """Test if the primary header is output correctly along with the data with
+    defining bit offsets"""
     num_packets = 3
-    packet = create_simple_ccsds_packet(num_packets)
+    packet = create_simple_ccsds_packet(num_packets)  # noqa: F841
 
     pkt = FixedLength(
         [
@@ -93,12 +91,8 @@ def test_primary_header_contents_offset():
     assert (result["CCSDS_SECONDARY_FLAG"] == np.zeros(num_packets, dtype="uint")).all()
     assert (result["CCSDS_APID"] == 10 * np.ones(num_packets, dtype="uint")).all()
     assert (result["CCSDS_SEQUENCE_FLAG"] == np.ones(num_packets, dtype="uint")).all()
-    assert (
-        result["CCSDS_SEQUENCE_COUNT"] == np.arange(num_packets, dtype="uint")
-    ).all()
-    assert (
-        result["CCSDS_PACKET_LENGTH"] == 7 * np.ones(num_packets, dtype="uint")
-    ).all()
+    assert (result["CCSDS_SEQUENCE_COUNT"] == np.arange(num_packets, dtype="uint")).all()
+    assert (result["CCSDS_PACKET_LENGTH"] == 7 * np.ones(num_packets, dtype="uint")).all()
     assert (result["BOO"] == 314 * np.ones(num_packets, dtype="uint")).all()
     assert (result["FOO"] == 512 * np.ones(num_packets, dtype="uint")).all()
     assert (result["BLAH"] == 10000 * np.ones(num_packets, dtype="uint")).all()

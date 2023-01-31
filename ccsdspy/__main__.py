@@ -1,4 +1,4 @@
-"""Main method of the module. 
+"""Main method of the module.
 
 This is called with `python -m ccsdspy`
 """

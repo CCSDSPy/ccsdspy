@@ -16,12 +16,8 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 packet_def_dir = os.path.join(dir_path, "data", "packet_def")
 csv_file_4col = os.path.join(packet_def_dir, "simple_csv_4col.csv")
 csv_file_3col = os.path.join(packet_def_dir, "simple_csv_3col.csv")
-csv_file_4col_with_array = os.path.join(
-    packet_def_dir, "simple_csv_4col_with_array.csv"
-)
-csv_file_3col_with_array = os.path.join(
-    packet_def_dir, "simple_csv_3col_with_array.csv"
-)
+csv_file_4col_with_array = os.path.join(packet_def_dir, "simple_csv_4col_with_array.csv")
+csv_file_3col_with_array = os.path.join(packet_def_dir, "simple_csv_3col_with_array.csv")
 
 
 def test_FixedLength_initializer_copies_field_list():

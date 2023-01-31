@@ -41,9 +41,7 @@ def test_var_length_data(include_primary_header):
 @pytest.mark.parametrize("include_primary_header", [True, False])
 def test_var_length_data_with_footer(include_primary_header):
     dir_path = os.path.dirname(os.path.realpath(__file__))
-    bin_path = os.path.join(
-        dir_path, "data", "var_length", "var_length_packets_with_footer.bin"
-    )
+    bin_path = os.path.join(dir_path, "data", "var_length", "var_length_packets_with_footer.bin")
 
     pkt = VariableLength(
         [

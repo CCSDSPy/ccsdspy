@@ -53,8 +53,7 @@ def split_by_apid(mixed_file, valid_apids=None):
     if offset != len(file_bytes):
         missing_bytes = offset - len(file_bytes)
         message = (
-            f"File appears truncated-- missing {missing_bytes} byte (or "
-            "maybe garbage at end)"
+            f"File appears truncated-- missing {missing_bytes} byte (or " "maybe garbage at end)"
         )
         warnings.warn(message)
 
