@@ -8,7 +8,6 @@ __author__ = "Daniel da Silva <mail@danieldasilva.org>"
 
 
 def _decode_fixed_length(file_bytes, fields):
-
     """Decode a fixed length packet stream of a single APID.
 
     Parameters
@@ -131,7 +130,6 @@ def _decode_fixed_length(file_bytes, fields):
         arr.dtype = meta.np_dtype
 
         if field._data_type in ("int", "uint"):
-
             xbytes = meta.nbytes_final - meta.nbytes_file
 
             bitmask_left = bit_offset[field._name] + 8 * xbytes - 8 * meta.start_byte_file
@@ -159,7 +157,6 @@ def _decode_fixed_length(file_bytes, fields):
 
 
 def _decode_variable_length(file_bytes, fields):
-
     """Decode a variable length packet stream of a single APID.
 
     Parameters
