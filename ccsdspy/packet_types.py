@@ -481,5 +481,34 @@ def _load(file, fields, decoder_name, include_primary_header=False):
         )
 
     field_arrays = _unexpand_field_arrays(field_arrays, expand_history)
+    field_arrays = _apply_converters(field_arrays, fields)
 
     return field_arrays
+
+
+def _apply_converters(field_arrays, fields):
+    """Apply post-processing converters in place to a dictionary of field
+    arrays.
+
+    Parameters
+    ----------
+    field_arrays : dict of string to NumPy arrays
+       The decoded packet field arrays without any post-processing applied
+    fields : list of `ccsdspy.PacketField`
+      Layout of packet fields contained in the definition.
+
+    Returns
+    -------
+    converted_field_arrays : dict of string to NumPy arrays
+       The converted decoded packet field arrays, as a dictionary with the same
+       key as the passed `field_arrays`.
+    """
+    converted = field_arrays.copy()
+
+    for field in fields:
+        if field._converter is not None:
+            # Apply the conversion
+            converter = field._converter
+            converted[field._name] = converter.convert_many(field_arrays[field._name])
+
+    return converted
