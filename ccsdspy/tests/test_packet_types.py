@@ -179,3 +179,25 @@ def test_multidimensional_array(
         for i in range(32):
             for j in range(4):
                 assert results["array"][k, i, j] == k * (2 * i + j)
+
+
+def test_fixedlength_to_file():
+    field_name = "DATA"
+    pkt = FixedLength([PacketField(name=field_name, data_type="uint", bit_length=32)])
+    num_packets = 1000
+    pkt_type = 1
+    apid = 0x084
+    sec_header_flag = 1
+    seq_flag = 0
+    data = {field_name: np.arange(0, num_packets, dtype=np.uint32)}
+
+    pkt.to_file("test.bin", pkt_type, apid, sec_header_flag, seq_flag, data)
+    result = pkt.load('test.bin', include_primary_header=True)
+
+    assert len(result["DATA"]) == num_packets
+    assert np.all(result["CCSDS_PACKET_TYPE"] == pkt_type)
+    assert np.all(result["CCSDS_SECONDARY_FLAG"] == sec_header_flag)
+    assert np.all(result["CCSDS_APID"] == apid)
+    assert np.all(result["CCSDS_SEQUENCE_FLAG"] == seq_flag)
+
+    assert np.allclose(data["DATA"], result["DATA"])
