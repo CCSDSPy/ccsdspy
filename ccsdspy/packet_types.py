@@ -246,6 +246,29 @@ class FixedLength(_BasePacket):
 
         return packet_arrays
 
+    def to_file(self, file, pkt_type, apid, sec_header_flag, seq_flag, data):
+        """Encode a file containing a sequence of packet fields.
+
+        Parameters
+        ----------
+        file : str
+            Path to file on the local file system, or file-like object
+        data : dict
+            The data to add to the file
+
+        Returns
+        -------
+        file : str
+            A binary file with the packet data    
+        """
+
+        return _to_file(
+            file,
+            pkt_type, apid, sec_header_flag, seq_flag, data,
+            self._fields,
+            "fixed_length"
+        )
+
 
 class VariableLength(_BasePacket):
     """Define a variable length packet to decode binary data.
@@ -898,3 +921,31 @@ def _do_array_byte_reordering(array, byte_order_ints):
     shifted = shifted.reshape(array.shape)
 
     return shifted
+
+
+def _to_file(file : str, pkt_type : int, apid: int, sec_header_flag : bool, seq_flag : bool, data : dict, fields, decoder_name):
+
+    # check that each element in data is of the same length
+    num_elements = [len(val) for val in data.values()]
+    if num_elements.count(num_elements[0]) != len(num_elements):
+        raise ValueError("Length of the arrays in data are not the same.")
+    num_packets = num_elements[0]
+    fields, expand_history = _expand_array_fields(fields)
+    # check that all fields are defined in data
+    packet_length = sum([this_field._bit_length for this_field in fields]) / 8 - 1
+    packets = b""
+
+    # create the bitstruct string
+    fmt = 'u3u1u1u11u2u14u16'  # ccsds header
+    for this_field in fields:
+        fmt += 'u' + str(this_field._bit_length)
+
+    for i in range(num_packets):
+        values = [0, pkt_type, sec_header_flag, apid, seq_flag, i, packet_length] + [val[i] for val in data.values()]
+        this_packet = pack(fmt, *values)
+        packets += this_packet
+
+    with open(file, "wb") as fp:
+        fp.write(packets)
+
+    return file
