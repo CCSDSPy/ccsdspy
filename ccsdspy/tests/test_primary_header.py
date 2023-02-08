@@ -4,6 +4,7 @@ import os
 import pytest
 
 from .. import FixedLength, VariableLength, PacketField
+from ..packet_types import _inspect_primary_header_fields
 
 TEST_FILENAME = "ccsds_test.bin"
 
@@ -97,3 +98,101 @@ def test_primary_header_contents_offset():
     assert (result["FOO"] == 512 * np.ones(num_packets, dtype="uint")).all()
     assert (result["BLAH"] == 10000 * np.ones(num_packets, dtype="uint")).all()
     os.remove(TEST_FILENAME)
+
+
+def test_primary_header_contents_offset():
+    """Test if the primary header is output correctly along with the data with
+    defining bit offsets"""
+    num_packets = 3
+    packet = create_simple_ccsds_packet(num_packets)  # noqa: F841
+
+    pkt = FixedLength(
+        [
+            PacketField(name="BOO", data_type="uint", bit_length=16, bit_offset=48),
+            PacketField(name="FOO", data_type="uint", bit_length=16, bit_offset=64),
+            PacketField(name="BLAH", data_type="uint", bit_length=32, bit_offset=80),
+        ]
+    )
+
+    result = pkt.load("ccsds_test.bin", include_primary_header=True)
+    assert (result["CCSDS_VERSION_NUMBER"] == np.zeros(num_packets, dtype="uint")).all()
+    assert (result["CCSDS_PACKET_TYPE"] == np.zeros(num_packets, dtype="uint")).all()
+    assert (result["CCSDS_SECONDARY_FLAG"] == np.zeros(num_packets, dtype="uint")).all()
+    assert (result["CCSDS_APID"] == 10 * np.ones(num_packets, dtype="uint")).all()
+    assert (result["CCSDS_SEQUENCE_FLAG"] == np.ones(num_packets, dtype="uint")).all()
+    assert (result["CCSDS_SEQUENCE_COUNT"] == np.arange(num_packets, dtype="uint")).all()
+    assert (result["CCSDS_PACKET_LENGTH"] == 7 * np.ones(num_packets, dtype="uint")).all()
+    assert (result["BOO"] == 314 * np.ones(num_packets, dtype="uint")).all()
+    assert (result["FOO"] == 512 * np.ones(num_packets, dtype="uint")).all()
+    assert (result["BLAH"] == 10000 * np.ones(num_packets, dtype="uint")).all()
+    os.remove(TEST_FILENAME)
+
+
+def test_primary_header_contents_offset():
+    """Test if the primary header is output correctly along with the data with
+    defining bit offsets"""
+    num_packets = 3
+    packet = create_simple_ccsds_packet(num_packets)  # noqa: F841
+
+    pkt = FixedLength(
+        [
+            PacketField(name="BOO", data_type="uint", bit_length=16, bit_offset=48),
+            PacketField(name="FOO", data_type="uint", bit_length=16, bit_offset=64),
+            PacketField(name="BLAH", data_type="uint", bit_length=32, bit_offset=80),
+        ]
+    )
+
+    result = pkt.load("ccsds_test.bin", include_primary_header=True)
+    assert (result["CCSDS_VERSION_NUMBER"] == np.zeros(num_packets, dtype="uint")).all()
+    assert (result["CCSDS_PACKET_TYPE"] == np.zeros(num_packets, dtype="uint")).all()
+    assert (result["CCSDS_SECONDARY_FLAG"] == np.zeros(num_packets, dtype="uint")).all()
+    assert (result["CCSDS_APID"] == 10 * np.ones(num_packets, dtype="uint")).all()
+    assert (result["CCSDS_SEQUENCE_FLAG"] == np.ones(num_packets, dtype="uint")).all()
+    assert (result["CCSDS_SEQUENCE_COUNT"] == np.arange(num_packets, dtype="uint")).all()
+    assert (result["CCSDS_PACKET_LENGTH"] == 7 * np.ones(num_packets, dtype="uint")).all()
+    assert (result["BOO"] == 314 * np.ones(num_packets, dtype="uint")).all()
+    assert (result["FOO"] == 512 * np.ones(num_packets, dtype="uint")).all()
+    assert (result["BLAH"] == 10000 * np.ones(num_packets, dtype="uint")).all()
+    os.remove(TEST_FILENAME)
+
+
+def test_check_primary_header_contents_missingseq():
+    """Check that non consecutive sequence counts raises a warning."""
+    num_packets = 10000
+    packet_data = {"CCSDS_SEQUENCE_COUNT": np.arange(1, num_packets),
+                   "CCSDS_APID": 1 * np.ones(num_packets)}
+    
+    with pytest.raises(UserWarning) as excinfo:
+        packet_data["CCSDS_SEQUENCE_COUNT"][100] = 0
+        _inspect_primary_header_fields(packet_data)
+        assert "100" in str(excinfo.value)  # check that it tells you that 100 is missing
+
+        # check that it tells you that both 100 and 249 are missing
+        packet_data["CCSDS_SEQUENCE_COUNT"][249] = 0
+        _inspect_primary_header_fields(packet_data)
+        assert "248" in str(excinfo.value)
+        assert "100" in str(excinfo.value)
+
+
+def test_check_primary_header_contents_nonconseq():
+    """Check that non consecutive sequence counts raises a warning."""
+    num_packets = 10000
+    packet_data = {"CCSDS_SEQUENCE_COUNT": np.flip(np.arange(1, num_packets)),
+                   "CCSDS_APID": 1 * np.ones(num_packets)}
+    
+    with pytest.raises(UserWarning) as excinfo:
+        _inspect_primary_header_fields(packet_data)
+        assert "out of order" in str(excinfo.value)
+
+
+def test_check_primary_header_contents_sameapid():
+    """Check that all apids are the same."""
+    num_packets = 10000
+    packet_data = {"CCSDS_SEQUENCE_COUNT": np.arange(1, num_packets),
+                   "CCSDS_APID": 48 * np.ones(num_packets)}
+    
+    with pytest.raises(UserWarning) as excinfo:
+        packet_data["CCSDS_APID"][100:200] = 58
+        _inspect_primary_header_fields(packet_data)
+        assert "48" in str(excinfo.value)
+        assert "58" in str(excinfo.value)
