@@ -96,6 +96,15 @@ class FixedLength(_BasePacket):
         field_arrays : dict, string to NumPy array
             dictionary mapping field names to NumPy arrays, with key order matching
             the order of fields in the packet.
+        
+        Warns
+        -----
+        UserWarning
+            If the ccsds sequence count is not in order
+        UserWarning
+            If the ccsds sequence count is missing packets
+        UserWarning
+            If there are more than one APID
         """
         return _load(
             file,
@@ -173,6 +182,15 @@ class VariableLength(_BasePacket):
         field_arrays : dict, string to NumPy array
             dictionary mapping field names to NumPy arrays, with key order matching
             the order of fields in the packet.
+        
+        Warns
+        -----
+        UserWarning
+            If the ccsds sequence count is not in order
+        UserWarning
+            If the ccsds sequence count is missing packets
+        UserWarning
+            If there are more than one APID
         """
         # The variable length decoder requires the full packet definition, so if
         # they didn't want the primary header fields, we parse for them and then
