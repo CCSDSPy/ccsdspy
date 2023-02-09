@@ -4,6 +4,7 @@
 
 import csv
 import os
+import warnings
 
 import numpy as np
 
@@ -232,14 +233,14 @@ def _inspect_primary_header_fields(packet_arrays):
     start, end = seq_counts[0], seq_counts[-1]
     missing_elements = sorted(set(range(start, end + 1)).difference(seq_counts))
     if len(missing_elements) != 0:
-        raise UserWarning(f'Missing packets found {missing_elements}.')
+        warnings.warn(f'Missing packets found {missing_elements}.', UserWarning)
 
     if not np.all(seq_counts == np.sort(seq_counts)):
-        raise UserWarning("Sequence count are out of order.")
+        warnings.warn("Sequence count are out of order.", UserWarning)
 
     individual_ap_ids = set(packet_arrays["CCSDS_APID"])
     if len(individual_ap_ids) != 1:
-        raise UserWarning(f"Found multiple AP IDs {individual_ap_ids}.")
+        warnings.warn(f"Found multiple AP IDs {individual_ap_ids}.", UserWarning)
 
     return None
 

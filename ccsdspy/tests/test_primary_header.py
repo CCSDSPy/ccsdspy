@@ -161,17 +161,19 @@ def test_check_primary_header_contents_missingseq():
     num_packets = 10000
     packet_data = {"CCSDS_SEQUENCE_COUNT": np.arange(1, num_packets),
                    "CCSDS_APID": 1 * np.ones(num_packets)}
-    
-    with pytest.raises(UserWarning) as excinfo:
-        packet_data["CCSDS_SEQUENCE_COUNT"][100] = 0
-        _inspect_primary_header_fields(packet_data)
-        assert "100" in str(excinfo.value)  # check that it tells you that 100 is missing
 
-        # check that it tells you that both 100 and 249 are missing
-        packet_data["CCSDS_SEQUENCE_COUNT"][249] = 0
+    packet_data["CCSDS_SEQUENCE_COUNT"][250] = 0
+
+    # TODO check that the warning states the right missing packets
+    with pytest.warns(UserWarning):
         _inspect_primary_header_fields(packet_data)
-        assert "248" in str(excinfo.value)
-        assert "100" in str(excinfo.value)
+
+    packet_data["CCSDS_SEQUENCE_COUNT"][500] = 0
+
+    # TODO check that the warning states the right missing packets
+    with pytest.warns(UserWarning):
+        # check that it tells you that both 100 and 249 are missing
+        _inspect_primary_header_fields(packet_data)
 
 
 def test_check_primary_header_contents_nonconseq():
@@ -179,10 +181,9 @@ def test_check_primary_header_contents_nonconseq():
     num_packets = 10000
     packet_data = {"CCSDS_SEQUENCE_COUNT": np.flip(np.arange(1, num_packets)),
                    "CCSDS_APID": 1 * np.ones(num_packets)}
-    
-    with pytest.raises(UserWarning) as excinfo:
+
+    with pytest.warns(UserWarning, match='out of order'):
         _inspect_primary_header_fields(packet_data)
-        assert "out of order" in str(excinfo.value)
 
 
 def test_check_primary_header_contents_sameapid():
@@ -191,8 +192,6 @@ def test_check_primary_header_contents_sameapid():
     packet_data = {"CCSDS_SEQUENCE_COUNT": np.arange(1, num_packets),
                    "CCSDS_APID": 48 * np.ones(num_packets)}
     
-    with pytest.raises(UserWarning) as excinfo:
+    with pytest.warns(UserWarning, match='Found multiple AP IDs'):
         packet_data["CCSDS_APID"][100:200] = 58
         _inspect_primary_header_fields(packet_data)
-        assert "48" in str(excinfo.value)
-        assert "58" in str(excinfo.value)
