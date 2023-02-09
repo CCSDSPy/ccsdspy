@@ -106,12 +106,20 @@ class FixedLength(_BasePacket):
         UserWarning
             If there are more than one APID
         """
-        return _load(
+        packet_arrays = _load(
             file,
             self._fields,
             "fixed_length",
-            include_primary_header=include_primary_header,
+            include_primary_header=True,
         )
+
+        # inspect the primary header and issue warning if appropriate
+        _inspect_primary_header_fields(packet_arrays)
+
+        if not include_primary_header:
+            _delete_primary_header_fields(packet_arrays)
+
+        return packet_arrays
 
 
 class VariableLength(_BasePacket):
@@ -225,7 +233,7 @@ def _inspect_primary_header_fields(packet_arrays):
     missing_elements = sorted(set(range(start, end + 1)).difference(seq_counts))
     if len(missing_elements) != 0:
         raise UserWarning(f'Missing packets found {missing_elements}.')
-    
+
     if not np.all(seq_counts == np.sort(seq_counts)):
         raise UserWarning("Sequence count are out of order.")
 
