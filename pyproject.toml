@@ -60,7 +60,7 @@ write_to = "ccsdspy/_version.py"
 [tool.pytest.ini_options]
 minversion = "6.0"
 testpaths = ["ccsdspy/tests", "docs"]
-norecursedirs = ["build", "docs/_build", "docs/generated", "*.egg-info"]
+norecursedirs = ["build", "docs/_build", "docs/generated", "*.egg-info", "attic"]
 doctest_plus = "enabled"
 text_file_format = "rst"
 addopts = "--doctest-modules"
