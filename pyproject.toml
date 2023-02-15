@@ -64,6 +64,7 @@ norecursedirs = ["build", "docs/_build", "docs/generated", "*.egg-info"]
 doctest_plus = "enabled"
 text_file_format = "rst"
 addopts = "--doctest-modules"
+collect_ignore_glob= ['_*.py']
 filterwarnings = [
   "ignore::UserWarning",
   "ignore::DeprecationWarning",
