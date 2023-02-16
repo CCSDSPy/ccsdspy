@@ -159,8 +159,10 @@ def test_primary_header_contents_offset():
 def test_check_primary_header_contents_missingseq():
     """Check that non consecutive sequence counts raises a warning."""
     num_packets = 10000
-    packet_data = {"CCSDS_SEQUENCE_COUNT": np.arange(1, num_packets),
-                   "CCSDS_APID": 1 * np.ones(num_packets)}
+    packet_data = {
+        "CCSDS_SEQUENCE_COUNT": np.arange(1, num_packets),
+        "CCSDS_APID": 1 * np.ones(num_packets),
+    }
 
     packet_data["CCSDS_SEQUENCE_COUNT"][250] = 0
 
@@ -179,19 +181,23 @@ def test_check_primary_header_contents_missingseq():
 def test_check_primary_header_contents_nonconseq():
     """Check that non consecutive sequence counts raises a warning."""
     num_packets = 10000
-    packet_data = {"CCSDS_SEQUENCE_COUNT": np.flip(np.arange(1, num_packets)),
-                   "CCSDS_APID": 1 * np.ones(num_packets)}
+    packet_data = {
+        "CCSDS_SEQUENCE_COUNT": np.flip(np.arange(1, num_packets)),
+        "CCSDS_APID": 1 * np.ones(num_packets),
+    }
 
-    with pytest.warns(UserWarning, match='out of order'):
+    with pytest.warns(UserWarning, match="out of order"):
         _inspect_primary_header_fields(packet_data)
 
 
 def test_check_primary_header_contents_sameapid():
     """Check that all apids are the same."""
     num_packets = 10000
-    packet_data = {"CCSDS_SEQUENCE_COUNT": np.arange(1, num_packets),
-                   "CCSDS_APID": 48 * np.ones(num_packets)}
-    
-    with pytest.warns(UserWarning, match='Found multiple AP IDs'):
+    packet_data = {
+        "CCSDS_SEQUENCE_COUNT": np.arange(1, num_packets),
+        "CCSDS_APID": 48 * np.ones(num_packets),
+    }
+
+    with pytest.warns(UserWarning, match="Found multiple AP IDs"):
         packet_data["CCSDS_APID"][100:200] = 58
         _inspect_primary_header_fields(packet_data)

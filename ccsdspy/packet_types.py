@@ -97,7 +97,7 @@ class FixedLength(_BasePacket):
         field_arrays : dict, string to NumPy array
             dictionary mapping field names to NumPy arrays, with key order matching
             the order of fields in the packet.
-        
+
         Warns
         -----
         UserWarning
@@ -191,7 +191,7 @@ class VariableLength(_BasePacket):
         field_arrays : dict, string to NumPy array
             dictionary mapping field names to NumPy arrays, with key order matching
             the order of fields in the packet.
-        
+
         Warns
         -----
         UserWarning
@@ -217,7 +217,7 @@ class VariableLength(_BasePacket):
 
 def _inspect_primary_header_fields(packet_arrays):
     """Inspects the primary header fields.
-    
+
     Checks for the following issues
     * all apids are the same
     * sequence count is not missing any values
@@ -233,7 +233,7 @@ def _inspect_primary_header_fields(packet_arrays):
     start, end = seq_counts[0], seq_counts[-1]
     missing_elements = sorted(set(range(start, end + 1)).difference(seq_counts))
     if len(missing_elements) != 0:
-        warnings.warn(f'Missing packets found {missing_elements}.', UserWarning)
+        warnings.warn(f"Missing packets found {missing_elements}.", UserWarning)
 
     if not np.all(seq_counts == np.sort(seq_counts)):
         warnings.warn("Sequence count are out of order.", UserWarning)

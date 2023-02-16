@@ -27,7 +27,8 @@ def _decode_fixed_length(file_bytes, fields):
     # that the `fields` array contains entries for the secondary header.
     packet_nbytes = file_bytes[4] * 256 + file_bytes[5] + 7
     body_nbytes = sum(field._bit_length for field in fields) // 8
-    counter = (packet_nbytes - body_nbytes) * 8
+    counter_start = max(0, (packet_nbytes - body_nbytes) * 8)
+    counter = counter_start
 
     bit_offset = {}
 
@@ -62,8 +63,13 @@ def _decode_fixed_length(file_bytes, fields):
     if all(field._bit_offset is None for field in fields):
         assert counter == packet_nbytes * 8, "Field definition != packet length"
     elif counter > packet_nbytes * 8:
+        body_bits = sum(field._bit_length for field in fields)
         raise RuntimeError(
-            ("Packet definition larger than packet length" f" by {counter-(packet_nbytes*8)} bits")
+            (
+                "Packet definition larger than packet length"
+                f" by {counter-(packet_nbytes*8)} bits"
+                f" (packet length in file is {packet_nbytes*8} bits, defined fields are {body_bits} bits)"
+            )
         )
 
     # Setup metadata for each field, consiting of where to look for the field in
