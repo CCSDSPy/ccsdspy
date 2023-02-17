@@ -1,13 +1,17 @@
 Notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`__.
 
-Dev
-===
+Version 1.1.0 - 2023-xx-xx
+===========================
+  * Major extensions to `~ccsdspy.VariableLength` class to support arrays whose length is determined by another field 
+
+Version 1.0.0 - 2023-02-02
+===========================
   * Major new documentation added and re-organization.
   * Started tracking coverage percentage
   * Repackaging using pyproject.toml file
 
-Version 0.0.13 - 2022-01-03
+Version 0.0.13 - 2023-01-03
 ===========================
   * Added the ability to parse variable length files
   * Added the ability to specify packet field that are arrays

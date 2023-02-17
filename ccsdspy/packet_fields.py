@@ -74,15 +74,14 @@ class PacketField:
                 "{cls_name}(name={_name}, data_type={_data_type}, "
                 "bit_length={_bit_length}, bit_offset={_bit_offset}, "
                 "byte_order={_byte_order}, array_shape={_array_shape}, "
-                "array_order={_array_order})"
-                .format(**values)
+                "array_order={_array_order})".format(**values)
             )
         else:
             return (
                 "{cls_name}(name={_name}, data_type={_data_type}, "
                 "bit_length={_bit_length}, bit_offset={_bit_offset}, "
                 "byte_order={_byte_order}".format(**values)
-            )            
+            )
 
     def __iter__(self):
         return iter(

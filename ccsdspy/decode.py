@@ -192,19 +192,19 @@ def _decode_variable_length(file_bytes, fields):
     # Loop through packets
     # ----------------------------------------------------------------------------
     for pkt_num, packet_start in enumerate(packet_starts):
-        packet_nbytes = file_bytes[packet_start + 4] * 256 + file_bytes[packet_start + 5] + 7        
+        packet_nbytes = file_bytes[packet_start + 4] * 256 + file_bytes[packet_start + 5] + 7
         bit_offsets_cur = bit_offsets.copy()
         bit_lengths_cur = {}
-        
+
         offset_counter = 0
         offset_history = []
-        
+
         for i, field in enumerate(fields):
             # Determine the bit length for field
             # ----------------------------------
             if field._array_shape == "expand":
                 footer_bits = sum(field._bit_length for fld in fields[i + 1 :])
-                bit_length = packet_nbytes*8 - footer_bits - offset_counter
+                bit_length = packet_nbytes * 8 - footer_bits - offset_counter
             elif isinstance(field._array_shape, str):
                 # Defined by previous field
                 bit_length = field_arrays[field._array_shape][pkt_num] * field._bit_length
@@ -215,11 +215,11 @@ def _decode_variable_length(file_bytes, fields):
 
             # Determine both offset
             if field._name not in bit_offsets_cur:
-                bit_offsets_cur[field._name] = offset_counter                    
+                bit_offsets_cur[field._name] = offset_counter
 
-            offset_history.append(offset_counter)            
+            offset_history.append(offset_counter)
             offset_counter += bit_length
-            
+
             # Parse field data
             # ------------------
             field_raw_data = None  # will be array of uint8
@@ -229,7 +229,7 @@ def _decode_variable_length(file_bytes, fields):
             else:
                 # Header byte before expanding field: Referenced from start of packet
                 start_byte = packet_start + bit_offsets_cur[field._name] // 8
-                              
+
             if isinstance(field._array_shape, str):
                 stop_byte = start_byte + bit_lengths_cur[field._name] // 8
                 field_raw_data = file_bytes[start_byte:stop_byte]
@@ -250,7 +250,7 @@ def _decode_variable_length(file_bytes, fields):
             # Switch dtype of byte arrays to the final dtype, and apply masks and shifts
             # to interpret the correct bits.
             field_raw_data.dtype = numpy_dtypes[field._name]
-                
+
             if field._data_type in ("int", "uint"):
                 if not isinstance(field._array_shape, str):
                     last_byte = start_byte + nbytes_file
@@ -299,15 +299,15 @@ def _varlength_intialize_field_arrays(fields, npackets):
     fields : list of ccsdspy.PacketField
        A list of fields, including the secondary header but excluding the
        primary header.
-    
-    npackets : int 
+
+    npackets : int
        Number of packets in the file
-    
+
     Returns
     -------
     field_arrays : dict, str to array
         Dictionary of initialized field arrays, mapping string field name to numpy array
-    numpy_dtypes : dict, str to numpy dtype 
+    numpy_dtypes : dict, str to numpy dtype
         Dictionary of datatypes for the final field arrays, mapping string field names
         to numpy data types
     bit_offsets : dict, str to int/None
@@ -333,36 +333,40 @@ def _varlength_intialize_field_arrays(fields, npackets):
     for i, field in enumerate(fields):
         if isinstance(field._array_shape, str):
             last_var_idx = i
-            
+
     if last_var_idx is not None:
         counter = 0
         footer_fields = fields[last_var_idx + 1 :]
         for i, field in enumerate(reversed(footer_fields)):
             bit_offsets[field._name] = counter - field._bit_length
             counter -= field._bit_length
-            
+
     # Generate field arrays
     # ---------------------
     field_arrays = {}
     numpy_dtypes = {}
     nbytes_file = {}
-    
-    for i, field in enumerate(fields):            
+
+    for i, field in enumerate(fields):
         # Number of bytes that the field spans in the file
         if isinstance(field._array_shape, str):
             nbytes_file[field._name] = field._bit_length // 8
         else:
-            if i > 0 and isinstance(fields[i-1]._array_shape, str):
+            if i > 0 and isinstance(fields[i - 1]._array_shape, str):
                 # if preceding field is vairable length, we can assume this is byte
                 # asgined
                 nbytes_file[field._name] = math.ceil(field._bit_length / 8)
             else:
                 bit_offset = bit_offsets[field._name]
-                nbytes_file[field._name] = (bit_offset + field._bit_length - 1) // 8 - bit_offset // 8 + 1
+                nbytes_file[field._name] = (
+                    (bit_offset + field._bit_length - 1) // 8 - bit_offset // 8 + 1
+                )
 
         # NumPy only has 2-byte, 4-byte and 8-byte variants (eg, float16, float32,
         # float64, but not float48). Map them to an nbytes for the output.
-        nbytes_final = {3: 4, 5: 8, 6: 8, 7: 8}.get(nbytes_file[field._name], nbytes_file[field._name])
+        nbytes_final = {3: 4, 5: 8, 6: 8, 7: 8}.get(
+            nbytes_file[field._name], nbytes_file[field._name]
+        )
 
         # byte_order_symbol is only used to control float types here.
         #  - uint and int byte order are handled with byteswap later
@@ -383,5 +387,5 @@ def _varlength_intialize_field_arrays(fields, npackets):
             field_arrays[field._name] = np.zeros(npackets, dtype=object)
         else:
             field_arrays[field._name] = np.zeros(npackets, dtype=np_dtype)
-            
+
     return field_arrays, numpy_dtypes, bit_offsets

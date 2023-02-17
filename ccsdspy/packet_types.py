@@ -156,20 +156,20 @@ class VariableLength(_BasePacket):
         # Check variable fields with their sizes set by other fields only do so when
         # the previous field precedes it
         field_names = [field._name for field in fields]
-        
-        for i, field in enumerate(fields):            
+
+        for i, field in enumerate(fields):
             if (
-                    isinstance(field, PacketArray) and
-                    isinstance(field._array_shape, str) and
-                    field._array_shape != "expand" and
-                    field._array_shape not in field_names[:i]                     
+                isinstance(field, PacketArray)
+                and isinstance(field._array_shape, str)
+                and field._array_shape != "expand"
+                and field._array_shape not in field_names[:i]
             ):
                 raise ValueError(
                     "The VariableLength class requires that variable fields with "
                     "their sizes set by other fields only do so when the "
                     "previous field precedes it."
                 )
-                
+
         # Check that bit offsets are not set
         if not all(field._bit_offset is None for field in fields):
             raise ValueError(

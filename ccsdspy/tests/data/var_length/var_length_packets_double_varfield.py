@@ -38,7 +38,7 @@ for packet_num in range(num_packets):
     for j in range(data1_length[packet_num]):
         this_packet += struct.pack(">H", data1_length[packet_num] + j)
 
-    #  data2 array contents start with the zero and increment to the data2_length 
+    #  data2 array contents start with the zero and increment to the data2_length
     this_packet += struct.pack("B", data2_length[packet_num])
     for j in range(data2_length[packet_num]):
         this_packet += struct.pack(">H", j)
@@ -51,9 +51,13 @@ for packet_num in range(num_packets):
     packet += this_packet
 
 if include_footer:
-    expected_length = 8 * num_packets + 2 * np.sum(data1_length) + 2 * np.sum(data2_length) + 2 * num_packets
+    expected_length = (
+        8 * num_packets + 2 * np.sum(data1_length) + 2 * np.sum(data2_length) + 2 * num_packets
+    )
 else:
-    expected_length = 6 * num_packets + 2 * np.sum(data1_length) + 2 * np.sum(data2_length) + 2 * num_packets
+    expected_length = (
+        6 * num_packets + 2 * np.sum(data1_length) + 2 * np.sum(data2_length) + 2 * num_packets
+    )
 
 print(f"File length is {len(packet)}. Expected length is {expected_length}.")
 
