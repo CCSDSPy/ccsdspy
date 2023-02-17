@@ -72,11 +72,10 @@ class FixedLength(_BasePacket):
         ValueError
             one or more of the arguments are invalid
         """
-        if any(field._bit_length == "expand" for field in fields):
+        if any(isinstance(field._bit_length, str) for field in fields):
             raise ValueError(
-                "The FixedLength class does not support fields with "
-                "bit_length='expand'. Instead, use the VariableLength "
-                "class."
+                "The FixedLength class does not support variable fields. "
+                "Instead, use the VariableLength class."
             )
 
         self._init(fields)
@@ -109,14 +108,18 @@ class VariableLength(_BasePacket):
     """Define a variable length packet to decode binary data.
 
     Variable length packets are packets which have a different length each
-    time. Each variable length packet should have a single `~ccsdspy.PacketArray` with
-    the `array_shape='expand'`, which will grow to fill the packet.
+    time.  Variable length fields are defined as `~ccsdspy.PacketArray` fields
+    where `array_shape="expand"` (causing the field to grow to fill the packet) or
+    `array_shape="other_field"` (causes the field named `other_field` to set the number
+    of elements in this array).
 
     Please note that while this class is able to parse fixed length packets, it
     is much slower. Use the :py:class:`~ccsdspy.FixedLength` class instead.
 
     Rules for variable length packets:
-      * Do provide only one one expanding `~ccsdspy.PacketArray` with `array_shape='expand'`.
+      * Do only specify a `~ccsdspy.PacketArray` with the `array_shape="other_field"`
+        when `other_field` precedes it in the packet definition
+      * Do not provide more than one expanding `~ccsdspy.PacketArray` with `array_shape="expand"`
       * Do not specify the primary header fields manually
       * Do not specify explicit bit_offsets (they will be computed automatically)
     """
@@ -136,6 +139,7 @@ class VariableLength(_BasePacket):
             one or more of the arguments are invalid, or do not follow the
             specified rules.
         """
+        # Check there is only one expanding field in the packet definition
         expand_arrays = [
             field
             for field in fields
@@ -149,6 +153,24 @@ class VariableLength(_BasePacket):
                 "ambiguous."
             )
 
+        # Check variable fields with their sizes set by other fields only do so when
+        # the previous field precedes it
+        field_names = [field._name for field in fields]
+        
+        for i, field in enumerate(fields):            
+            if (
+                    isinstance(field, PacketArray) and
+                    isinstance(field._array_shape, str) and
+                    field._array_shape != "expand" and
+                    field._array_shape not in field_names[:i]                     
+            ):
+                raise ValueError(
+                    "The VariableLength class requires that variable fields with "
+                    "their sizes set by other fields only do so when the "
+                    "previous field precedes it."
+                )
+                
+        # Check that bit offsets are not set
         if not all(field._bit_offset is None for field in fields):
             raise ValueError(
                 "The VariableLength class does not support explicit bit "
@@ -224,7 +246,7 @@ def _expand_array_fields(existing_fields):
     expand_history = {}
 
     for existing_field in existing_fields:
-        if existing_field._field_type != "array" or existing_field._array_shape == "expand":
+        if existing_field._field_type != "array" or isinstance(existing_field._array_shape, str):
             return_fields.append(existing_field)
             continue
 

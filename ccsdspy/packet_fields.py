@@ -67,12 +67,22 @@ class PacketField:
 
     def __repr__(self):
         values = {k: repr(v) for (k, v) in self.__dict__.items()}
+        values["cls_name"] = self.__class__.__name__
 
-        return (
-            "PacketField(name={_name}, data_type={_data_type}, "
-            "bit_length={_bit_length}, bit_offset={_bit_offset}, "
-            "byte_order={_byte_order})".format(**values)
-        )
+        if values["cls_name"] == "PacketArray":
+            return (
+                "{cls_name}(name={_name}, data_type={_data_type}, "
+                "bit_length={_bit_length}, bit_offset={_bit_offset}, "
+                "byte_order={_byte_order}, array_shape={_array_shape}, "
+                "array_order={_array_order})"
+                .format(**values)
+            )
+        else:
+            return (
+                "{cls_name}(name={_name}, data_type={_data_type}, "
+                "bit_length={_bit_length}, bit_offset={_bit_offset}, "
+                "byte_order={_byte_order}".format(**values)
+            )            
 
     def __iter__(self):
         return iter(
@@ -102,10 +112,11 @@ class PacketArray(PacketField):
             Data type of the field.
         bit_length : int
             Number of bits contained in the field.
-        array_shape : int, tuple of ints, or 'expand'
+        array_shape : int, tuple of ints, str, 'expand'
             Shape of the array as a tuple. For a 1-dimensional array, a single integer
-            can be supplied. For details on expanding arrays, see the
-            :py:class:`~ccsdspy.VariableLength` class.
+            can be supplied. To use another field's value, pass the name of that field. To
+            grow to fill the packet, use "expand". For details on variable length fields, see
+            the :py:class:`~ccsdspy.VariableLength` class.
         array_order  {'C', 'F'}
             Row-major (C-style) or column-major (Fortran-style) order.
         bit_offset : int, optional
@@ -120,9 +131,9 @@ class PacketArray(PacketField):
         TypeError
              If one of the arguments is not of the correct type.
         ValueError
-             data_type or byte_order is invalid
+             array_shape, array_order, data_type, or byte_order is invalid
         """
-        if array_shape == "expand":
+        if isinstance(array_shape, str):
             if kwargs["data_type"] is None:
                 kwargs["data_type"] = "uint"
             elif kwargs["data_type"] != "uint":
