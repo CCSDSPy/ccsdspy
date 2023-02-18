@@ -2,7 +2,7 @@
 
 import pytest
 
-from .. import PacketField
+from .. import PacketField, PacketArray
 
 
 def test_PacketField_initializer_raises_ValueError_on_bad_data_type():
@@ -40,3 +40,60 @@ def test_PacketField_iter():
     field = PacketField(name="MyField", data_type="uint", bit_length=1)
     assert dict(field)["name"] == "MyField"
     assert dict(field)["dataType"] == "uint"
+
+
+def test_PacketArray_TypeErrors():
+    with pytest.raises(TypeError):
+        PacketArray(
+            name="mnemonic",
+            data_type="uint",
+            array_shape=30,
+            bit_length=1,
+            array_order=3,  # must be str
+        )
+
+    with pytest.raises(TypeError):
+        PacketArray(
+            name="mnemonic",
+            data_type="uint",
+            array_shape=30,
+            bit_length=1,
+            array_order="X",  # invalid str
+        )
+
+    # Array shape must be either str or tuple
+    with pytest.raises(TypeError):
+        PacketArray(
+            name="mnemonic",
+            data_type="",
+            array_shape={3, 4, 5},
+            bit_length=1,
+        )
+
+    # Array shape must be >= 0 for all dims
+    with pytest.raises(TypeError):
+        PacketArray(
+            name="mnemonic",
+            data_type="",
+            array_shape=(3, -2, 4),
+            bit_length=1,
+        )
+
+    # Sum of array shape must be nonzero
+    with pytest.raises(TypeError):
+        PacketArray(
+            name="mnemonic",
+            data_type="",
+            array_shape=(0, 0, 0),
+            bit_length=1,
+        )
+
+
+def test_PacketArray_sets_default_data_type_expanding():
+    # checks sets data type to uint when not specified (when expanding)
+    field = PacketArray(name="mnemonic", bit_length=1, array_shape="expand")
+    assert field._data_type == "uint"
+
+    # checks rejects data type set thats not uint (when expanding)
+    with pytest.raises(ValueError):
+        PacketArray(name="mnemonic", bit_length=1, data_type="fill", array_shape="expand")
