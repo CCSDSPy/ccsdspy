@@ -7,6 +7,40 @@ import warnings
 
 import numpy as np
 
+from . import VariableLength, PacketArray
+
+
+def read_primary_headers(file):
+    """Read primary header fields and return contents as a dictionary
+    of arrays.
+
+    Parameters
+    ----------
+    file : str
+      Path to file on the local file system, or file-like object
+
+    Returns
+    -------
+    header_arrays : dict, string to NumPy array
+       Dictionary mapping header names to NumPy arrays,The header names are:
+       `CCSDS_VERSION_NUMBER`, `CCSDS_PACKET_TYPE`, `CCSDS_SECONDARY_FLAG`,
+       `CCSDS_SEQUENCE_FLAG`, `CCSDS_APID`, `CCSDS_SEQUENCE_COUNT`,
+       `CCSDS_PACKET_LENGTH`
+    """
+    pkt = VariableLength([
+        PacketArray(
+            name="unused",
+            data_type="uint",
+            bit_length=8,
+            array_shape="expand"
+        )
+    ])
+
+    header_arrays = pkt.load(file, include_primary_header=True)
+    del header_arrays['unused']
+
+    return header_arrays
+        
 
 def split_by_apid(mixed_file, valid_apids=None):
     """Split a stream of mixed APIDs into separate streams by APID.
