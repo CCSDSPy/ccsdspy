@@ -179,3 +179,52 @@ def test_multidimensional_array(
         for i in range(32):
             for j in range(4):
                 assert results["array"][k, i, j] == k * (2 * i + j)
+
+
+def test_fixed_length_rejects_expanding():
+    with pytest.raises(ValueError):
+        FixedLength(
+            [
+                PacketArray(
+                    name="array",
+                    array_shape="expand",
+                    data_type="uint",
+                    bit_length=8,
+                )
+            ]
+        )
+
+
+def test_variable_length_rejects_multiple_expanding():
+    with pytest.raises(ValueError):
+        FixedLength(
+            [
+                PacketArray(
+                    name="array1",
+                    array_shape="expand",
+                    data_type="uint",
+                    bit_length=8,
+                ),
+                PacketArray(
+                    name="array2",
+                    array_shape="expand",
+                    data_type="uint",
+                    bit_length=8,
+                ),
+            ]
+        )
+
+
+def test_variable_length_rejects_bit_offset():
+    with pytest.raises(ValueError):
+        FixedLength(
+            [
+                PacketArray(
+                    name="array1",
+                    array_shape="expand",
+                    data_type="uint",
+                    bit_length=8,
+                    bit_offset=32,
+                ),
+            ]
+        )
