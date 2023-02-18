@@ -149,9 +149,9 @@ def test_end_to_end(cls):
     pkt.add_converter("BOO", "BOO_conv", boo_conv)
     pkt.add_converter("FOO", "FOO_conv", foo_conv)
     pkt.add_converter("BLAH", "BLAH_conv", blah_conv)
-    
+
     result = pkt.load(TEST_FILENAME)
-    
+
     assert np.all(result["BOO"] == np.array([0, 1, 2] * (num_packets // 3)))
     assert np.all(result["FOO"] == np.arange(num_packets, dtype=int) % 5)
     assert np.allclose(result["BLAH"], np.arange(num_packets, dtype=int) % 10)

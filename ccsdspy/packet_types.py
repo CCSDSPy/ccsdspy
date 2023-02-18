@@ -72,7 +72,7 @@ class _BasePacket:
            A converter object to apply post-processing conversions, such as
            calibration curves or value replacement. Converter objects
            can be found in`:py:mod:~ccsdspy.converters`.
-        
+
         Raises
         ------
         TypeError
@@ -90,12 +90,9 @@ class _BasePacket:
         if not any(input_field_name == field._name for field in self._fields):
             raise ValueError("input_field_name must be present in the packet definition")
 
-        self._converters[input_field_name] = (
-            output_field_name,
-            converter
-        )
+        self._converters[input_field_name] = (output_field_name, converter)
 
-    
+
 class FixedLength(_BasePacket):
     """Define a fixed length packet to decode binary data.
 
@@ -223,11 +220,7 @@ class VariableLength(_BasePacket):
         # they didn't want the primary header fields, we parse for them and then
         # remove them after.
         packet_arrays = _load(
-            file,
-            self._fields,
-            self._converters,
-            "variable_length",
-            include_primary_header=True
+            file, self._fields, self._converters, "variable_length", include_primary_header=True
         )
 
         if not include_primary_header:
@@ -561,7 +554,7 @@ def _apply_converters(field_arrays, converters):
     converted = field_arrays.copy()
 
     for input_field_name, (output_field_name, converter) in converters.items():
-        input_array = field_arrays[input_field_name]        
+        input_array = field_arrays[input_field_name]
         converted[output_field_name] = converter.convert_many(input_array)
 
     return converted
