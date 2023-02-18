@@ -7,6 +7,7 @@ import os
 
 import numpy as np
 
+from .converters import Converter
 from .decode import _decode_fixed_length, _decode_variable_length
 from .packet_fields import PacketField, PacketArray
 
@@ -26,7 +27,11 @@ class _BasePacket:
         fields : list of `ccsdspy.PacketField`
             Layout of packet fields contained in the definition.
         """
+        # List of PacketField instances
         self._fields = fields[:]
+
+        # Dictionary mapping input name to tuple (output_name: str, Converter instance)
+        self._converters = {}
 
     @classmethod
     def from_file(cls, file):
@@ -51,7 +56,46 @@ class _BasePacket:
 
         return cls(fields)
 
+    def add_converter(self, input_field_name, output_field_name, converter):
+        """Add a converter to the packet definition, used to apply
+        post-processing transformatons of decoded fields.
 
+        Parameters
+        ----------
+        input_file_name : str
+           Name of input field. There must be one field named this in the packet
+           definition.
+        output_file_name : str
+           Name of output field. When the packet is decoded using `pkt.load()`,
+           a new field named this will be present in the output dictionary.
+        converter : instance of subclass of `:py:class:~ccsdspy.converters.Converter`
+           A converter object to apply post-processing conversions, such as
+           calibration curves or value replacement. Converter objects
+           can be found in`:py:mod:~ccsdspy.converters`.
+        
+        Raises
+        ------
+        TypeError
+           If one of the arguments is not of the correct type.
+        ValueError
+           The provided `input_field_name` is not present in the packet definition
+        """
+        if not isinstance(input_field_name, str):
+            raise TypeError("input_field_name must be a str")
+        if not isinstance(output_field_name, str):
+            raise TypeError("output_field_name must be a str")
+        if not isinstance(converter, Converter):
+            raise TypeError("converter must be an instance of a Converter subclass")
+
+        if not any(input_field_name == field._name for field in self._fields):
+            raise ValueError("input_field_name must be present in the packet definition")
+
+        self._converters[input_field_name] = (
+            output_field_name,
+            converter
+        )
+
+    
 class FixedLength(_BasePacket):
     """Define a fixed length packet to decode binary data.
 
@@ -100,6 +144,7 @@ class FixedLength(_BasePacket):
         return _load(
             file,
             self._fields,
+            self._converters,
             "fixed_length",
             include_primary_header=include_primary_header,
         )
@@ -177,7 +222,13 @@ class VariableLength(_BasePacket):
         # The variable length decoder requires the full packet definition, so if
         # they didn't want the primary header fields, we parse for them and then
         # remove them after.
-        packet_arrays = _load(file, self._fields, "variable_length", include_primary_header=True)
+        packet_arrays = _load(
+            file,
+            self._fields,
+            self._converters,
+            "variable_length",
+            include_primary_header=True
+        )
 
         if not include_primary_header:
             _delete_primary_header_fields(packet_arrays)
@@ -436,7 +487,7 @@ def _get_fields_csv_file(csv_file):
     return fields
 
 
-def _load(file, fields, decoder_name, include_primary_header=False):
+def _load(file, fields, converters, decoder_name, include_primary_header=False):
     """Decode a file-like object containing a sequence of these packets.
 
     Parameters
@@ -445,6 +496,9 @@ def _load(file, fields, decoder_name, include_primary_header=False):
        Path to file on the local file system, or file-like object
     fields : list of `ccsdspy.PacketField`
        Layout of packet fields contained in the definition.
+    converters : dict, str to tuple (str, Converter)
+       Dictionary of post-processing conversions. keys are input field names,
+       values are tuples of (output_field_name, Converter instance)
     decoder_name: {'fixed_length', 'variable_length'}
        String identifying which decoder to use.
     include_primary_header: bool
@@ -481,12 +535,12 @@ def _load(file, fields, decoder_name, include_primary_header=False):
         )
 
     field_arrays = _unexpand_field_arrays(field_arrays, expand_history)
-    field_arrays = _apply_converters(field_arrays, fields)
+    field_arrays = _apply_converters(field_arrays, converters)
 
     return field_arrays
 
 
-def _apply_converters(field_arrays, fields):
+def _apply_converters(field_arrays, converters):
     """Apply post-processing converters in place to a dictionary of field
     arrays.
 
@@ -494,8 +548,9 @@ def _apply_converters(field_arrays, fields):
     ----------
     field_arrays : dict of string to NumPy arrays
        The decoded packet field arrays without any post-processing applied
-    fields : list of `ccsdspy.PacketField`
-      Layout of packet fields contained in the definition.
+    converters : dict, str to tuple (str, Converter)
+       Dictionary of post-processing conversions. keys are input field names,
+       values are tuples of (output_field_name, Converter instance)
 
     Returns
     -------
@@ -505,10 +560,8 @@ def _apply_converters(field_arrays, fields):
     """
     converted = field_arrays.copy()
 
-    for field in fields:
-        if field._converter is not None:
-            # Apply the conversion
-            converter = field._converter
-            converted[field._name] = converter.convert_many(field_arrays[field._name])
+    for input_field_name, (output_field_name, converter) in converters.items():
+        input_array = field_arrays[input_field_name]        
+        converted[output_field_name] = converter.convert_many(input_array)
 
     return converted
