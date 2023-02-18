@@ -12,7 +12,7 @@ from .. import utils
 def test_read_primary_headers():
     dir_path = os.path.dirname(os.path.realpath(__file__))
     data_path = os.path.join(dir_path, "data", "split")
-    
+
     # Check files in output directory
     tlm_files = [
         "apid00384.tlm",
@@ -29,11 +29,10 @@ def test_read_primary_headers():
         header_arrays = utils.read_primary_headers(tlm_path)
         apid = int(tlm_file[4:-4])
 
-        assert np.all(header_arrays['CCSDS_VERSION_NUMBER'] == 0)
-        assert np.all(header_arrays['CCSDS_PACKET_TYPE'] == 0)
-        assert np.all(header_arrays['CCSDS_SECONDARY_FLAG'] == 1)
-        assert np.all(header_arrays['CCSDS_SEQUENCE_FLAG'] == 3)
-        assert np.all(header_arrays['CCSDS_APID'] == apid)
-        assert np.all(np.diff(header_arrays['CCSDS_SEQUENCE_COUNT']) > 0)
-        assert np.unique(header_arrays['CCSDS_PACKET_LENGTH']).size == 1  # fixed length
- 
+        assert np.all(header_arrays["CCSDS_VERSION_NUMBER"] == 0)
+        assert np.all(header_arrays["CCSDS_PACKET_TYPE"] == 0)
+        assert np.all(header_arrays["CCSDS_SECONDARY_FLAG"] == 1)
+        assert np.all(header_arrays["CCSDS_SEQUENCE_FLAG"] == 3)
+        assert np.all(header_arrays["CCSDS_APID"] == apid)
+        assert np.all(np.diff(header_arrays["CCSDS_SEQUENCE_COUNT"]) > 0)
+        assert np.unique(header_arrays["CCSDS_PACKET_LENGTH"]).size == 1  # fixed length

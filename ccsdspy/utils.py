@@ -27,20 +27,15 @@ def read_primary_headers(file):
        `CCSDS_SEQUENCE_FLAG`, `CCSDS_APID`, `CCSDS_SEQUENCE_COUNT`,
        `CCSDS_PACKET_LENGTH`
     """
-    pkt = VariableLength([
-        PacketArray(
-            name="unused",
-            data_type="uint",
-            bit_length=8,
-            array_shape="expand"
-        )
-    ])
+    pkt = VariableLength(
+        [PacketArray(name="unused", data_type="uint", bit_length=8, array_shape="expand")]
+    )
 
     header_arrays = pkt.load(file, include_primary_header=True)
-    del header_arrays['unused']
+    del header_arrays["unused"]
 
     return header_arrays
-        
+
 
 def split_by_apid(mixed_file, valid_apids=None):
     """Split a stream of mixed APIDs into separate streams by APID.
