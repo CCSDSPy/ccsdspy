@@ -11,6 +11,7 @@ import pytest
 
 from .. import utils
 
+
 def test_count_packets_missing_bytes():
     dir_path = os.path.dirname(os.path.realpath(__file__))
     data_path = os.path.join(dir_path, "data", "split")
@@ -19,14 +20,13 @@ def test_count_packets_missing_bytes():
     num_packets, missing_bytes = utils.count_packets(tlm_path, return_missing_bytes=True)
     assert missing_bytes == 0
 
-
     total_in_split = 0
 
     for apid, apid_stream in utils.split_by_apid(tlm_path).items():
         total_in_split += utils.count_packets(apid_stream)
 
     assert total_in_split == num_packets
-            
+
 
 def test_count_packets_simple():
     dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -52,7 +52,7 @@ def test_count_packets_file_like_obj():
     assert isinstance(result_1, int)
     assert isinstance(result_2, int)
     assert isinstance(result_3, int)
-        
+
     assert result_1 == result_2
     assert result_1 == result_3
 

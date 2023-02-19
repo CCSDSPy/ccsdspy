@@ -171,18 +171,18 @@ def count_packets(file, return_missing_bytes=False):
       Path to file on the local file system, or file-like object
     return_missing_bytes : bool, optional
       Also return the number of missing bytes at the end of the file. This
-      is the number of bytes which would need to be added to the file to 
+      is the number of bytes which would need to be added to the file to
       complete the last packet expected (as set by the packet length in
-      the last packet's primary header).    
+      the last packet's primary header).
 
     Returns
     -------
     num_packets : int
        Number of complete packets in the file
     missing_bytes : int, optional
-      The number of bytes which would need to be added to the file to 
+      The number of bytes which would need to be added to the file to
       complete the last packet expected (as set by the packet length in
-      the last packet's primary header).    
+      the last packet's primary header).
     """
     if hasattr(file, "read"):
         file_bytes = np.frombuffer(file.read(), "u1")
@@ -191,13 +191,13 @@ def count_packets(file, return_missing_bytes=False):
 
     offset = 0
     num_packets = 0
-    
+
     while offset < len(file_bytes):
         packet_nbytes = file_bytes[offset + 4] * 256 + file_bytes[offset + 5] + 7
         offset += packet_nbytes
         num_packets += 1
 
-    #num_packets -= 1  # overcounted on last iteration    
+    # num_packets -= 1  # overcounted on last iteration
     missing_bytes = offset - len(file_bytes)
 
     if return_missing_bytes:
