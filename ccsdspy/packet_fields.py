@@ -135,7 +135,7 @@ class PacketArray(PacketField):
              data_type or byte_order is invalid
         """
         if array_shape == "expand":
-            if kwargs["data_type"] is None:
+            if "data_type" not in kwargs:
                 kwargs["data_type"] = "uint"
             elif kwargs["data_type"] != "uint":
                 raise ValueError("Expanding arrays must be data_type='uint'")
