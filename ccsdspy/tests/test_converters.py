@@ -140,18 +140,25 @@ def test_end_to_end(cls):
 
     pkt = cls(
         [
-            PacketField(name="BOO", data_type="uint", bit_length=16, converter=boo_conv),
-            PacketField(name="FOO", data_type="uint", bit_length=16, converter=foo_conv),
-            PacketField(name="BLAH", data_type="uint", bit_length=32, converter=blah_conv),
+            PacketField(name="BOO", data_type="uint", bit_length=16),
+            PacketField(name="FOO", data_type="uint", bit_length=16),
+            PacketField(name="BLAH", data_type="uint", bit_length=32),
         ]
     )
 
+    pkt.add_converter("BOO", "BOO_conv", boo_conv)
+    pkt.add_converter("FOO", "FOO_conv", foo_conv)
+    pkt.add_converter("BLAH", "BLAH_conv", blah_conv)
+
     result = pkt.load(TEST_FILENAME)
 
-    assert np.all(result["BOO"] == np.array(["NO", "YES", "MAYBE"] * (num_packets // 3)))
-    assert np.all(result["FOO"] == (np.arange(num_packets, dtype=int) % 5) * slope + intercept)
+    assert np.all(result["BOO"] == np.array([0, 1, 2] * (num_packets // 3)))
+    assert np.all(result["FOO"] == np.arange(num_packets, dtype=int) % 5)
+    assert np.allclose(result["BLAH"], np.arange(num_packets, dtype=int) % 10)
+    assert np.all(result["BOO_conv"] == np.array(["NO", "YES", "MAYBE"] * (num_packets // 3)))
+    assert np.all(result["FOO_conv"] == (np.arange(num_packets, dtype=int) % 5) * slope + intercept)
     assert np.allclose(
-        result["BLAH"], (np.arange(num_packets, dtype=int) % 10) * coeffs[0] + coeffs[1]
+        result["BLAH_conv"], (np.arange(num_packets, dtype=int) % 10) * coeffs[0] + coeffs[1]
     )
 
     os.remove(TEST_FILENAME)
