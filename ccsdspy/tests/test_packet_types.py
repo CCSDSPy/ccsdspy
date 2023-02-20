@@ -233,55 +233,55 @@ def test_variable_length_rejects_bit_offset():
 def test_fixed_length_save():
     """Save a fixed length packet and then parse it and make sure that the input is the same as the output."""
     pkt = FixedLength(
-                      [
-                       PacketField(name="DATAU", data_type="uint", bit_length=32),
-                       PacketField(name="DATAI", data_type="int", bit_length=16),
-                       PacketField(name="DATAF", data_type="float", bit_length=64),
-                       PacketField(name="DATAS", data_type="str", bit_length=8),
-                       PacketArray(
-                                   name="SENSOR_GRID",
-                                   data_type="uint",
-                                   bit_length=16,
-                                   array_shape=(32, 32),
-                                   array_order="C",
-                                   ),
-                       ]
-                      )
-                      num_packets = 1000
-                      pkt_type = 1
-                      apid = 0x084
-                      sec_header_flag = 1
-                      seq_flag = 0
-                      datau = np.arange(0, num_packets, dtype=np.uint32)
-                      datai = np.arange(1, num_packets + 1, dtype=np.int16)
-                      dataf = np.arange(2, num_packets + 2, dtype=np.float64)
-                      # shift to make first element 'a'
-                      datas = np.arange(97, num_packets + 97, dtype=np.uint8)
-                      sensor_grid = np.arange(0, num_packets * 32 * 32, dtype=np.uint16).reshape(num_packets, 32, 32)
-                      
-                      data = {
-                          "DATAU": datau,
-                              "DATAI": datai,
-                                  "DATAF": dataf,
-                                      "DATAS": datas,
-                                          "SENSOR_GRID": sensor_grid,
-                                      }
+        [
+            PacketField(name="DATAU", data_type="uint", bit_length=32),
+            PacketField(name="DATAI", data_type="int", bit_length=16),
+            PacketField(name="DATAF", data_type="float", bit_length=64),
+            PacketField(name="DATAS", data_type="str", bit_length=8),
+            PacketArray(
+                name="SENSOR_GRID",
+                data_type="uint",
+                bit_length=16,
+                array_shape=(32, 32),
+                array_order="C",
+            ),
+        ]
+    )
+    num_packets = 1000
+    pkt_type = 1
+    apid = 0x084
+    sec_header_flag = 1
+    seq_flag = 0
+    datau = np.arange(0, num_packets, dtype=np.uint32)
+    datai = np.arange(1, num_packets + 1, dtype=np.int16)
+    dataf = np.arange(2, num_packets + 2, dtype=np.float64)
+    # shift to make first element 'a'
+    datas = np.arange(97, num_packets + 97, dtype=np.uint8)
+    sensor_grid = np.arange(0, num_packets * 32 * 32, dtype=np.uint16).reshape(num_packets, 32, 32)
 
-pkt.save("test.bin", pkt_type, apid, sec_header_flag, seq_flag, data)
+    data = {
+        "DATAU": datau,
+        "DATAI": datai,
+        "DATAF": dataf,
+        "DATAS": datas,
+        "SENSOR_GRID": sensor_grid,
+    }
+
+    pkt.save("test.bin", pkt_type, apid, sec_header_flag, seq_flag, data)
     result = pkt.load("test.bin", include_primary_header=True)
-    
+
     assert len(result["DATAU"]) == len(datau)
     assert len(result["DATAI"]) == len(datai)
     assert len(result["DATAF"]) == len(dataf)
     assert len(result["DATAS"]) == len(datas)
     assert len(result["SENSOR_GRID"]) == len(sensor_grid)
     assert result["SENSOR_GRID"].shape == sensor_grid.shape
-    
+
     assert np.all(result["CCSDS_PACKET_TYPE"] == pkt_type)
     assert np.all(result["CCSDS_SECONDARY_FLAG"] == sec_header_flag)
     assert np.all(result["CCSDS_APID"] == apid)
     assert np.all(result["CCSDS_SEQUENCE_FLAG"] == seq_flag)
-    
+
     assert np.allclose(result["DATAU"], datau)
     assert np.allclose(result["DATAI"], datai)
     assert np.allclose(result["DATAF"], dataf)
@@ -291,62 +291,61 @@ pkt.save("test.bin", pkt_type, apid, sec_header_flag, seq_flag, data)
 
 def test_variable_length_save():
     """Save a variable length packet and then parse it and make sure that the input is the same as the output."""
-    
+
     pkt = VariableLength(
-                         [
-                          PacketField(name="DATAU", data_type="uint", bit_length=32),
-                          PacketField(name="DATAI", data_type="int", bit_length=16),
-                          PacketField(name="DATAF", data_type="float", bit_length=64),
-                          PacketField(name="DATAS", data_type="str", bit_length=8),
-                          PacketArray(
-                                      name="DATAEXPAND",
-                                      data_type="uint",
-                                      bit_length=8,
-                                      array_shape="expand",
-                                      ),
-                          ]
-                         )
-                         num_packets = 1000
-                         pkt_type = 1
-                         apid = 0x084
-                         sec_header_flag = 1
-                         seq_flag = 0
-                         datau = np.arange(0, num_packets, dtype=np.uint32)
-                         datai = np.arange(1, num_packets + 1, dtype=np.int16)
-                         dataf = np.arange(2, num_packets + 2, dtype=np.float64)
-                         # shift to make first element 'a'
-                         datas = np.arange(97, num_packets + 97, dtype=np.uint8)
-                         data_expand_length = np.random.randint(1, 10, size=num_packets)
-                         data_expand = []
-                         for i in range(num_packets):
-                             data_expand.append(np.random.randint(1, 10, size=data_expand_length[i], dtype=np.uint8))
-                         
-data = {
-    "DATAU": datau,
+        [
+            PacketField(name="DATAU", data_type="uint", bit_length=32),
+            PacketField(name="DATAI", data_type="int", bit_length=16),
+            PacketField(name="DATAF", data_type="float", bit_length=64),
+            PacketField(name="DATAS", data_type="str", bit_length=8),
+            PacketArray(
+                name="DATAEXPAND",
+                data_type="uint",
+                bit_length=8,
+                array_shape="expand",
+            ),
+        ]
+    )
+    num_packets = 1000
+    pkt_type = 1
+    apid = 0x084
+    sec_header_flag = 1
+    seq_flag = 0
+    datau = np.arange(0, num_packets, dtype=np.uint32)
+    datai = np.arange(1, num_packets + 1, dtype=np.int16)
+    dataf = np.arange(2, num_packets + 2, dtype=np.float64)
+    # shift to make first element 'a'
+    datas = np.arange(97, num_packets + 97, dtype=np.uint8)
+    data_expand_length = np.random.randint(1, 10, size=num_packets)
+    data_expand = []
+    for i in range(num_packets):
+        data_expand.append(np.random.randint(1, 10, size=data_expand_length[i], dtype=np.uint8))
+
+    data = {
+        "DATAU": datau,
         "DATAI": datai,
         "DATAF": dataf,
         "DATAS": datas,
         "DATAEXPAND": data_expand,
     }
-    
+
     pkt.save("test.bin", pkt_type, apid, sec_header_flag, seq_flag, data)
     result = pkt.load("test.bin", include_primary_header=True)
-    
-assert len(result["DATAU"]) == len(datau)
+
+    assert len(result["DATAU"]) == len(datau)
     assert len(result["DATAI"]) == len(datai)
     assert len(result["DATAF"]) == len(dataf)
     assert len(result["DATAS"]) == len(datas)
     assert len(result["DATAEXPAND"]) == len(data_expand)
-    
+
     assert np.all(result["CCSDS_PACKET_TYPE"] == pkt_type)
     assert np.all(result["CCSDS_SECONDARY_FLAG"] == sec_header_flag)
     assert np.all(result["CCSDS_APID"] == apid)
     assert np.all(result["CCSDS_SEQUENCE_FLAG"] == seq_flag)
-    
+
     assert np.allclose(result["DATAU"], datau)
     assert np.allclose(result["DATAI"], datai)
     assert np.allclose(result["DATAF"], dataf)
     assert np.allclose(result["DATAS"].view("uint8"), datas)
     for i in range(len(result["DATAEXPAND"])):
         assert np.allclose(result["DATAEXPAND"][i], data_expand[i])
-
