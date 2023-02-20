@@ -1,4 +1,4 @@
-"""This class hold the implementation of the converter sysytem, which applies 
+"""This class hold the implementation of the converter system, which applies 
 post-process to decoded packet fields. This post-processing includes applying
 linear/polynomial calibration curves, dictionary replacement, and time parsing.
 """
