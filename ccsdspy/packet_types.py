@@ -75,10 +75,10 @@ class FixedLength(_BasePacket):
         ValueError
             one or more of the arguments are invalid
         """
-        if any(field._bit_length == "expand" for field in fields):
+        if any(field._array_shape == "expand" for field in fields):
             raise ValueError(
                 "The FixedLength class does not support fields with "
-                "bit_length='expand'. Instead, use the VariableLength "
+                "array_shape='expand'. Instead, use the VariableLength "
                 "class."
             )
 

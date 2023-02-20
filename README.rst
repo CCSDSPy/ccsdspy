@@ -50,6 +50,10 @@ Documentation
 =============
 Our documentation is hosted on readthedocs and can be found `here <https://ccsdspy.readthedocs.io/en/latest/>`__.
 
+Getting Help
+============
+For more information or to ask questions about the library or CCSDS data in general, check out the `CCSDSPy Discussion Board <https://github.com/ddasilva/ccsdspy/discussions>`__ hosted through GitHub.
+
 Acknowledging or Citing ccsdspy
 ===============================
 If you use ccsdspy, it would be appreciated if you let us know and mention it in your publications. The continued growth and development of this package is dependent on the community being aware of it.
