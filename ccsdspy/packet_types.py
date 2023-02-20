@@ -7,11 +7,12 @@ import os
 
 import numpy as np
 
-from bitstruct import pack
+from bitstruct import pack, calcsize
 
 from .decode import _decode_fixed_length, _decode_variable_length
 from .packet_fields import PacketField, PacketArray
 
+BITS_PER_BYTE = 8
 
 __author__ = "Daniel da Silva <mail@danieldasilva.org>"
 
@@ -106,7 +107,7 @@ class FixedLength(_BasePacket):
             include_primary_header=include_primary_header,
         )
 
-    def to_file(self, file, pkt_type, apid, sec_header_flag, seq_flag, data):
+    def save(self, file, pkt_type, apid, sec_header_flag, seq_flag, data):
         """Encode a file containing a sequence of packet fields.
 
         Parameters
@@ -122,10 +123,11 @@ class FixedLength(_BasePacket):
             A binary file with the packet data    
         """
 
-        return _to_file(
+        return _save(
             file,
-            pkt_type, apid, sec_header_flag, seq_flag, data,
             self._fields,
+            data, 
+            pkt_type, apid, sec_header_flag, seq_flag,
             "fixed_length"
         )
 
@@ -208,6 +210,30 @@ class VariableLength(_BasePacket):
             _delete_primary_header_fields(packet_arrays)
 
         return packet_arrays
+
+    def save(self, file, pkt_type, apid, sec_header_flag, seq_flag, data):
+        """Encode a file containing a sequence of packet fields.
+
+        Parameters
+        ----------
+        file : str
+            Path to file on the local file system, or file-like object
+        data : dict
+            The data to add to the file
+
+        Returns
+        -------
+        file : str
+            A binary file with the packet data    
+        """
+
+        return _save(
+            file,
+            self._fields,
+            data, 
+            pkt_type, apid, sec_header_flag, seq_flag,
+            "variable_length"
+        )
 
 
 def _delete_primary_header_fields(packet_arrays):
@@ -510,27 +536,99 @@ def _load(file, fields, decoder_name, include_primary_header=False):
     return field_arrays
 
 
-def _to_file(file : str, pkt_type : int, apid: int, sec_header_flag : bool, seq_flag : bool, data : dict, fields, decoder_name):
+def _save(file : str, fields, data : dict, pkt_type : int, apid: int, sec_header_flag : bool, seq_flag : bool, decoder_name):
+    """Encode a file-like object containing a sequence of these packets.
+    The number of packets is defined by the number of values in the arrays in the data dictionary.
 
-    # check that each element in data is of the same length
+    Parameters
+    ----------
+    file: str
+       Path to file on the local file system, or file-like object
+    fields : list of `ccsdspy.PacketField`
+       Layout of packet fields contained in the definition.
+    data : dictionary
+        A dictionary with keys as the packet field names and values are arrays with values for each packet.
+    pkt_type : int
+        Packet type as defined in CCSDS primary header.
+    apid : int
+        Application ID as defined in the CCSDS primary header.
+    sec_header_flag : bool
+        Secondary header flag as defined in the CCSDS header.
+    seq_flag : bool
+        The sequence flag as defined in the CCSDS primary header.
+    decoder_name: {'fixed_length', 'variable_length'}
+       String identifying which decoder to use.
+
+    Returns
+    -------
+    file: str
+       Path to file on the local file system, or file-like object
+
+    Raises
+    ------
+    ValueError
+      if the arrays in the data dictionary are not all the same length
+    """
+    conversion = {'s': 'u', 'i': 's', 'u': 'u', 'f': 'f'}
+#    if 'array' in [this_field._field_type for this_field in fields]:
+
+    expand_fields, expand_history = _expand_array_fields(fields)
+
+    # check that each element in data has the same number of elements for x packets
     num_elements = [len(val) for val in data.values()]
     if num_elements.count(num_elements[0]) != len(num_elements):
         raise ValueError("Length of the arrays in data are not the same.")
     num_packets = num_elements[0]
-    fields, expand_history = _expand_array_fields(fields)
-    # check that all fields are defined in data
-    packet_length = sum([this_field._bit_length for this_field in fields]) / 8 - 1
     packets = b""
+    header_fmt = 'u3u1u1u11u2u14u16'  # ccsds header
+    data_fmt = ''
 
-    # create the bitstruct string
-    fmt = 'u3u1u1u11u2u14u16'  # ccsds header
-    for this_field in fields:
-        fmt += 'u' + str(this_field._bit_length)
+    if decoder_name == 'fixed_length':
+        if 'array' in [this_field._field_type for this_field in fields]:
+            array_exists = True
+        else:
+            array_exists = False
+        for this_field in expand_fields:
+            data_fmt += conversion[this_field._data_type[0]] + str(this_field._bit_length)
+        packet_length = calcsize(data_fmt) / BITS_PER_BYTE - 1
+        for i in range(num_packets):
+            values = [0, pkt_type, sec_header_flag, apid, seq_flag, i, packet_length]
+            packets += pack(header_fmt, *values)
+            if not array_exists:
+                values = [data[this_field._name][i] for this_field in fields]
+            else:
+                values = []
+                for this_field in fields:
+                    if this_field._field_type == 'element':
+                        values.append(data[this_field._name][i])
+                    elif this_field._field_type == 'array':
+                        values += list(data[this_field._name][i].flatten())
+            packets += pack(data_fmt, *values)
 
-    for i in range(num_packets):
-        values = [0, pkt_type, sec_header_flag, apid, seq_flag, i, packet_length] + [val[i] for val in data.values()]
-        this_packet = pack(fmt, *values)
-        packets += this_packet
+    if decoder_name == 'variable_length':
+        for i in range(num_packets):
+            data_fmt = ''
+            for this_field in expand_fields:
+                # first figure out the data format
+                if this_field._field_type == 'array' and this_field._array_shape == 'expand':
+                    this_field_numitems = len(data[this_field._name][i])
+                    this_data_format = (conversion[this_field._data_type[0]] + str(this_field._bit_length)) * this_field_numitems
+                    data_fmt += this_data_format
+                else:
+                    data_fmt += conversion[this_field._data_type[0]] + str(this_field._bit_length)
+
+            packet_length = int(calcsize(data_fmt) / BITS_PER_BYTE - 1)
+            values = [0, pkt_type, sec_header_flag, apid, seq_flag, i, packet_length]
+            packets += pack(header_fmt, *values)
+            data_values = []
+            for this_field in fields:
+                if this_field._field_type == 'element':
+                    data_values.append(data[this_field._name][i])
+                elif this_field._field_type == 'array' and this_field._array_shape != 'expand':
+                    data_values += list(data[this_field._name][i].flatten())
+                elif this_field._field_type == 'array' and this_field._array_shape == 'expand':
+                    data_values += list(data[this_field._name][i])
+            packets += pack(data_fmt, *data_values)
 
     with open(file, "wb") as fp:
         fp.write(packets)
