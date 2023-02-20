@@ -28,6 +28,7 @@ classifiers = [
 ]
 dependencies = [
   'numpy>=1.8.0',
+  'bitstruct>=8.17.0'
 ]
 
 [project.optional-dependencies]
