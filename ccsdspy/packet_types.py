@@ -65,7 +65,7 @@ class _BasePacket:
         input_field_name : str
            Name of input field. There must be one field named that exists in the packet
            definition.
-        output_file_name : str
+        output_field_name : str
            Name of output field. When the packet is decoded using `pkt.load()`,
            a new field named this will be present in the output dictionary.
         converter : instance of subclass of `:py:class:~ccsdspy.converters.Converter`
