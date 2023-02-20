@@ -62,7 +62,7 @@ class _BasePacket:
 
         Parameters
         ----------
-        input_file_name : str
+        input_field_name : str
            Name of input field. There must be one field named that exists in the packet
            definition.
         output_file_name : str
