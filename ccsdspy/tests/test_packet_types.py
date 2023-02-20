@@ -324,23 +324,205 @@ def test_load_without_moving_file_buffer_pos():
         assert pos == fp.tell()
 
 
-def test_fixedlength_to_file():
-    field_name = "DATA"
-    pkt = FixedLength([PacketField(name=field_name, data_type="uint", bit_length=32)])
+def test_fixed_length_rejects_expanding():
+    with pytest.raises(ValueError):
+        FixedLength(
+            [
+                PacketArray(
+                    name="array",
+                    array_shape="expand",
+                    data_type="uint",
+                    bit_length=BITS_PER_BYTE,
+                )
+            ]
+        )
+
+
+def test_VariableLength_initializer_raises_TypeError_on_bad_types():
+    """Tests that the VariableLength class raises TypeError when arguments
+    are of the wrong type.
+    """
+    with pytest.raises(TypeError):
+        VariableLength([], apid="not an int")
+    with pytest.raises(TypeError):
+        VariableLength([], name=1234)
+    with pytest.raises(TypeError):
+        VariableLength([], description=4567)
+
+
+def test_VariableLength_raises_AttributeError_on_set_optionals():
+    """Tests that the VariableLength class raises AttributeError when trying to set
+    read-only properties.
+    """
+    pkt = VariableLength([], apid=100, name="TestPacket", description="A test packet")
+    with pytest.raises(AttributeError):
+        pkt.apid = 200
+    with pytest.raises(AttributeError):
+        pkt.name = "New Name"
+    with pytest.raises(AttributeError):
+        pkt.description = "New description"
+
+
+def test_variable_length_rejects_multiple_expanding():
+    with pytest.raises(ValueError):
+        FixedLength(
+            [
+                PacketArray(
+                    name="array1",
+                    array_shape="expand",
+                    data_type="uint",
+                    bit_length=BITS_PER_BYTE,
+                ),
+                PacketArray(
+                    name="array2",
+                    array_shape="expand",
+                    data_type="uint",
+                    bit_length=BITS_PER_BYTE,
+                ),
+            ]
+        )
+
+
+def test_variable_length_rejects_bit_offset():
+    with pytest.raises(ValueError):
+        FixedLength(
+            [
+                PacketArray(
+                    name="array1",
+                    array_shape="expand",
+                    data_type="uint",
+                    bit_length=BITS_PER_BYTE,
+                    bit_offset=32,
+                ),
+            ]
+        )
+
+
+def test_load_without_moving_file_buffer_pos():
+    """Tests that load(..., reset_file_obj=True) works as intended."""
+    pkts = FixedLength.from_file(random_packet_def)
+    with open(random_binary_file, "rb") as fp:
+        pos = fp.tell()
+        pkts.load(fp, reset_file_obj=True)
+        assert pos == fp.tell()
+
+
+def test_fixed_length_save():
+    """Save a fixed length packet and then parse it and make sure that the input is the same as the output."""
+    pkt = FixedLength(
+        [
+            PacketField(name="DATAU", data_type="uint", bit_length=32),
+            PacketField(name="DATAI", data_type="int", bit_length=16),
+            PacketField(name="DATAF", data_type="float", bit_length=64),
+            PacketField(name="DATAS", data_type="str", bit_length=8),
+            PacketArray(
+                name="SENSOR_GRID",
+                data_type="uint",
+                bit_length=16,
+                array_shape=(32, 32),
+                array_order="C",
+            ),
+        ]
+    )
     num_packets = 1000
     pkt_type = 1
     apid = 0x084
     sec_header_flag = 1
     seq_flag = 0
-    data = {field_name: np.arange(0, num_packets, dtype=np.uint32)}
+    datau = np.arange(0, num_packets, dtype=np.uint32)
+    datai = np.arange(1, num_packets + 1, dtype=np.int16)
+    dataf = np.arange(2, num_packets + 2, dtype=np.float64)
+    # shift to make first element 'a'
+    datas = np.arange(97, num_packets + 97, dtype=np.uint8)
+    sensor_grid = np.arange(0, num_packets * 32 * 32, dtype=np.uint16).reshape(num_packets, 32, 32)
 
-    pkt.to_file("test.bin", pkt_type, apid, sec_header_flag, seq_flag, data)
-    result = pkt.load('test.bin', include_primary_header=True)
+    data = {
+        "DATAU": datau,
+        "DATAI": datai,
+        "DATAF": dataf,
+        "DATAS": datas,
+        "SENSOR_GRID": sensor_grid,
+    }
 
-    assert len(result["DATA"]) == num_packets
+    pkt.save("test.bin", pkt_type, apid, sec_header_flag, seq_flag, data)
+    result = pkt.load("test.bin", include_primary_header=True)
+
+    assert len(result["DATAU"]) == len(datau)
+    assert len(result["DATAI"]) == len(datai)
+    assert len(result["DATAF"]) == len(dataf)
+    assert len(result["DATAS"]) == len(datas)
+    assert len(result["SENSOR_GRID"]) == len(sensor_grid)
+    assert result["SENSOR_GRID"].shape == sensor_grid.shape
+
     assert np.all(result["CCSDS_PACKET_TYPE"] == pkt_type)
     assert np.all(result["CCSDS_SECONDARY_FLAG"] == sec_header_flag)
     assert np.all(result["CCSDS_APID"] == apid)
     assert np.all(result["CCSDS_SEQUENCE_FLAG"] == seq_flag)
 
-    assert np.allclose(data["DATA"], result["DATA"])
+    assert np.allclose(result["DATAU"], datau)
+    assert np.allclose(result["DATAI"], datai)
+    assert np.allclose(result["DATAF"], dataf)
+    assert np.allclose(result["DATAS"].view("uint8"), datas)
+    assert np.allclose(result["SENSOR_GRID"], sensor_grid)
+
+
+def test_variable_length_save():
+    """Save a variable length packet and then parse it and make sure that the input is the same as the output."""
+
+    pkt = VariableLength(
+        [
+            PacketField(name="DATAU", data_type="uint", bit_length=32),
+            PacketField(name="DATAI", data_type="int", bit_length=16),
+            PacketField(name="DATAF", data_type="float", bit_length=64),
+            PacketField(name="DATAS", data_type="str", bit_length=8),
+            PacketArray(
+                name="DATAEXPAND",
+                data_type="uint",
+                bit_length=8,
+                array_shape="expand",
+            ),
+        ]
+    )
+    num_packets = 1000
+    pkt_type = 1
+    apid = 0x084
+    sec_header_flag = 1
+    seq_flag = 0
+    datau = np.arange(0, num_packets, dtype=np.uint32)
+    datai = np.arange(1, num_packets + 1, dtype=np.int16)
+    dataf = np.arange(2, num_packets + 2, dtype=np.float64)
+    # shift to make first element 'a'
+    datas = np.arange(97, num_packets + 97, dtype=np.uint8)
+    data_expand_length = np.random.randint(1, 10, size=num_packets)
+    data_expand = []
+    for i in range(num_packets):
+        data_expand.append(np.random.randint(1, 10, size=data_expand_length[i], dtype=np.uint8))
+
+    data = {
+        "DATAU": datau,
+        "DATAI": datai,
+        "DATAF": dataf,
+        "DATAS": datas,
+        "DATAEXPAND": data_expand,
+    }
+
+    pkt.save("test.bin", pkt_type, apid, sec_header_flag, seq_flag, data)
+    result = pkt.load("test.bin", include_primary_header=True)
+
+    assert len(result["DATAU"]) == len(datau)
+    assert len(result["DATAI"]) == len(datai)
+    assert len(result["DATAF"]) == len(dataf)
+    assert len(result["DATAS"]) == len(datas)
+    assert len(result["DATAEXPAND"]) == len(data_expand)
+
+    assert np.all(result["CCSDS_PACKET_TYPE"] == pkt_type)
+    assert np.all(result["CCSDS_SECONDARY_FLAG"] == sec_header_flag)
+    assert np.all(result["CCSDS_APID"] == apid)
+    assert np.all(result["CCSDS_SEQUENCE_FLAG"] == seq_flag)
+
+    assert np.allclose(result["DATAU"], datau)
+    assert np.allclose(result["DATAI"], datai)
+    assert np.allclose(result["DATAF"], dataf)
+    assert np.allclose(result["DATAS"].view("uint8"), datas)
+    for i in range(len(result["DATAEXPAND"])):
+        assert np.allclose(result["DATAEXPAND"][i], data_expand[i])
