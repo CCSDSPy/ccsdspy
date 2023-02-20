@@ -63,7 +63,7 @@ class _BasePacket:
         Parameters
         ----------
         input_file_name : str
-           Name of input field. There must be one field named this in the packet
+           Name of input field. There must be one field named that exists in the packet
            definition.
         output_file_name : str
            Name of output field. When the packet is decoded using `pkt.load()`,
