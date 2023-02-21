@@ -4,6 +4,7 @@
 Variable Length Packets
 ***********************
 
+
 Overview
 ========
 A CCSDS packet may sometimes contain fields which differ in length packet-to-packet.  Parsing such variable length packets is supported through the `~ccsdspy.VariableLength`. 
@@ -28,11 +29,12 @@ The result will be a dictionary with the names as the keys.
 The values are arrays with the `~ccsdspy.PacketArray` field providing arrays with variable sizes.
 It is also possible to get access to the packet primary header. See :ref:`getting-header`.
 
-
+.. contents::
+   :depth: 2
 
 Reference-based Variable Length Field
-*************************************
-An example of using a reference-based variable length field called `data` which gets the number of elements from another field called `data_len` is below:
+=====================================
+An example of using a reference-based variable length field called `data1` which gets the number of elements from another field called `data1_len` is below, and similar for `data2` and `data2_len`. There is not a limit to the number of reference-based variable length fields in a packet definition. 
 
 .. code-block:: python
 
@@ -46,16 +48,27 @@ An example of using a reference-based variable length field called `data` which 
               bit_length=32
          ),
          PacketField(
-              name='data_len',
+              name='data1_len',
               data_type='uint',
               bit_length=8,
          ),	 
          PacketArray(
-              name="data",
+              name="data1",
               data_type="uint",
               bit_length=16,
-              array_shape="data_len",  # links data to data_len
+              array_shape="data1_len",  # links data1 <-> data1_len
          ),
+         PacketField(
+              name='data2_len',
+              data_type='uint',
+              bit_length=8,
+         ),	 
+         PacketArray(
+              name="data2",
+              data_type="uint",
+              bit_length=16,
+              array_shape="data1_len",  # links data2 <-> data2_len
+         ),	 
          PacketField(
               name="checksum",
               data_type="uint",
@@ -65,8 +78,8 @@ An example of using a reference-based variable length field called `data` which 
 
 
 Expanding Variable Length Field
-*******************************  
-An example of using a expanding variable length field called `data` below:
+===============================
+An example of using a expanding variable length field called `data` below. Because the expanding field grows to fill all remaining space, there can only be one per packet definition. 
 
 .. code-block:: python
 
