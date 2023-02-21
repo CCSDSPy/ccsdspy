@@ -72,7 +72,7 @@ class FixedLength(_BasePacket):
         ValueError
             one or more of the arguments are invalid
         """
-        if any(isinstance(field._bit_length, str) for field in fields):
+        if any(isinstance(field._array_shape, str) for field in fields):
             raise ValueError(
                 "The FixedLength class does not support variable fields. "
                 "Instead, use the VariableLength class."
