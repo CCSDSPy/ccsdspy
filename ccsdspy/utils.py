@@ -13,8 +13,10 @@ from . import VariableLength, PacketArray
 def iter_packet_bytes(file, include_primary_header=True):
     """Iterate through packets as raw bytes objects, in the order they appear in a file.
 
-    Supports streams of packets with mixed APIDs. If end of last packet doesn't
-    align with end of file, a warning is issued.
+    This function works with mixed files containing multiple APIDs, which may
+    include both fixed length and variable length packets.
+
+    If end of last packet doesn't align with end of file, a warning is issued.
 
     Parameters
     ----------
@@ -60,7 +62,10 @@ def iter_packet_bytes(file, include_primary_header=True):
 def read_packet_bytes(file, include_primary_header=True):
     """Read a list of bytes objects corresponding to each packet in a file.
 
-    Supports streams of packets with mixed APIDs.
+    This function works with mixed files containing multiple APIDs, which may
+    include both fixed length and variable length packets.
+
+    If end of last packet doesn't align with end of file, a warning is issued.
 
     Parameters
     ----------
@@ -83,6 +88,9 @@ def read_primary_headers(file):
     """Read primary header fields and return contents as a dictionary
     of arrays.
 
+    This function works with mixed files containing multiple APIDs, which may
+    include both fixed length and variable length packets.
+
     Parameters
     ----------
     file : str, file-like
@@ -91,7 +99,7 @@ def read_primary_headers(file):
     Returns
     -------
     header_arrays : dict, string to NumPy array
-       Dictionary mapping header names to NumPy arrays,The header names are:
+       Dictionary mapping header names to NumPy arrays. The header names are:
        `CCSDS_VERSION_NUMBER`, `CCSDS_PACKET_TYPE`, `CCSDS_SECONDARY_FLAG`,
        `CCSDS_SEQUENCE_FLAG`, `CCSDS_APID`, `CCSDS_SEQUENCE_COUNT`,
        `CCSDS_PACKET_LENGTH`
@@ -109,6 +117,8 @@ def read_primary_headers(file):
 def split_by_apid(mixed_file, valid_apids=None):
     """Split a stream of mixed APIDs into separate streams by APID.
 
+    This works with a mix of both fixed length and variable length packets.
+
     Parameters
     ----------
     mixed_file: str, file-like
@@ -123,18 +133,10 @@ def split_by_apid(mixed_file, valid_apids=None):
       Dictionary mapping integer apid number to BytesIO instance with the file
       pointer at the beginning of the stream.
     """
-    if hasattr(mixed_file, "read"):
-        file_bytes = np.frombuffer(mixed_file.read(), "u1")
-    else:
-        file_bytes = np.fromfile(mixed_file, "u1")
-
-    offset = 0
     stream_by_apid = {}
 
-    while offset < len(file_bytes):
-        packet_nbytes = file_bytes[offset + 4] * 256 + file_bytes[offset + 5] + 7
-
-        apid = np.array([file_bytes[offset], file_bytes[offset + 1]], dtype=np.uint8)
+    for packet_bytes in iter_packet_bytes(mixed_file):
+        apid = np.array([packet_bytes[0], packet_bytes[1]], dtype=np.uint8)
         apid.dtype = ">u2"
         apid = apid[0]
         apid &= 0x07FF
@@ -145,15 +147,7 @@ def split_by_apid(mixed_file, valid_apids=None):
         if apid not in stream_by_apid:
             stream_by_apid[apid] = BytesIO()
 
-        stream_by_apid[apid].write(file_bytes[offset : offset + packet_nbytes])
-        offset += packet_nbytes
-
-    if offset != len(file_bytes):
-        missing_bytes = offset - len(file_bytes)
-        message = (
-            f"File appears truncated-- missing {missing_bytes} byte (or " "maybe garbage at end)"
-        )
-        warnings.warn(message)
+        stream_by_apid[apid].write(packet_bytes)
 
     for stream in stream_by_apid.values():
         stream.seek(0)
@@ -164,6 +158,11 @@ def split_by_apid(mixed_file, valid_apids=None):
 def count_packets(file, return_missing_bytes=False):
     """Count the number of packets in a file and check if there are any
     missing bytes in the last packet.
+
+    This function works with mixed files containing multiple APIDs, which may
+    include both fixed length and variable length packets.
+
+    If end of last packet doesn't align with end of file, a warning is issued.
 
     Parameters
     ----------
@@ -197,8 +196,14 @@ def count_packets(file, return_missing_bytes=False):
         offset += packet_nbytes
         num_packets += 1
 
-    # num_packets -= 1  # overcounted on last iteration
     missing_bytes = offset - len(file_bytes)
+
+    if offset != len(file_bytes):
+        missing_bytes = offset - len(file_bytes)
+        message = (
+            f"File appears truncated-- missing {missing_bytes} byte (or " "maybe garbage at end)"
+        )
+        warnings.warn(message)
 
     if return_missing_bytes:
         return num_packets, missing_bytes
