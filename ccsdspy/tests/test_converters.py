@@ -146,9 +146,9 @@ def test_end_to_end(cls):
         ]
     )
 
-    pkt.add_converter("BOO", "BOO_conv", boo_conv)
-    pkt.add_converter("FOO", "FOO_conv", foo_conv)
-    pkt.add_converter("BLAH", "BLAH_conv", blah_conv)
+    pkt.add_converted_field("BOO", "BOO_conv", boo_conv)
+    pkt.add_converted_field("FOO", "FOO_conv", foo_conv)
+    pkt.add_converted_field("BLAH", "BLAH_conv", blah_conv)
 
     result = pkt.load(TEST_FILENAME)
 

@@ -56,8 +56,8 @@ class _BasePacket:
 
         return cls(fields)
 
-    def add_converter(self, input_field_name, output_field_name, converter):
-        """Add a converter to the packet definition, used to apply
+    def add_converted_field(self, input_field_name, output_field_name, converter):
+        """Add a converteed field to the packet definition, used to apply
         post-processing transformatons of decoded fields.
 
         Parameters

@@ -33,12 +33,12 @@ An example of using a built in transformation to apply a linear transformation t
         PacketField(name="FirstField", data_type="uint", bit_length=8),
         PacketField(name="SecondField", data_type="uint", bit_length=8),
     ])
-    pkt.add_converter(
+    pkt.add_converted_field(
         "FirstField",
 	"FirstField_Converted",
 	LinearConverter(slope=1.2, intercept=0.4)
     )
-    pkt.add_converter(
+    pkt.add_converted_field(
         "SecondField",
 	"SecondField_Converted",
 	converters.EnumConverter({
@@ -71,7 +71,7 @@ Below is an example of creating a user-defined transformation to return False if
     pkt = FixedLength([
         PacketField(name="MyField", data_type="uint", bit_length=8)
     ])
-    pkt.add_converter(
+    pkt.add_converted_field(
         "MyField",
 	"MyField_Converted",
 	CustomConverter()
