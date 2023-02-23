@@ -16,6 +16,7 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+from datetime import datetime
 import os
 import sys
 
@@ -75,8 +76,8 @@ version = version('ccsdspy')
 
 # General information about the project.
 project = "CCSDSPy"
-copyright = f"2018, Daniel da Silva, version={version}"
-author = "Daniel da Silva"
+copyright = f"{datetime.now().year}, CCSDSPy Developers, version={version}"
+author = "CCSDSPy Developers"
 
 
 
