@@ -45,7 +45,7 @@ def _get_packet_total_bytes(primary_header_bytes):
 
     # Number of bytes listed in the orimary header. The value in the
     # primary header is the number of byes in the body minus one.
-    num_bytes = primary_header_byte5 << 8
+    num_bytes = primary_header_byte5 << BITS_PER_BYTE
     num_bytes += primary_header_byte6
     num_bytes += 1
     num_bytes += PRIMARY_HEADER_NUM_BYTES
@@ -80,7 +80,7 @@ def _get_packet_apid(primary_header_bytes):
 
     # Read as 2-byte unisgned integer and mask out unwanted parts of the first
     # byte
-    apid = primary_header_byte1 << 8
+    apid = primary_header_byte1 << BITS_PER_BYTE
     apid += primary_header_byte2
     apid &= 0x07FF
 
