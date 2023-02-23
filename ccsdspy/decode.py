@@ -21,13 +21,22 @@ def _get_packet_total_bytes(primary_header_bytes):
     ----------
     primary_header_bytes : bytes
       Bytes associated with the packet primary header, of length
-      ccdsdspy.constants.PRIMARY_HEADER_NUM_BYTES.
+      `ccsdspy.constants.PRIMARY_HEADER_NUM_BYTES`.
 
     Returns
     -------
     num_bytes : int
       Total number of bytes in the packet, including the primary header.
+
+    Raises
+    ------
+    ValueError
+       The number of bytes in the supplied argument is too short. It must be
+       of length `ccsdspy.constants.PRIMARY_HEADER_NUM_BYTES`.
     """
+    if len(primary_header_bytes) != PRIMARY_HEADER_NUM_BYTES:
+        raise ValueError(f"Primary header byte sequence must be {PRIMARY_HEADER_NUM_BYTES} bytes long")
+    
     # These variables are named based on 1-indexing
     primary_header_byte5 = primary_header_bytes[4]
     primary_header_byte6 = primary_header_bytes[5]
@@ -50,13 +59,17 @@ def _get_packet_apid(primary_header_bytes):
     ----------
     primary_header_bytes : bytes
       Bytes associated with the packet primary header, of length
-      ccdsdspy.constants.PRIMARY_HEADER_NUM_BYTES.
+      `ccsdspy.constants.PRIMARY_HEADER_NUM_BYTES`.
 
-    Returns
-    -------
-    apid : int
-      Integer APID (Application ID) of the packet.
+    Raises
+    ------
+    ValueError
+       The number of bytes in the supplied argument is too short. It must be
+       of length `ccsdspy.constants.PRIMARY_HEADER_NUM_BYTES`.
     """
+    if len(primary_header_bytes) != PRIMARY_HEADER_NUM_BYTES:
+        raise ValueError(f"Primary header byte sequence must be {PRIMARY_HEADER_NUM_BYTES} bytes long")
+    
     # These variables are named based on 1-indexing
     primary_header_byte1 = primary_header_bytes[0]
     primary_header_byte2 = primary_header_bytes[1]
