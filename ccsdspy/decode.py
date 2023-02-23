@@ -1,10 +1,74 @@
 """Internal decoding routines."""
 from __future__ import division
 from collections import namedtuple
+from pickle import bytes_types
 
 import numpy as np
 
+from ccsdspy.constants import (
+    BITS_PER_BYTE,
+    PRIMARY_HEADER_NUM_BYTES,
+)
+
 __author__ = "Daniel da Silva <mail@danieldasilva.org>"
+
+
+def _get_packet_nbytes(primary_header_bytes):
+    """Shortcut function to get number of bytes in a packet from bytes
+    5/6 and 6/6.
+
+    Parameters
+    ----------
+    primary_header_bytes : bytes
+      Bytes associated with the packet primary header, of length
+      ccdsdspy.constants.PRIMARY_HEADER_NUM_BYTES.
+
+    Returns
+    -------
+    num_bytes : int
+      Total number of bytes in the packet, including the primary header.
+    """
+    # These variables are named based on 1-indexing
+    primary_header_byte5 = primary_header_bytes[4]
+    primary_header_byte6 = primary_header_bytes[5]
+
+    # Number of bytes listed in the orimary header. The multiplication
+    # by 256 acts as a bit shift. The value in the primary header is
+    # the number of byes in the body minus one.
+    num_bytes = primary_header_byte5 * 256
+    num_bytes += primary_header_byte6
+    num_bytes += 1
+    num_bytes += PRIMARY_HEADER_NUM_BYTES
+
+    return num_bytes
+
+
+def _get_packet_apid(primary_header_bytes):
+    """Shortcut function to get APID of a packet from primary header bytes.
+
+    Parameters
+    ----------
+    primary_header_bytes : bytes
+      Bytes associated with the packet primary header, of length
+      ccdsdspy.constants.PRIMARY_HEADER_NUM_BYTES.
+
+    Returns
+    -------
+    apid : int
+      Integer APID (Application ID) of the packet.
+    """
+    # These variables are named based on 1-indexing
+    primary_header_byte1 = primary_header_bytes[0]
+    primary_header_byte2 = primary_header_bytes[1]
+
+    # Read as 2-byte unisgned integer and mask out unwanted parts of the first
+    # byte
+    apid = np.array([primary_header_byte1, primary_header_byte2], dtype=np.uint8)
+    apid.dtype = ">u2"
+    apid = apid[0]
+    apid &= 0x07FF
+
+    return apid
 
 
 def _decode_fixed_length(file_bytes, fields):
@@ -25,7 +89,7 @@ def _decode_fixed_length(file_bytes, fields):
     """
     # Setup a dictionary mapping a bit offset to each field. It is assumed
     # that the `fields` array contains entries for the secondary header.
-    packet_nbytes = file_bytes[4] * 256 + file_bytes[5] + 7
+    packet_nbytes = _get_packet_nbytes(file_bytes[:PRIMARY_HEADER_NUM_BYTES])
     body_nbytes = sum(field._bit_length for field in fields) // 8
     counter = (packet_nbytes - body_nbytes) * 8
 

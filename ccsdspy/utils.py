@@ -8,6 +8,8 @@ import warnings
 import numpy as np
 
 from . import VariableLength, PacketArray
+from .constants import PRIMARY_HEADER_NUM_BYTES
+from . import decode
 
 
 def iter_packet_bytes(file, include_primary_header=True):
@@ -41,10 +43,12 @@ def iter_packet_bytes(file, include_primary_header=True):
     if include_primary_header:
         delta_idx = 0
     else:
-        delta_idx = 6
+        delta_idx = PRIMARY_HEADER_NUM_BYTES
 
     while offset < len(file_bytes):
-        packet_nbytes = file_bytes[offset + 4] * 256 + file_bytes[offset + 5] + 7
+        packet_nbytes = decode._get_packet_nbytes(
+            file_bytes[offset : offset + PRIMARY_HEADER_NUM_BYTES]
+        )
         packet_bytes = file_bytes[offset + delta_idx : offset + packet_nbytes].tobytes()
 
         yield packet_bytes
@@ -136,10 +140,7 @@ def split_by_apid(mixed_file, valid_apids=None):
     stream_by_apid = {}
 
     for packet_bytes in iter_packet_bytes(mixed_file):
-        apid = np.array([packet_bytes[0], packet_bytes[1]], dtype=np.uint8)
-        apid.dtype = ">u2"
-        apid = apid[0]
-        apid &= 0x07FF
+        apid = decode._get_packet_apid(packet_bytes[:PRIMARY_HEADER_NUM_BYTES])
 
         if valid_apids is not None and apid not in valid_apids:
             warnings.warn(f"Found unknown APID {apid}")
@@ -192,7 +193,9 @@ def count_packets(file, return_missing_bytes=False):
     num_packets = 0
 
     while offset < len(file_bytes):
-        packet_nbytes = file_bytes[offset + 4] * 256 + file_bytes[offset + 5] + 7
+        packet_nbytes = decode._get_packet_nbytes(
+            file_bytes[offset : offset + PRIMARY_HEADER_NUM_BYTES]
+        )
         offset += packet_nbytes
         num_packets += 1
 
