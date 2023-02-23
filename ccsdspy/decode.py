@@ -13,9 +13,9 @@ from ccsdspy.constants import (
 __author__ = "Daniel da Silva <mail@danieldasilva.org>"
 
 
-def _get_packet_nbytes(primary_header_bytes):
-    """Shortcut function to get number of bytes in a packet from bytes
-    5/6 and 6/6.
+def _get_packet_total_bytes(primary_header_bytes):
+    """Parse the  number of bytes in a packet from the bytes associated
+    with a packet's primary header.
 
     Parameters
     ----------
@@ -32,10 +32,9 @@ def _get_packet_nbytes(primary_header_bytes):
     primary_header_byte5 = primary_header_bytes[4]
     primary_header_byte6 = primary_header_bytes[5]
 
-    # Number of bytes listed in the orimary header. The multiplication
-    # by 256 acts as a bit shift. The value in the primary header is
-    # the number of byes in the body minus one.
-    num_bytes = primary_header_byte5 * 256
+    # Number of bytes listed in the orimary header. The value in the
+    # primary header is the number of byes in the body minus one.
+    num_bytes = primary_header_byte5 << 8
     num_bytes += primary_header_byte6
     num_bytes += 1
     num_bytes += PRIMARY_HEADER_NUM_BYTES
@@ -44,7 +43,8 @@ def _get_packet_nbytes(primary_header_bytes):
 
 
 def _get_packet_apid(primary_header_bytes):
-    """Shortcut function to get APID of a packet from primary header bytes.
+    """Parse the APID of a packet from the bytes associated
+    with a packet's primary header.
 
     Parameters
     ----------
@@ -63,9 +63,8 @@ def _get_packet_apid(primary_header_bytes):
 
     # Read as 2-byte unisgned integer and mask out unwanted parts of the first
     # byte
-    apid = np.array([primary_header_byte1, primary_header_byte2], dtype=np.uint8)
-    apid.dtype = ">u2"
-    apid = apid[0]
+    apid = primary_header_byte1 << 8
+    apid += primary_header_byte2
     apid &= 0x07FF
 
     return apid
@@ -89,9 +88,9 @@ def _decode_fixed_length(file_bytes, fields):
     """
     # Setup a dictionary mapping a bit offset to each field. It is assumed
     # that the `fields` array contains entries for the secondary header.
-    packet_nbytes = _get_packet_nbytes(file_bytes[:PRIMARY_HEADER_NUM_BYTES])
-    body_nbytes = sum(field._bit_length for field in fields) // 8
-    counter = (packet_nbytes - body_nbytes) * 8
+    packet_nbytes = _get_packet_total_bytes(file_bytes[:PRIMARY_HEADER_NUM_BYTES])
+    body_nbytes = sum(field._bit_length for field in fields) // BITS_PER_BYTE
+    counter = (packet_nbytes - body_nbytes) * BITS_PER_BYTE
 
     bit_offset = {}
 
@@ -124,10 +123,10 @@ def _decode_fixed_length(file_bytes, fields):
             )
 
     if all(field._bit_offset is None for field in fields):
-        assert counter == packet_nbytes * 8, "Field definition != packet length"
-    elif counter > packet_nbytes * 8:
+        assert counter == packet_nbytes * BITS_PER_BYTE, "Field definition != packet length"
+    elif counter > packet_nbytes * BITS_PER_BYTE:
         raise RuntimeError(
-            ("Packet definition larger than packet length" f" by {counter-(packet_nbytes*8)} bits")
+            ("Packet definition larger than packet length" f" by {counter-(packet_nbytes*BITS_PER_BYTE)} bits")
         )
 
     # Setup metadata for each field, consiting of where to look for the field in
@@ -136,13 +135,13 @@ def _decode_fixed_length(file_bytes, fields):
     field_meta = {}
 
     for field in fields:
-        nbytes_file = np.ceil(field._bit_length / 8.0).astype(int)
+        nbytes_file = np.ceil(field._bit_length / BITS_PER_BYTE).astype(int)
 
-        if bit_offset[field._name] % 8 and bit_offset[field._name] % 8 + field._bit_length > 8:
+        if bit_offset[field._name] % BITS_PER_BYTE and bit_offset[field._name] % BITS_PER_BYTE + field._bit_length > BITS_PER_BYTE:
             nbytes_file += 1
 
         nbytes_final = {3: 4, 5: 8, 6: 8, 7: 8}.get(nbytes_file, nbytes_file)
-        start_byte_file = bit_offset[field._name] // 8
+        start_byte_file = bit_offset[field._name] // BITS_PER_BYTE
 
         # byte_order_symbol is only used to control float types here.
         #  - uint and int byte order are handled with byteswap later
@@ -196,16 +195,16 @@ def _decode_fixed_length(file_bytes, fields):
         if field._data_type in ("int", "uint"):
             xbytes = meta.nbytes_final - meta.nbytes_file
 
-            bitmask_left = bit_offset[field._name] + 8 * xbytes - 8 * meta.start_byte_file
+            bitmask_left = bit_offset[field._name] + BITS_PER_BYTE * xbytes - BITS_PER_BYTE * meta.start_byte_file
 
-            bitmask_right = 8 * meta.nbytes_final - bitmask_left - field._bit_length
+            bitmask_right = BITS_PER_BYTE * meta.nbytes_final - bitmask_left - field._bit_length
 
             bitmask_left, bitmask_right = np.array([bitmask_left, bitmask_right]).astype(
                 meta.np_dtype
             )
 
             bitmask = np.zeros(arr.shape, meta.np_dtype)
-            bitmask |= (1 << int(8 * meta.nbytes_final - bitmask_left)) - 1
+            bitmask |= (1 << int(BITS_PER_BYTE * meta.nbytes_final - bitmask_left)) - 1
             tmp = np.left_shift([1], bitmask_right)
             bitmask &= np.bitwise_not(tmp[0] - 1).astype(meta.np_dtype)
 
@@ -257,7 +256,7 @@ def _decode_variable_length(file_bytes, fields):
 
     for i, field in enumerate(fields):
         if field._bit_offset is None:
-            if field._array_shape == "expand" and counter % 8 != 0:
+            if field._array_shape == "expand" and counter % BITS_PER_BYTE != 0:
                 raise RuntimeError(
                     "Expanding fields must be byte aligned. Found an instance "
                     f"where not in field named '{field._name}'"
@@ -291,7 +290,7 @@ def _decode_variable_length(file_bytes, fields):
     for field in fields:
         # Number of bytes that the field spans in the file
         bit_offset = bit_offsets[field._name]
-        nbytes_file = (bit_offset + field._bit_length - 1) // 8 - bit_offset // 8 + 1
+        nbytes_file = (bit_offset + field._bit_length - 1) // BITS_PER_BYTE - bit_offset // BITS_PER_BYTE + 1
 
         # NumPy only has 2-byte, 4-byte and 8-byte variants (eg, float16, float32,
         # float64, but not float48). Map them to an nbytes for the output.
@@ -326,21 +325,21 @@ def _decode_variable_length(file_bytes, fields):
             field_raw_data = None  # will be array of uint8
             if bit_offsets[field._name] < 0:
                 # Footer byte after expanding field: Referenced from end of packet
-                start_byte = packet_start + packet_nbytes + bit_offsets[field._name] // 8
+                start_byte = packet_start + packet_nbytes + bit_offsets[field._name] // BITS_PER_BYTE
             else:
                 # Header byte before expanding field: Referenced from start of packet
-                start_byte = packet_start + bit_offsets[field._name] // 8
+                start_byte = packet_start + bit_offsets[field._name] // BITS_PER_BYTE
 
             if field._array_shape == "expand":
                 footer_bits = sum(field._bit_length for field in fields[i + 1 :])
-                assert footer_bits % 8 == 0, "Expanding field must be byte aligned"
-                stop_byte = packet_start + packet_nbytes - footer_bits // 8
+                assert footer_bits % BITS_PER_BYTE == 0, "Expanding field must be byte aligned"
+                stop_byte = packet_start + packet_nbytes - footer_bits // BITS_PER_BYTE
                 field_raw_data = file_bytes[start_byte:stop_byte]
             else:
                 # Get field_raw_data, which are the bytes of the field as uint8 for this
                 # packet
                 bit_offset = bit_offsets[field._name]
-                nbytes_file = (bit_offset + field._bit_length - 1) // 8 - bit_offset // 8 + 1
+                nbytes_file = (bit_offset + field._bit_length - 1) // BITS_PER_BYTE - bit_offset // BITS_PER_BYTE + 1
 
                 nbytes_final = {3: 4, 5: 8, 6: 8, 7: 8}.get(nbytes_file, nbytes_file)
                 xbytes = nbytes_final - nbytes_file
@@ -357,20 +356,20 @@ def _decode_variable_length(file_bytes, fields):
 
             if field._data_type in ("int", "uint"):
                 last_byte = start_byte + nbytes_file
-                end_last_parent_byte = last_byte * 8
+                end_last_parent_byte = last_byte * BITS_PER_BYTE
 
                 b = bit_offsets[field._name]
                 if b < 0:
-                    b = packet_nbytes * 8 + bit_offsets[field._name]
+                    b = packet_nbytes * BITS_PER_BYTE + bit_offsets[field._name]
 
-                last_occupied_bit = packet_start * 8 + b + field._bit_length
-                left_bits_before_shift = b % 8
+                last_occupied_bit = packet_start * BITS_PER_BYTE + b + field._bit_length
+                left_bits_before_shift = b % BITS_PER_BYTE
                 right_shift = end_last_parent_byte - last_occupied_bit
 
                 assert right_shift >= 0
 
                 if left_bits_before_shift > 0:
-                    mask = int("1" * ((nbytes_file * 8) - left_bits_before_shift), 2)
+                    mask = int("1" * ((nbytes_file * BITS_PER_BYTE) - left_bits_before_shift), 2)
                     field_raw_data &= mask
 
                 if right_shift > 0 and field._array_shape != "expand":

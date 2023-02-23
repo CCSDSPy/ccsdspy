@@ -8,8 +8,46 @@ import warnings
 import numpy as np
 
 from . import VariableLength, PacketArray
-from .constants import PRIMARY_HEADER_NUM_BYTES
+from .constants import BITS_PER_BYTE, PRIMARY_HEADER_NUM_BYTES
 from . import decode
+
+
+def get_packet_total_bytes(primary_header_bytes):
+    """Parse the number of bytes in a packet from the bytes associated
+    with a packet's primary header.
+
+    Parameters
+    ----------
+    primary_header_bytes : bytes
+      Bytes associated with the packet primary header, of length
+      ccdsdspy.constants.PRIMARY_HEADER_NUM_BYTES.
+
+    Returns
+    -------
+    num_bytes : int
+      Total number of bytes in the packet, including the primary header.
+    """
+    # Wrap around internal function from decode module
+    return decode._get_packet_total_bytes(primary_header_bytes)
+
+
+def get_packet_apid(primary_header_bytes):
+    """Parse the APID of a packet from the bytes associated with a packet's
+    primary header.
+
+    Parameters
+    ----------
+    primary_header_bytes : bytes
+      Bytes associated with the packet primary header, of length
+      ccdsdspy.constants.PRIMARY_HEADER_NUM_BYTES.
+
+    Returns
+    -------
+    apid : int
+      Integer APID (Application ID) of the packet.
+    """
+    # Wrap around internal function from decode module
+    return decode._get_packet_apid(primary_header_bytes)
 
 
 def iter_packet_bytes(file, include_primary_header=True):
@@ -46,8 +84,8 @@ def iter_packet_bytes(file, include_primary_header=True):
         delta_idx = PRIMARY_HEADER_NUM_BYTES
 
     while offset < len(file_bytes):
-        packet_nbytes = decode._get_packet_nbytes(
-            file_bytes[offset : offset + PRIMARY_HEADER_NUM_BYTES]
+        packet_nbytes = get_packet_total_bytes(
+            file_bytes[offset : offset + PRIMARY_HEADER_NUM_BYTES].tobytes()
         )
         packet_bytes = file_bytes[offset + delta_idx : offset + packet_nbytes].tobytes()
 
@@ -109,7 +147,7 @@ def read_primary_headers(file):
        `CCSDS_PACKET_LENGTH`
     """
     pkt = VariableLength(
-        [PacketArray(name="unused", data_type="uint", bit_length=8, array_shape="expand")]
+        [PacketArray(name="unused", data_type="uint", bit_length=BITS_PER_BYTE, array_shape="expand")]
     )
 
     header_arrays = pkt.load(file, include_primary_header=True)
@@ -140,7 +178,7 @@ def split_by_apid(mixed_file, valid_apids=None):
     stream_by_apid = {}
 
     for packet_bytes in iter_packet_bytes(mixed_file):
-        apid = decode._get_packet_apid(packet_bytes[:PRIMARY_HEADER_NUM_BYTES])
+        apid = get_packet_apid(packet_bytes[:PRIMARY_HEADER_NUM_BYTES])
 
         if valid_apids is not None and apid not in valid_apids:
             warnings.warn(f"Found unknown APID {apid}")
@@ -193,8 +231,8 @@ def count_packets(file, return_missing_bytes=False):
     num_packets = 0
 
     while offset < len(file_bytes):
-        packet_nbytes = decode._get_packet_nbytes(
-            file_bytes[offset : offset + PRIMARY_HEADER_NUM_BYTES]
+        packet_nbytes = get_packet_total_bytes(
+            file_bytes[offset : offset + PRIMARY_HEADER_NUM_BYTES].tobytes()
         )
         offset += packet_nbytes
         num_packets += 1
