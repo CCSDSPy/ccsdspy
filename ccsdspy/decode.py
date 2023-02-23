@@ -126,7 +126,10 @@ def _decode_fixed_length(file_bytes, fields):
         assert counter == packet_nbytes * BITS_PER_BYTE, "Field definition != packet length"
     elif counter > packet_nbytes * BITS_PER_BYTE:
         raise RuntimeError(
-            ("Packet definition larger than packet length" f" by {counter-(packet_nbytes*BITS_PER_BYTE)} bits")
+            (
+                "Packet definition larger than packet length"
+                f" by {counter-(packet_nbytes*BITS_PER_BYTE)} bits"
+            )
         )
 
     # Setup metadata for each field, consiting of where to look for the field in
@@ -137,7 +140,10 @@ def _decode_fixed_length(file_bytes, fields):
     for field in fields:
         nbytes_file = np.ceil(field._bit_length / BITS_PER_BYTE).astype(int)
 
-        if bit_offset[field._name] % BITS_PER_BYTE and bit_offset[field._name] % BITS_PER_BYTE + field._bit_length > BITS_PER_BYTE:
+        if (
+            bit_offset[field._name] % BITS_PER_BYTE
+            and bit_offset[field._name] % BITS_PER_BYTE + field._bit_length > BITS_PER_BYTE
+        ):
             nbytes_file += 1
 
         nbytes_final = {3: 4, 5: 8, 6: 8, 7: 8}.get(nbytes_file, nbytes_file)
@@ -195,7 +201,11 @@ def _decode_fixed_length(file_bytes, fields):
         if field._data_type in ("int", "uint"):
             xbytes = meta.nbytes_final - meta.nbytes_file
 
-            bitmask_left = bit_offset[field._name] + BITS_PER_BYTE * xbytes - BITS_PER_BYTE * meta.start_byte_file
+            bitmask_left = (
+                bit_offset[field._name]
+                + BITS_PER_BYTE * xbytes
+                - BITS_PER_BYTE * meta.start_byte_file
+            )
 
             bitmask_right = BITS_PER_BYTE * meta.nbytes_final - bitmask_left - field._bit_length
 
@@ -290,7 +300,9 @@ def _decode_variable_length(file_bytes, fields):
     for field in fields:
         # Number of bytes that the field spans in the file
         bit_offset = bit_offsets[field._name]
-        nbytes_file = (bit_offset + field._bit_length - 1) // BITS_PER_BYTE - bit_offset // BITS_PER_BYTE + 1
+        nbytes_file = (
+            (bit_offset + field._bit_length - 1) // BITS_PER_BYTE - bit_offset // BITS_PER_BYTE + 1
+        )
 
         # NumPy only has 2-byte, 4-byte and 8-byte variants (eg, float16, float32,
         # float64, but not float48). Map them to an nbytes for the output.
@@ -325,7 +337,9 @@ def _decode_variable_length(file_bytes, fields):
             field_raw_data = None  # will be array of uint8
             if bit_offsets[field._name] < 0:
                 # Footer byte after expanding field: Referenced from end of packet
-                start_byte = packet_start + packet_nbytes + bit_offsets[field._name] // BITS_PER_BYTE
+                start_byte = (
+                    packet_start + packet_nbytes + bit_offsets[field._name] // BITS_PER_BYTE
+                )
             else:
                 # Header byte before expanding field: Referenced from start of packet
                 start_byte = packet_start + bit_offsets[field._name] // BITS_PER_BYTE
@@ -339,7 +353,11 @@ def _decode_variable_length(file_bytes, fields):
                 # Get field_raw_data, which are the bytes of the field as uint8 for this
                 # packet
                 bit_offset = bit_offsets[field._name]
-                nbytes_file = (bit_offset + field._bit_length - 1) // BITS_PER_BYTE - bit_offset // BITS_PER_BYTE + 1
+                nbytes_file = (
+                    (bit_offset + field._bit_length - 1) // BITS_PER_BYTE
+                    - bit_offset // BITS_PER_BYTE
+                    + 1
+                )
 
                 nbytes_final = {3: 4, 5: 8, 6: 8, 7: 8}.get(nbytes_file, nbytes_file)
                 xbytes = nbytes_final - nbytes_file

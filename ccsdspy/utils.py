@@ -147,7 +147,11 @@ def read_primary_headers(file):
        `CCSDS_PACKET_LENGTH`
     """
     pkt = VariableLength(
-        [PacketArray(name="unused", data_type="uint", bit_length=BITS_PER_BYTE, array_shape="expand")]
+        [
+            PacketArray(
+                name="unused", data_type="uint", bit_length=BITS_PER_BYTE, array_shape="expand"
+            )
+        ]
     )
 
     header_arrays = pkt.load(file, include_primary_header=True)
