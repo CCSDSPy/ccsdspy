@@ -57,7 +57,7 @@ def test_count_packets_file_like_obj():
     assert result_1 == result_3
 
 
-def test_read_packet_bytes_issues_warning():
+def test_split_packet_bytes_issues_warning():
     dir_path = os.path.dirname(os.path.realpath(__file__))
     data_path = os.path.join(dir_path, "data", "split")
     tlm_path = os.path.join(data_path, "CYGNSS_F7_L0_2022_086_10_15_V01_F__first101pkts.tlm")
@@ -68,21 +68,21 @@ def test_read_packet_bytes_issues_warning():
     file_bytes = file_bytes[:-5]  # make last packet be incomplete
 
     with pytest.warns(UserWarning):
-        result = utils.read_packet_bytes(io.BytesIO(file_bytes))
+        result = utils.split_packet_bytes(io.BytesIO(file_bytes))
 
 
-def test_read_packet_bytes_file_like_obj():
+def test_split_packet_bytes_file_like_obj():
     dir_path = os.path.dirname(os.path.realpath(__file__))
     data_path = os.path.join(dir_path, "data", "split")
     tlm_path = os.path.join(data_path, "CYGNSS_F7_L0_2022_086_10_15_V01_F__first101pkts.tlm")
 
-    result_1 = utils.read_packet_bytes(tlm_path)
+    result_1 = utils.split_packet_bytes(tlm_path)
 
     with open(tlm_path, "rb") as fh:
-        result_2 = utils.read_packet_bytes(fh)
+        result_2 = utils.split_packet_bytes(fh)
 
     with open(tlm_path, "rb") as fh:
-        result_3 = utils.read_packet_bytes(io.BytesIO(fh.read()))
+        result_3 = utils.split_packet_bytes(io.BytesIO(fh.read()))
 
     results = [result_1, result_2, result_3]
 
@@ -95,7 +95,7 @@ def test_read_packet_bytes_file_like_obj():
 
 
 @pytest.mark.parametrize("include_primary_header", [True, False])
-def test_read_packet_bytes_mixed_stream(include_primary_header):
+def test_split_packet_bytes_mixed_stream(include_primary_header):
     dir_path = os.path.dirname(os.path.realpath(__file__))
     data_path = os.path.join(dir_path, "data", "split")
     tlm_path = os.path.join(data_path, "CYGNSS_F7_L0_2022_086_10_15_V01_F__first101pkts.tlm")
@@ -106,7 +106,7 @@ def test_read_packet_bytes_mixed_stream(include_primary_header):
     if include_primary_header:
         expected_lens += 6
 
-    packet_bytes = utils.read_packet_bytes(tlm_path, include_primary_header=include_primary_header)
+    packet_bytes = utils.split_packet_bytes(tlm_path, include_primary_header=include_primary_header)
 
     for cur_exp_len, cur_packet_bytes in zip(expected_lens, packet_bytes):
         assert cur_exp_len == len(cur_packet_bytes)
