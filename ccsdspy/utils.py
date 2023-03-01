@@ -183,7 +183,8 @@ def count_packets(file, return_missing_bytes=False):
     missing bytes in the last packet.
 
     This function works with mixed files containing multiple APIDs, which may
-    include both fixed length and variable length packets.
+    include both fixed length and variable length packets. When used with
+    multiple APIDs, it simply returns the total number of packets of any APID.
 
     If end of last packet doesn't align with end of file, a warning is issued.
 

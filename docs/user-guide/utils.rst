@@ -43,7 +43,7 @@ Counting Number of Packets in a File
 ====================================
 Sometimes, it is desirable to know  the number of packets in a file. For this, the `utils.count_packets()` function can be used. It's argument is a file-like object or name of a file. It accepts the optional arguments `return_missing_bytes=True` which can be used to determine the number of bytes which would be needed to be added to the file to complete the last packet (computed using the packet length set in the primary header of last packet).
 
-This function works with mixed files containing multiple APIDs, which may include both fixed length and variable length packets.
+This function works with mixed files containing multiple APIDs, which may include both fixed length and variable length packets. When used with multiple APIDs, it simply returns the total number of packets of any APID. 
 
 
 .. code-block:: python
