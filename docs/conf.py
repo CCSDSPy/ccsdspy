@@ -76,7 +76,8 @@ version = version('ccsdspy')
 
 # General information about the project.
 project = "CCSDSPy"
-copyright = f"{datetime.now().year}, CCSDSPy Developers, version={version}"
+authors = "CCSDSPy Developers"
+copyright = f"{datetime.now().year}, {authors}, version={version}"
 author = "CCSDSPy Developers"
 
 
