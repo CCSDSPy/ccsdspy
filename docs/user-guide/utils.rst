@@ -25,30 +25,18 @@ This function works with mixed files containing multiple APIDs, which may includ
 
   # Print bytes of first five packets
   for i in range(5):
-    print(f"The bytes in packet number {i+1} out "
-          f"of {len(packet_bytes)} are: ")
     print(packet_bytes[i].hex())
-
-  print()
-  print("Stopping after first five!")
 
 
 This generates the following output for a sequence of variable length packets:
 
 .. code-block::
 
-  The bytes in packet number 1 out of 10 are:
   20e20000000300020003
-  The bytes in packet number 2 out of 10 are:
   20e200010005000300040005
-  The bytes in packet number 3 out of 10 are:
   20e20002000900050006000700080009
-  The bytes in packet number 4 out of 10 are:
   20e20003000d000700080009000a000b000c000d
-  The bytes in packet number 5 out of 10 are:
   20e200040015000b000c000d000e000f001000110012001300140015
-
-  Stopping after first five!
 
 
 Counting Number of Packets in a File
