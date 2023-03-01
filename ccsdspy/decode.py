@@ -14,7 +14,7 @@ __author__ = "Daniel da Silva <mail@danieldasilva.org>"
 
 
 def _get_packet_total_bytes(primary_header_bytes):
-    """Parse the  number of bytes in a packet from the bytes associated
+    """Parse the number of bytes in a packet from the bytes associated
     with a packet's primary header.
 
     Parameters
