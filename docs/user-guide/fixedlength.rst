@@ -68,7 +68,7 @@ Once a `~ccsdspy.FixedLength` object is defined, it can be used to read a binary
 	),
    ])
 
-   result = pkt.load('MyCCSDS.bin')
+   result = pkt.load('MyCCSDS.tlm')
 
 The result is returned as a dictionary, containing the names as keys and values are each a `~numpy.ndarray` of the interpreted data from each packet.
 The bit length of the `~numpy.ndarray` elements will be rounded up to the next nearest byte.
@@ -84,6 +84,6 @@ For a definition of the CCSDS primary header see :ref:`ccsds_standard`.
 
 .. code-block:: python
 
-    result = pkt.load('MyCCSDS.bin', include_primary_header=True)
+    result = pkt.load('MyCCSDS.tlm', include_primary_header=True)
 
 This adds the following fields to the result `CCSDS_VERSION_NUMBER`, `CCSDS_PACKET_TYPE`, `CCSDS_SECONDARY_FLAG`, `CCSDS_SEQUENCE_FLAG`, `CCSDS_SEQUENCE_COUNT`, `CCSDS_PACKET_LENGTH`.

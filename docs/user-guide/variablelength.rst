@@ -39,7 +39,7 @@ An example is provided below.
 The efficiency of parsing variable length packets is significantly decreased compared to fixed length packets.
 Parsing the packets is done in the same way as `~ccsdspy.FixedLength`::
 
-    result = pkt.load('MyCCSDS.bin')
+    result = pkt.load('MyCCSDS.tlm')
 
 The result will be a dictionary with the names as the keys.
 The values are arrays with the `~ccsdspy.PacketArray` field providing arrays with variable sizes.

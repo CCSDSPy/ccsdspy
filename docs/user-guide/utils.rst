@@ -21,7 +21,7 @@ This function works with mixed files containing multiple APIDs, which may includ
 
   from ccsdspy.utils import split_packet_bytes
 
-  packet_bytes = split_packet_bytes('mixed_file.bin')
+  packet_bytes = split_packet_bytes('mixed_file.tlm')
 
   # Print bytes of first five packets
   for i in range(5):
@@ -51,7 +51,7 @@ This function works with mixed files containing multiple APIDs, which may includ
   from ccsdspy.utils import count_packets
 
   num_packets, missing_bytes = count_packets(
-    'mixed_file.bin',
+    'mixed_file.tlm',
     return_missing_bytes=True
   )
 
@@ -73,7 +73,7 @@ The API method:
 
   from ccsdspy.utils import split_by_apid
 
-  with open('mixed_file.bin', 'rb') as mixed_file):
+  with open('mixed_file.tlm', 'rb') as mixed_file):
       # dictionary mapping integer apid to BytesIO
       stream_by_apid = split_by_apid(mixed_file)
 
@@ -104,7 +104,7 @@ This function works with mixed files containing multiple APIDs, which may includ
 
   from ccsdspy.utils import read_primary_headers
 
-  header_arrays = read_primary_headers('mixed_file.bin')
+  header_arrays = read_primary_headers('mixed_file.tlm')
 
   # Print APIDs of first five packets
   for i in range(5):
