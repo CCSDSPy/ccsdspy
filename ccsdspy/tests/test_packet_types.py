@@ -230,7 +230,7 @@ def test_variable_length_rejects_bit_offset():
         )
 
 
-def test_fixed_length_save():
+def test_fixed_length_to_file():
     """Save a fixed length packet and then parse it and make sure that the input is the same as the output."""
     pkt = FixedLength(
         [
@@ -267,7 +267,7 @@ def test_fixed_length_save():
         "SENSOR_GRID": sensor_grid,
     }
 
-    pkt.save("test.bin", pkt_type, apid, sec_header_flag, seq_flag, data)
+    pkt.to_file("test.bin", pkt_type, apid, sec_header_flag, seq_flag, data)
     result = pkt.load("test.bin", include_primary_header=True)
 
     assert len(result["DATAU"]) == len(datau)
@@ -289,7 +289,7 @@ def test_fixed_length_save():
     assert np.allclose(result["SENSOR_GRID"], sensor_grid)
 
 
-def test_variable_length_save():
+def test_variable_length_to_file():
     """Save a variable length packet and then parse it and make sure that the input is the same as the output."""
 
     pkt = VariableLength(
@@ -329,7 +329,7 @@ def test_variable_length_save():
         "DATAEXPAND": data_expand,
     }
 
-    pkt.save("test.bin", pkt_type, apid, sec_header_flag, seq_flag, data)
+    pkt.to_file("test.bin", pkt_type, apid, sec_header_flag, seq_flag, data)
     result = pkt.load("test.bin", include_primary_header=True)
 
     assert len(result["DATAU"]) == len(datau)
