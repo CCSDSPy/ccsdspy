@@ -14,8 +14,6 @@ from .converters import Converter
 from .decode import _decode_fixed_length, _decode_variable_length
 from .packet_fields import PacketField, PacketArray
 
-BITS_PER_BYTE = 8
-
 __author__ = "Daniel da Silva <mail@danieldasilva.org>"
 
 
@@ -250,7 +248,7 @@ class FixedLength(_BasePacket):
 
         return packet_arrays
 
-    def save(self, file, pkt_type, apid, sec_header_flag, seq_flag, data):
+    def to_file(self, file, pkt_type, apid, sec_header_flag, seq_flag, data):
         """Encode a file containing a sequence of packet fields.
 
         Parameters
@@ -263,15 +261,11 @@ class FixedLength(_BasePacket):
         Returns
         -------
         file : str
-            A binary file with the packet data    
+            A binary file with the packet data
         """
 
-        return _save(
-            file,
-            self._fields,
-            data, 
-            pkt_type, apid, sec_header_flag, seq_flag,
-            "fixed_length"
+        return _to_file(
+            file, self._fields, data, pkt_type, apid, sec_header_flag, seq_flag, "fixed_length"
         )
 
 
@@ -411,45 +405,45 @@ class VariableLength(_BasePacket):
         return packet_arrays
 
 
-def _inspect_primary_header_fields(packet_arrays):
-    """Inspects the primary header fields.
+    def _inspect_primary_header_fields(packet_arrays):
+        """Inspects the primary header fields.
 
-    Checks for the following issues
-    * all apids are the same
-    * sequence count is not missing any values
-    * sequence count is in order
+        Checks for the following issues
+        * all apids are the same
+        * sequence count is not missing any values
+        * sequence count is in order
 
-    Parameters
-    -----------
-    packet_arrays
-        dictionary mapping field names to NumPy arrays, with key order matching
-        the order fields in the packet. Modified in place
+        Parameters
+        -----------
+        packet_arrays
+            dictionary mapping field names to NumPy arrays, with key order matching
+            the order fields in the packet. Modified in place
 
-    Warns
-    -----
-    UserWarning
-        If the ccsds sequence count is not in order
-    UserWarning
-        If the ccsds sequence count is missing packets
-    UserWarning
-        If there are more than one APID
-    """
-    seq_counts = packet_arrays["CCSDS_SEQUENCE_COUNT"]
-    start, end = seq_counts[0], seq_counts[-1]
-    missing_elements = sorted(set(range(start, end + 1)).difference(seq_counts))
-    if len(missing_elements) != 0:
-        warnings.warn(f"Missing packets found {missing_elements}.", UserWarning)
+        Warns
+        -----
+        UserWarning
+            If the ccsds sequence count is not in order
+        UserWarning
+            If the ccsds sequence count is missing packets
+        UserWarning
+            If there are more than one APID
+        """
+        seq_counts = packet_arrays["CCSDS_SEQUENCE_COUNT"]
+        start, end = seq_counts[0], seq_counts[-1]
+        missing_elements = sorted(set(range(start, end + 1)).difference(seq_counts))
+        if len(missing_elements) != 0:
+            warnings.warn(f"Missing packets found {missing_elements}.", UserWarning)
 
-    if not np.all(seq_counts == np.sort(seq_counts)):
-        warnings.warn("Sequence count are out of order.", UserWarning)
+        if not np.all(seq_counts == np.sort(seq_counts)):
+            warnings.warn("Sequence count are out of order.", UserWarning)
 
-    individual_ap_ids = set(packet_arrays["CCSDS_APID"])
-    if len(individual_ap_ids) != 1:
-        warnings.warn(f"Found multiple AP IDs {individual_ap_ids}.", UserWarning)
+        individual_ap_ids = set(packet_arrays["CCSDS_APID"])
+        if len(individual_ap_ids) != 1:
+            warnings.warn(f"Found multiple AP IDs {individual_ap_ids}.", UserWarning)
 
-    return None
+        return None
 
-    def save(self, file, pkt_type, apid, sec_header_flag, seq_flag, data):
+    def to_file(self, file, pkt_type, apid, sec_header_flag, seq_flag, data):
         """Encode a file containing a sequence of packet fields.
 
         Parameters
@@ -462,15 +456,11 @@ def _inspect_primary_header_fields(packet_arrays):
         Returns
         -------
         file : str
-            A binary file with the packet data    
+            A binary file with the packet data
         """
 
-        return _save(
-            file,
-            self._fields,
-            data, 
-            pkt_type, apid, sec_header_flag, seq_flag,
-            "variable_length"
+        return _to_file(
+            file, self._fields, data, pkt_type, apid, sec_header_flag, seq_flag, "variable_length"
         )
 
 
@@ -905,101 +895,7 @@ def _apply_post_byte_reoderings(field_arrays, orig_fields):
     return field_arrays
 
 
-def _do_array_byte_reordering(array, byte_order_ints):
-    """Reorder the bytes of an array.
-
-    Parameters
-    ----------
-    array : NumPy array
-      May be multidimensional. Dtype of array must not be object.
-    byte_order_ints : list of int
-      Inceces of the bytes in order, e.g., 2314.
-
-    Returns
-    -------
-    Array with bytes reordered according to the passed order.
-    """
-    assert array.dtype != object, "Error in byte reordering, please report a bug:.{array.dtype}"
-
-    parsed_byte_length = array.itemsize
-    native_byte_length = max(byte_order_ints)
-
-    array_bytes = array.copy()
-    array_bytes.dtype = np.uint8
-    array_bytes = array_bytes.reshape((array.size, parsed_byte_length))
-
-    digits_zero_idx = [digit - 1 for digit in reversed(byte_order_ints)]
-    select_indeces = []
-    select_indeces.extend(digits_zero_idx)
-    select_indeces.extend(sorted(set(range(array.itemsize)) - set(digits_zero_idx)))
-
-    padding = array.itemsize - len(byte_order_ints)
-    reordered = np.zeros_like(array_bytes)
-
-    for i in range(reordered.shape[0]):
-        reordered[i, :] = array_bytes[i, ::-1][select_indeces]
-
-    shifted = np.zeros_like(reordered)
-
-    if padding > 0:
-        shifted[:, padding:] = reordered[:, :-padding]
-    else:
-        shifted[:] = reordered
-
-    shifted.dtype = array.dtype
-    shifted = shifted.reshape(array.shape)
-
-    return shifted
-
-
-def _do_array_byte_reordering(array, byte_order_ints):
-    """Reorder the bytes of an array.
-
-    Parameters
-    ----------
-    array : NumPy array
-      May be multidimensional. Dtype of array must not be object.
-    byte_order_ints : list of int
-      Inceces of the bytes in order, e.g., 2314.
-
-    Returns
-    -------
-    Array with bytes reordered according to the passed order.
-    """
-    assert array.dtype != object, "Error in byte reordering, please report a bug:.{array.dtype}"
-
-    parsed_byte_length = array.itemsize
-    native_byte_length = max(byte_order_ints)
-
-    array_bytes = array.copy()
-    array_bytes.dtype = np.uint8
-    array_bytes = array_bytes.reshape((array.size, parsed_byte_length))
-
-    digits_zero_idx = [digit - 1 for digit in reversed(byte_order_ints)]
-    select_indeces = []
-    select_indeces.extend(digits_zero_idx)
-    select_indeces.extend(sorted(set(range(array.itemsize)) - set(digits_zero_idx)))
-
-    padding = array.itemsize - len(byte_order_ints)
-    reordered = np.zeros_like(array_bytes)
-
-    for i in range(reordered.shape[0]):
-        reordered[i, :] = array_bytes[i, ::-1][select_indeces]
-
-    shifted = np.zeros_like(reordered)
-
-    if padding > 0:
-        shifted[:, padding:] = reordered[:, :-padding]
-    else:
-        shifted[:] = reordered
-
-    shifted.dtype = array.dtype
-    shifted = shifted.reshape(array.shape)
-
-    return shifted
-
-
-def _save(file : str, fields, data : dict, pkt_type : int, apid: int, sec_header_flag : bool, seq_flag : bool, decoder_name):
+def _to_file(file : str, fields, data : dict, pkt_type : int, apid: int, sec_header_flag : bool, seq_flag : bool, decoder_name):
     """Encode a file-like object containing a sequence of these packets.
     The number of packets is defined by the number of values in the arrays in the data dictionary.
 

@@ -48,7 +48,7 @@ def test_primary_header_contents_no_offset(cls):
     """Test if the primary header is output correctly along with the data without
     defining bit offsets"""
     num_packets = 3
-    packet = create_simple_ccsds_packet(num_packets)  # noqa: F841
+    create_simple_ccsds_packet(num_packets)  # noqa: F841
 
     pkt = cls(
         [
@@ -104,7 +104,7 @@ def test_primary_header_contents_offset():
     """Test if the primary header is output correctly along with the data with
     defining bit offsets"""
     num_packets = 3
-    packet = create_simple_ccsds_packet(num_packets)  # noqa: F841
+    create_simple_ccsds_packet(num_packets)  # noqa: F841
 
     pkt = FixedLength(
         [
