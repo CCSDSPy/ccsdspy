@@ -13,7 +13,7 @@ CCSDSPy
     :target: https://codecov.io/gh/ddasilva/ccsdspy
     :alt: Code Coverage
 
-CCSDSPy provides an IO Interface for reading CCSDS_ data in Python.
+CCSDSPy provides an IO Interface for reading and writing CCSDS_ data in Python.
 The CCSDS format is used for many NASA and ESA missions for low-level telemetry, and often contains tightly packed bits to reduce downlink requirements.
 
 .. _CCSDS: https://public.ccsds.org/default.aspx
