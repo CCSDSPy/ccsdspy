@@ -3,8 +3,22 @@ The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`
 
 Development
 ===========
-  * Major extensions to `~ccsdspy.VariableLength` class to support arrays whose length is determined by another field 
+  * Major extensions to `~ccsdspy.VariableLength` class to support arrays whose length is determined by another field
+  * Added the following utility functions to the `ccsdspy.utils` module:
+    
+    * `~ccsdspy.utils.read_primary_headers()`
+    * `~ccsdspy.utils.iter_packet_bytes()`
+    * `~ccsdspy.utils.split_packet_bytes()`
+    * `~ccsdspy.utils.count_packets()`
+    * `~ccsdspy.utils.get_packet_apid()`
+    * `~ccsdspy.utils.get_packet_total_bytes()`
 
+  * Add warnings when issues are detected in the primary headers when loading data. Warnings are issued in the following scenarios. This information can also be found in the documentation for the `~FixedLength.load()` method.
+
+    * `UserWarning`: The CCSDS sequence count headers are not in order
+    * `UserWarning`: The CCSDS sequence count headers indicate missing packets
+    * `UserWarning`: There was more than one APID present in the decoded stream
+      
 Version 1.0.0 - 2023-02-02
 ===========================
   * Major new documentation added and re-organization.
