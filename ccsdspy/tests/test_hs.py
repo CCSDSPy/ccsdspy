@@ -9,6 +9,7 @@ import numpy as np
 import pytest
 
 from .. import FixedLength, VariableLength, PacketField, PacketArray
+from ..constants import BITS_PER_BYTE
 
 
 def _run_apid_test(apid, cls):

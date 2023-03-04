@@ -80,4 +80,4 @@ A simple example is shown below.
 	),
    ])
 
-   result = pkt.load('MyCCSDS.bin')
+   result = pkt.load('MyCCSDS.tlm')
