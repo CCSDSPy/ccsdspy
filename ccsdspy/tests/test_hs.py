@@ -135,8 +135,7 @@ def test_hs_apid035_PacketArray():
     normal_pkt = FixedLength(pkt_fields)
 
     # Make FixedLength for array packet
-    fill_length = sum(dict_normal_defs["bit_length"])
-    fill_length = BITS_PER_BYTE * 32  # 8 float32s at end
+    fill_length = sum(f._bit_length for f in pkt_fields if "[" not in f._name)
 
     array_pkt = FixedLength(
         [
