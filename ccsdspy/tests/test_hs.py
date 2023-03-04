@@ -154,3 +154,6 @@ def test_hs_apid035_PacketArray():
         assert np.all(
             normal_result[f"PKT35_FLT_SIN_2H[{i}]"] == array_result["PKT35_FLT_SIN_2H"][:, i]
         )
+        # These sin values should be between [0, 1]
+        assert np.abs(normal_result[f"PKT35_FLT_SIN_2H[{i}]"].min() - -1.0) < 1e-3
+        assert np.abs(normal_result[f"PKT35_FLT_SIN_2H[{i}]"].max() - +1.0) < 1e-3

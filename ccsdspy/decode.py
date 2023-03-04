@@ -107,7 +107,8 @@ def _decode_fixed_length(file_bytes, fields):
     # that the `fields` array contains entries for the secondary header.
     packet_nbytes = _get_packet_total_bytes(file_bytes[:PRIMARY_HEADER_NUM_BYTES])
     body_nbytes = sum(field._bit_length for field in fields) // BITS_PER_BYTE
-    counter = (packet_nbytes - body_nbytes) * BITS_PER_BYTE
+    counter_start = max(0, (packet_nbytes - body_nbytes) * 8)
+    counter = counter_start
 
     bit_offset = {}
 
@@ -142,10 +143,12 @@ def _decode_fixed_length(file_bytes, fields):
     if all(field._bit_offset is None for field in fields):
         assert counter == packet_nbytes * BITS_PER_BYTE, "Field definition != packet length"
     elif counter > packet_nbytes * BITS_PER_BYTE:
+        body_bits = sum(field._bit_length for field in fields)
         raise RuntimeError(
             (
                 "Packet definition larger than packet length"
                 f" by {counter-(packet_nbytes*BITS_PER_BYTE)} bits"
+                f" (packet length in file is {packet_nbytes*BITS_PER_BYTE} bits, defined fields are {body_bits} bits)"
             )
         )
 
