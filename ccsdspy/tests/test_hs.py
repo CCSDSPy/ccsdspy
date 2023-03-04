@@ -9,6 +9,7 @@ import numpy as np
 import pytest
 
 from .. import FixedLength, VariableLength, PacketField, PacketArray
+from ..constants import BITS_PER_BYTE
 
 
 def _run_apid_test(apid, cls):
@@ -134,8 +135,7 @@ def test_hs_apid035_PacketArray():
     normal_pkt = FixedLength(pkt_fields)
 
     # Make FixedLength for array packet
-    fill_length = sum(dict_normal_defs["bit_length"])
-    fill_length = 8 * 32  # 8 float32s at end
+    fill_length = sum(f._bit_length for f in pkt_fields if "[" not in f._name)
 
     array_pkt = FixedLength(
         [
@@ -153,3 +153,6 @@ def test_hs_apid035_PacketArray():
         assert np.all(
             normal_result[f"PKT35_FLT_SIN_2H[{i}]"] == array_result["PKT35_FLT_SIN_2H"][:, i]
         )
+        # These sin values should be between [0, 1]
+        assert np.abs(normal_result[f"PKT35_FLT_SIN_2H[{i}]"].min() - -1.0) < 1e-3
+        assert np.abs(normal_result[f"PKT35_FLT_SIN_2H[{i}]"].max() - +1.0) < 1e-3

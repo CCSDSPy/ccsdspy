@@ -4,6 +4,7 @@
 
 import csv
 import os
+import warnings
 
 import numpy as np
 
@@ -72,11 +73,10 @@ class FixedLength(_BasePacket):
         ValueError
             one or more of the arguments are invalid
         """
-        if any(field._array_shape == "expand" for field in fields):
+        if any(isinstance(field._array_shape, str) for field in fields):
             raise ValueError(
-                "The FixedLength class does not support fields with "
-                "array_shape='expand'. Instead, use the VariableLength "
-                "class."
+                "The FixedLength class does not support variable fields. "
+                "Instead, use the VariableLength class."
             )
 
         self._init(fields)
@@ -96,13 +96,30 @@ class FixedLength(_BasePacket):
         field_arrays : dict, string to NumPy array
             dictionary mapping field names to NumPy arrays, with key order matching
             the order of fields in the packet.
+
+        Warns
+        -----
+        UserWarning
+            If the ccsds sequence count is not in order
+        UserWarning
+            If the ccsds sequence count is missing packets
+        UserWarning
+            If there are more than one APID
         """
-        return _load(
+        packet_arrays = _load(
             file,
             self._fields,
             "fixed_length",
-            include_primary_header=include_primary_header,
+            include_primary_header=True,
         )
+
+        # inspect the primary header and issue warning if appropriate
+        _inspect_primary_header_fields(packet_arrays)
+
+        if not include_primary_header:
+            _delete_primary_header_fields(packet_arrays)
+
+        return packet_arrays
 
     def to_file(self, file, pkt_type, apid, sec_header_flag, seq_flag, data):
         """Encode a file containing a sequence of packet fields.
@@ -129,14 +146,18 @@ class VariableLength(_BasePacket):
     """Define a variable length packet to decode binary data.
 
     Variable length packets are packets which have a different length each
-    time. Each variable length packet should have a single `~ccsdspy.PacketArray` with
-    the `array_shape='expand'`, which will grow to fill the packet.
+    time.  Variable length fields are defined as `~ccsdspy.PacketArray` fields
+    where `array_shape="expand"` (causing the field to grow to fill the packet) or
+    `array_shape="other_field"` (causes the field named `other_field` to set the number
+    of elements in this array).
 
     Please note that while this class is able to parse fixed length packets, it
     is much slower. Use the :py:class:`~ccsdspy.FixedLength` class instead.
 
     Rules for variable length packets:
-      * Do provide only one one expanding `~ccsdspy.PacketArray` with `array_shape='expand'`.
+      * Do only specify a `~ccsdspy.PacketArray` with the `array_shape="other_field"`
+        when `other_field` precedes it in the packet definition
+      * Do not provide more than one expanding `~ccsdspy.PacketArray` with `array_shape="expand"`
       * Do not specify the primary header fields manually
       * Do not specify explicit bit_offsets (they will be computed automatically)
     """
@@ -156,6 +177,7 @@ class VariableLength(_BasePacket):
             one or more of the arguments are invalid, or do not follow the
             specified rules.
         """
+        # Check there is only one expanding field in the packet definition
         expand_arrays = [
             field
             for field in fields
@@ -169,6 +191,24 @@ class VariableLength(_BasePacket):
                 "ambiguous."
             )
 
+        # Check variable fields with their sizes set by other fields only do so when
+        # the previous field precedes it
+        field_names = [field._name for field in fields]
+
+        for i, field in enumerate(fields):
+            if (
+                isinstance(field, PacketArray)
+                and isinstance(field._array_shape, str)
+                and field._array_shape != "expand"
+                and field._array_shape not in field_names[:i]
+            ):
+                raise ValueError(
+                    "The VariableLength class requires that variable fields with "
+                    "their sizes set by other fields only do so when the "
+                    "previous field precedes it."
+                )
+
+        # Check that bit offsets are not set
         if not all(field._bit_offset is None for field in fields):
             raise ValueError(
                 "The VariableLength class does not support explicit bit "
@@ -193,11 +233,23 @@ class VariableLength(_BasePacket):
         field_arrays : dict, string to NumPy array
             dictionary mapping field names to NumPy arrays, with key order matching
             the order of fields in the packet.
+
+        Warns
+        -----
+        UserWarning
+            If the ccsds sequence count is not in order
+        UserWarning
+            If the ccsds sequence count is missing packets
+        UserWarning
+            If there are more than one APID
         """
         # The variable length decoder requires the full packet definition, so if
         # they didn't want the primary header fields, we parse for them and then
         # remove them after.
         packet_arrays = _load(file, self._fields, "variable_length", include_primary_header=True)
+
+        # inspect the primary header and issue warning if appropriate
+        _inspect_primary_header_fields(packet_arrays)
 
         if not include_primary_header:
             _delete_primary_header_fields(packet_arrays)
@@ -223,6 +275,36 @@ class VariableLength(_BasePacket):
         return _to_file(
             file, self._fields, data, pkt_type, apid, sec_header_flag, seq_flag, "variable_length"
         )
+
+
+def _inspect_primary_header_fields(packet_arrays):
+    """Inspects the primary header fields.
+
+    Checks for the following issues
+    * all apids are the same
+    * sequence count is not missing any values
+    * sequence count is in order
+
+    Parameters
+    -----------
+    packet_arrays
+        dictionary mapping field names to NumPy arrays, with key order matching
+        the order fields in the packet. Modified in place
+    """
+    seq_counts = packet_arrays["CCSDS_SEQUENCE_COUNT"]
+    start, end = seq_counts[0], seq_counts[-1]
+    missing_elements = sorted(set(range(start, end + 1)).difference(seq_counts))
+    if len(missing_elements) != 0:
+        warnings.warn(f"Missing packets found {missing_elements}.", UserWarning)
+
+    if not np.all(seq_counts == np.sort(seq_counts)):
+        warnings.warn("Sequence count are out of order.", UserWarning)
+
+    individual_ap_ids = set(packet_arrays["CCSDS_APID"])
+    if len(individual_ap_ids) != 1:
+        warnings.warn(f"Found multiple AP IDs {individual_ap_ids}.", UserWarning)
+
+    return None
 
 
 def _delete_primary_header_fields(packet_arrays):
@@ -264,7 +346,7 @@ def _expand_array_fields(existing_fields):
     expand_history = {}
 
     for existing_field in existing_fields:
-        if existing_field._field_type != "array" or existing_field._array_shape == "expand":
+        if existing_field._field_type != "array" or isinstance(existing_field._array_shape, str):
             return_fields.append(existing_field)
             continue
 

@@ -58,22 +58,25 @@ packages = ["ccsdspy"]
 [tool.setuptools_scm]
 write_to = "ccsdspy/_version.py"
 
-[tool.pytest]
-minversion = 3.0
+[tool.pytest.ini_options]
+minversion = "6.0"
 testpaths = ["ccsdspy/tests", "docs"]
-norecursedirs = ["build", "docs/_build", "docs/generated", "*.egg-info"]
+norecursedirs = ["build", "docs/_build", "docs/generated", "*.egg-info", "attic"]
 doctest_plus = "enabled"
 text_file_format = "rst"
 addopts = "--doctest-modules"
+collect_ignore_glob= ['_*.py']
 filterwarnings = [
-    # This is due to dependencies building with a numpy version different from
-    # the local installed numpy version, but should be fine
-    # See https://github.com/numpy/numpy/issues/15748#issuecomment-598584838
-    "ignore:numpy.ufunc size changed:RuntimeWarning",
-    "ignore:numpy.ndarray size changed:RuntimeWarning",
-    # See https://github.com/astropy/extension-helpers/issues/23
-    "ignore:Distutils was imported before Setuptools"
- ]
+  "ignore::UserWarning",
+  "ignore::DeprecationWarning",
+  # This is due to dependencies building with a numpy version different from
+  # the local installed numpy version, but should be fine
+  # See https://github.com/numpy/numpy/issues/15748#issuecomment-598584838
+  "ignore:numpy.ufunc size changed:RuntimeWarning",
+  "ignore:numpy.ndarray size changed:RuntimeWarning",
+  # See https://github.com/astropy/extension-helpers/issues/23
+  "ignore:Distutils was imported before Setuptools"
+]
 
 
 [tool.coverage.run]

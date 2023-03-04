@@ -10,6 +10,7 @@ import numpy as np
 import pytest
 
 from .. import FixedLength, VariableLength, PacketField, PacketArray
+from ..constants import BITS_PER_BYTE
 from ..packet_types import _get_fields_csv_file
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -24,7 +25,7 @@ def test_FixedLength_initializer_copies_field_list():
     """Tests that the FixedLengthPacket initializer stores a copy of the
     provided fields list.
     """
-    fields = [PacketField(name="mnemonic", data_type="uint", bit_length=8)]
+    fields = [PacketField(name="mnemonic", data_type="uint", bit_length=BITS_PER_BYTE)]
     pkt = FixedLength(fields)
     assert pkt._fields is not fields
 
@@ -189,7 +190,7 @@ def test_fixed_length_rejects_expanding():
                     name="array",
                     array_shape="expand",
                     data_type="uint",
-                    bit_length=8,
+                    bit_length=BITS_PER_BYTE,
                 )
             ]
         )
@@ -203,13 +204,13 @@ def test_variable_length_rejects_multiple_expanding():
                     name="array1",
                     array_shape="expand",
                     data_type="uint",
-                    bit_length=8,
+                    bit_length=BITS_PER_BYTE,
                 ),
                 PacketArray(
                     name="array2",
                     array_shape="expand",
                     data_type="uint",
-                    bit_length=8,
+                    bit_length=BITS_PER_BYTE,
                 ),
             ]
         )
@@ -223,7 +224,7 @@ def test_variable_length_rejects_bit_offset():
                     name="array1",
                     array_shape="expand",
                     data_type="uint",
-                    bit_length=8,
+                    bit_length=BITS_PER_BYTE,
                     bit_offset=32,
                 ),
             ]
