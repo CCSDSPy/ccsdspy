@@ -4,6 +4,7 @@
 
 import csv
 import os
+import warnings
 
 import numpy as np
 
@@ -95,13 +96,30 @@ class FixedLength(_BasePacket):
         field_arrays : dict, string to NumPy array
             dictionary mapping field names to NumPy arrays, with key order matching
             the order of fields in the packet.
+
+        Warns
+        -----
+        UserWarning
+            If the ccsds sequence count is not in order
+        UserWarning
+            If the ccsds sequence count is missing packets
+        UserWarning
+            If there are more than one APID
         """
-        return _load(
+        packet_arrays = _load(
             file,
             self._fields,
             "fixed_length",
-            include_primary_header=include_primary_header,
+            include_primary_header=True,
         )
+
+        # inspect the primary header and issue warning if appropriate
+        _inspect_primary_header_fields(packet_arrays)
+
+        if not include_primary_header:
+            _delete_primary_header_fields(packet_arrays)
+
+        return packet_arrays
 
 
 class VariableLength(_BasePacket):
@@ -195,16 +213,58 @@ class VariableLength(_BasePacket):
         field_arrays : dict, string to NumPy array
             dictionary mapping field names to NumPy arrays, with key order matching
             the order of fields in the packet.
+
+        Warns
+        -----
+        UserWarning
+            If the ccsds sequence count is not in order
+        UserWarning
+            If the ccsds sequence count is missing packets
+        UserWarning
+            If there are more than one APID
         """
         # The variable length decoder requires the full packet definition, so if
         # they didn't want the primary header fields, we parse for them and then
         # remove them after.
         packet_arrays = _load(file, self._fields, "variable_length", include_primary_header=True)
 
+        # inspect the primary header and issue warning if appropriate
+        _inspect_primary_header_fields(packet_arrays)
+
         if not include_primary_header:
             _delete_primary_header_fields(packet_arrays)
 
         return packet_arrays
+
+
+def _inspect_primary_header_fields(packet_arrays):
+    """Inspects the primary header fields.
+
+    Checks for the following issues
+    * all apids are the same
+    * sequence count is not missing any values
+    * sequence count is in order
+
+    Parameters
+    -----------
+    packet_arrays
+        dictionary mapping field names to NumPy arrays, with key order matching
+        the order fields in the packet. Modified in place
+    """
+    seq_counts = packet_arrays["CCSDS_SEQUENCE_COUNT"]
+    start, end = seq_counts[0], seq_counts[-1]
+    missing_elements = sorted(set(range(start, end + 1)).difference(seq_counts))
+    if len(missing_elements) != 0:
+        warnings.warn(f"Missing packets found {missing_elements}.", UserWarning)
+
+    if not np.all(seq_counts == np.sort(seq_counts)):
+        warnings.warn("Sequence count are out of order.", UserWarning)
+
+    individual_ap_ids = set(packet_arrays["CCSDS_APID"])
+    if len(individual_ap_ids) != 1:
+        warnings.warn(f"Found multiple AP IDs {individual_ap_ids}.", UserWarning)
+
+    return None
 
 
 def _delete_primary_header_fields(packet_arrays):

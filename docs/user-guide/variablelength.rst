@@ -67,7 +67,7 @@ An example of using a reference-based variable length field called `data1` which
               name="data2",
               data_type="uint",
               bit_length=16,
-              array_shape="data1_len",  # links data2 <-> data2_len
+              array_shape="data2_len",  # links data2 <-> data2_len
          ),	 
          PacketField(
               name="checksum",
@@ -75,6 +75,8 @@ An example of using a reference-based variable length field called `data1` which
               bit_length=16
          ),
     ])
+    
+    result = pkt.load('MyCCSDS.tlm')
 
 
 Expanding Variable Length Field
@@ -104,3 +106,5 @@ An example of using a expanding variable length field called `data` below. Becau
               bit_length=16
          ),
     ])
+    
+    result = pkt.load('MyCCSDS.tlm')

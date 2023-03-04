@@ -2,7 +2,6 @@ name,data_type,bit_offset,bit_length,calibration
 pkt35_time_secs,uint,0,32,
 pkt35_time_msecs,uint,32,16,
 pkt35_int8_cnt,int,48,8,
-pkt35_uint16_bitfld,uint,56,16,
 pkt35_cntoverflow,uint,56,1,"{""0"":""NO_OVERFLOW"",""1"":""OVERFLOW""}"
 pkt35_notused,uint,57,7,
 pkt35_sine0status,uint,64,1,"{""0"":""NEGATIVE"",""1"":""POSITIVE""}"
