@@ -8,8 +8,12 @@ All fields in a packet including those in the packet primary header are defined 
 This is done by using one of the following objects `~ccsdspy.PacketField` and `~ccsdspy.PacketArray`.
 These objects are used by the packet objects `~ccsdspy.FixedLength` and `~ccsdspy.VariableLength`.
 
+.. contents::
+   :depth: 2
+
+
 PacketField
------------
+===========
 The `~ccsdspy.PacketField` is used to define most fields in a packet as well as the packet primary header.
 It can be defined simply, for example::
 
@@ -23,7 +27,7 @@ This is typically not necessary because packet are defined in a list.
 Without a bit offset, its value is calculated automatically assuming that the order of packet fields is correct.
 
 PacketArray
------------
+===========
 The `~ccsdspy.PacketArray` provides a simple way to define multiple repeating packet fields.
 It is defined similarly to `~ccsdspy.PacketField` but adds a few new keywords, for example::
 
