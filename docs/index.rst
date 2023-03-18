@@ -21,7 +21,7 @@ The CCSDS format is used for many NASA and ESA missions for low-level telemetry,
 .. toctree::
    :maxdepth: 2
 
-   whatsnew/changelog
+   whatsnew/index
    user-guide/index
    dev-guide/index
    api
