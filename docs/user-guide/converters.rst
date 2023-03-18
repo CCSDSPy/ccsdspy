@@ -4,8 +4,8 @@
 Post-Processing Transformations
 ********************************
 
-Overview
-========
+
+
 Post-processing transformations are done through the Converters API, exposed through the `~ccsdspy.converters` module. Using Converters, one can create new fields transformed from another field. Examples including applying calibration curves, replacing enumerated values with strings, or converting your own time definition to a `datetime` instance. The following converters are built in, and you can write your own converter by extending the `~ccsdspy.converters.Converter` class (more on this below). When new fields are transformed from other fields, they are created as new entries in the returned dictionary.
 
 #. Polynomial Transformation (`~ccsdspy.converters.PolyConverter`)
@@ -20,23 +20,40 @@ Post-processing transformations are done through the Converters API, exposed thr
    
    This applies a dictionary replacement of integers to strings. For instance, you can use this to replace `0` with `"DISABLED"`, `1` with `"ENABLED"`, and `2` with `"STANDBY"`.
 
+#. Datetime Transformation (`~ccsdspy.converters.DatetimeConverter`)
+
+   This converts fields to datetime instances, computed using offset(s) from a reference time. The offsets can span multiple fields (for example, one a coarse time, and another for a fine time). If the reference time has a timezone, the result will too.
+
+.. contents::
+   :depth: 2
 
 Using a Built-In Transformations
-*************************************
-An example of using a built in transformation to apply a linear transformation to a first field and apply a enumerated values transformation to a secondary field is below.
+================================
+An example of using a built in transformation to parse time, apply a linear transformation to a first field, and apply a enumerated values transformation to a secondary field is below.
 
 .. code-block:: python
 		
     from ccsdspy import FixedLength, converters
    
     pkt = FixedLength([
-        PacketField(name="FirstField", data_type="uint", bit_length=8),
+	PacketField(name="CoarseTime",  data_type="uint", bit_length=24)
+        PacketField(name="FineTime",    data_type="uint", bit_length=48)
+        PacketField(name="FirstField",  data_type="uint", bit_length=8),
         PacketField(name="SecondField", data_type="uint", bit_length=8),
     ])
+
+    pkt.add_converted_field(
+        ("CoarseTime", "FineTime"),
+	"Time_Converted",
+	converters.DateTimeConverter(
+	   since=datetime(1970, 1, 1),
+           units=("seconds", "nanoseconds"),
+	)
+    )		
     pkt.add_converted_field(
         "FirstField",
 	"FirstField_Converted",
-	LinearConverter(slope=1.2, intercept=0.4)
+	converters.LinearConverter(slope=1.2, intercept=0.4)
     )
     pkt.add_converted_field(
         "SecondField",
@@ -55,8 +72,8 @@ An example of using a built in transformation to apply a linear transformation t
 
 
 Creating User-Defined Transformations
-*************************************
-Users can create their own user-defined transformations by extending the `~ccsdspy.converters.Converter` class and overriding the `convert_many(field_array)` function. This function accepts as an argument the decoded input field array and returns the converted array. If more convinient, one may instead override the `convert_one(field_value)` function which accepts a single decoded field value and returns a single converted value.
+=====================================
+Users can create their own user-defined transformations by extending the `~ccsdspy.converters.Converter` class and overriding the `convert(*field_arrays)` function. This function accepts as many arguments argument as input fields were provided when the converter was added.
 
 Below is an example of creating a user-defined transformation to return False if the value is equal to zero, and True if the value is greater than zero.
 
@@ -65,7 +82,7 @@ Below is an example of creating a user-defined transformation to return False if
     from ccsdspy import FixedLength, converters
 
     class CustomConverter(converters.Converter):
-        def convert_many(field_array):
+        def convert(field_array):
             return (field_array > 0)
     
     pkt = FixedLength([

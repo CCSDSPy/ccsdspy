@@ -3,7 +3,18 @@ post-process to decoded packet fields. This post-processing includes applying
 linear/polynomial calibration curves, dictionary replacement, and time parsing.
 """
 
+from datetime import datetime, timedelta
+
 import numpy as np
+
+__all__ = [
+    "EnumConverterMissingKey",
+    "Converter",
+    "PolyConverter",
+    "LinearConverter",
+    "EnumConverter",
+    "DatetimeConverter",
+]
 
 
 class EnumConverterMissingKey(RuntimeError):
@@ -19,22 +30,15 @@ class Converter:
     class to write their own custom converters.
 
     To write a converter, one must create a subclass and override either the method
-    `convert_many(field_array)` or `convert_one(field_array)`. The
-    `convert_many(field_array)` method implements the conversion for an entire
-    sequence of decoded packet field values in a single call (this is sometimes
-    faster), while the `convert_one(field_array)` method implements the
-    conversion for a single packet field at a time (this is sometimes easier to
-    write).
+    `convert(*field_arrays)`. This method implements the conversion for an entire
+    sequence of decoded packet field values in a single call.
     """
 
     def __init__(self):
         raise NotImplementedError("This is a base class not meant to be instantiated directly")
 
-    def convert_many(self, field_array):
+    def convert(self, field_array):
         """Convert a sequence of decoded packet field values.
-
-        This default implementation loops over the elements and defers the
-        conversion to `self.convert_one(field_array[i])`.
 
         Parameters
         ----------
@@ -45,30 +49,6 @@ class Converter:
         -------
         converted_field_array : NumPy array
             converted form of the decoded packet field values
-        """
-        converted_field_array = []
-
-        for i in range(field_array.shape[0]):
-            converted = self.convert_one(field_array[i])
-            converted_field_array.append(converted)
-
-        # Let NumPy infer the type from the elements.
-        converted_field_array = np.array(converted_field_array)
-
-        return converted_field_array
-
-    def convert_one(self, field_value):
-        """Convert a singel decoded packet field value.
-
-        Parameters
-        ----------
-        field_value : object
-            a single decoded packet field value
-
-        Returns
-        -------
-        converted_field_value : object
-            converted form of the decoded packet field value
         """
         raise NotImplementedError("This method must be overridden by a subclass")
 
@@ -88,7 +68,7 @@ class PolyConverter(Converter):
         """
         self._coeffs = coeffs
 
-    def convert_many(self, field_array):
+    def convert(self, field_array):
         """Apply the polynomial conversion.
 
         Parameters
@@ -157,7 +137,7 @@ class EnumConverter(Converter):
                     f"not a string: {repr(kevalue)}"
                 )
 
-    def convert_many(self, field_array):
+    def convert(self, field_array):
         """Apply the enum replacement conversion.
 
         Parameters
@@ -185,5 +165,119 @@ class EnumConverter(Converter):
                 f"corresponding keys in the replacment dictionary: "
                 f"{repr(missing_keys)}"
             )
+
+        return converted
+
+
+class DatetimeConverter(Converter):
+    """Post-processing conversion for converting timestamp fields to datetime
+    instances, computed using offset(s) from a reference time.
+
+    This class supports the offsets stored in multiple input fields, for example
+    where one field is a coarse time (eg seconds) and a second field is a fine
+    time (eg nanoseconds). To use multiple input fields, pass a tuple of input
+    field names when this converter is added to the packet.
+    """
+
+    _VALID_UNITS = (
+        "days",
+        "hours",
+        "minutes",
+        "seconds",
+        "milliseconds",
+        "microseconds",
+        "nanoseconds",
+    )
+    _MILLISECONDS_PER_SECOND = 1_000
+    _MICROSECONDS_PER_SECOND = 1_000_000
+    _NANOSECONDS_PER_SECOND = 1_000_000_000
+
+    def __init__(self, since, units):
+        """Initialize a DatetimeConverter
+
+        Parameters
+        ----------
+        since : datetime
+          Reference datetime. The time stored in the field(s) is considered an
+          offset to this reference. If this has timezone information attached to
+          it, so will the converted datetimes.
+        units : str or tuple of str
+          Units string of tuples of units strings for the offset of each
+          input field.  Valid units are "days", "minutes", "milliseconds",
+          "microseconds", and "nanoseconds".
+
+        Raises
+        ------
+        TypeError
+          One of the input arguments is not of the correct type
+        ValueError
+          One or more of the units are invalid
+        """
+        if not isinstance(since, datetime):
+            raise TypeError("Argument 'since' must be an instance of datetime")
+
+        if isinstance(units, str):
+            units_tuple = (units,)
+        elif isinstance(units, tuple):
+            units_tuple = units
+        else:
+            raise TypeError("Argument 'units' must be either a string or tuple")
+
+        if not (set(units_tuple) <= set(self._VALID_UNITS)):
+            raise ValueError("One or more units are invalid")
+
+        self._since = since
+        self._units = units_tuple
+
+    def convert(self, *field_arrays):
+        """Apply the datetime conversion.
+
+        Parameters
+        ----------
+        field_arrays : list of NumPy array
+          list of decoded packet field values, each must have at least one
+          dimension
+
+        Returns
+        -------
+        converted : NumPy array of object (holding datetimes)
+          converted form of the decoded packet field values
+
+        Raises
+        ------
+        ValueError
+          Too many or too few units were provided, as compared to the
+          input field arrays sent.
+        """
+        assert len(field_arrays) > 0, "Must have at least one input field"
+
+        converted = []
+
+        for field_values in zip(*field_arrays):
+            converted_time = self._since
+
+            for unit, offset_raw in zip(self._units, field_values):
+                offset_raw = float(offset_raw)
+
+                if unit == "days":
+                    converted_time += timedelta(days=offset_raw)
+                elif unit == "hours":
+                    converted_time += timedelta(hours=offset_raw)
+                elif unit == "minutes":
+                    converted_time += timedelta(minutes=offset_raw)
+                elif unit == "seconds":
+                    converted_time += timedelta(seconds=offset_raw)
+                elif unit == "milliseconds":
+                    converted_time += timedelta(seconds=offset_raw / self._MILLISECONDS_PER_SECOND)
+                elif unit == "microseconds":
+                    converted_time += timedelta(seconds=offset_raw / self._MICROSECONDS_PER_SECOND)
+                elif unit == "nanoseconds":
+                    converted_time += timedelta(seconds=offset_raw / self._NANOSECONDS_PER_SECOND)
+                else:
+                    raise RuntimeError(f"Invalid unit encountered: {unit}")
+
+            converted.append(converted_time)
+
+        converted = np.array(converted, dtype=object)
 
         return converted

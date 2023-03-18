@@ -1,5 +1,6 @@
 """Tests for the ccsdspy.converters module"""
 
+from datetime import datetime, timedelta
 import os
 
 import numpy as np
@@ -9,6 +10,7 @@ from .. import converters
 from .. import FixedLength, VariableLength, PacketField
 
 TEST_FILENAME = "ccsds_converters_test.bin"
+TEST_EPOCH = datetime(1970, 1, 1)
 
 
 def test_converter_cannot_be_instantiated():
@@ -22,7 +24,7 @@ def test_custom_class_with_missing_convert_one():
             pass
 
     with pytest.raises(NotImplementedError):
-        Test().convert_many(np.arange(10))
+        Test().convert(np.arange(10))
 
 
 @pytest.mark.parametrize("do_2darray", [False, True])
@@ -36,7 +38,7 @@ def test_poly_converter_direct_simple(do_2darray):
 
     x = field_array.astype(np.float64)
     expected = coeffs[0] * x**2 + coeffs[1] * x + coeffs[2]
-    got = converters.PolyConverter(coeffs).convert_many(field_array)
+    got = converters.PolyConverter(coeffs).convert(field_array)
 
     assert np.allclose(got, expected)
 
@@ -53,7 +55,7 @@ def test_linear_converter_direct_simple(do_2darray):
 
     x = field_array.astype(np.float64)
     expected = slope * x + intercept
-    got = converters.LinearConverter(slope, intercept).convert_many(field_array)
+    got = converters.LinearConverter(slope, intercept).convert(field_array)
 
     assert np.allclose(got, expected)
 
@@ -70,7 +72,7 @@ def test_enum_converter_direct_happy_path(do_2darray):
         field_array = field_array.reshape(shape)
         expected = expected.reshape(shape)
 
-    got = converters.EnumConverter(replace_dict).convert_many(field_array)
+    got = converters.EnumConverter(replace_dict).convert(field_array)
 
     assert np.all(got == expected)
 
@@ -89,7 +91,125 @@ def test_enum_converter_direct_missing_key(do_2darray):
         expected = expected.reshape(shape)
 
     with pytest.raises(converters.EnumConverterMissingKey):
-        got = converters.EnumConverter(replace_dict).convert_many(field_array)
+        got = converters.EnumConverter(replace_dict).convert(field_array)
+
+
+def test_datetime_converter_constructor_exceptions():
+    with pytest.raises(TypeError):
+        converters.DatetimeConverter(since="1970-01-01", units="seconds")
+
+    with pytest.raises(TypeError):
+        converters.DatetimeConverter(since=TEST_EPOCH, units=5)
+
+    with pytest.raises(ValueError):
+        converters.DatetimeConverter(since=TEST_EPOCH, units="gazooleans")
+
+    with pytest.raises(ValueError):
+        converters.DatetimeConverter(since=TEST_EPOCH, units=("gazooleans", "seconds"))
+
+
+def test_date_converter_direct_one_input_days():
+    field_array = np.array([100, 150, 200, 30, 499])
+
+    # Days
+    converter = converters.DatetimeConverter(since=TEST_EPOCH, units="days")
+    converted = converter.convert(field_array)
+    assert field_array.size == converted.size
+
+    for i in range(converted.size):
+        assert isinstance(converted[i], datetime)
+        assert converted[i] == TEST_EPOCH + timedelta(days=int(field_array[i]))
+
+
+def test_date_converter_direct_one_input_minutes():
+    field_array = np.array([100, 150, 200, 30, 499])
+
+    # Minutes
+    converter = converters.DatetimeConverter(since=TEST_EPOCH, units="minutes")
+    converted = converter.convert(field_array)
+    assert field_array.size == converted.size
+
+    for i in range(converted.size):
+        assert isinstance(converted[i], datetime)
+        assert converted[i] == TEST_EPOCH + timedelta(minutes=int(field_array[i]))
+
+
+def test_date_converter_direct_one_input_seconds():
+    field_array = np.array([100, 150, 200, 30, 499])
+
+    # Seconds
+    converter = converters.DatetimeConverter(since=TEST_EPOCH, units="seconds")
+    converted = converter.convert(field_array)
+    assert field_array.size == converted.size
+
+    for i in range(converted.size):
+        assert isinstance(converted[i], datetime)
+        assert converted[i] == TEST_EPOCH + timedelta(seconds=int(field_array[i]))
+
+
+def test_date_converter_direct_one_input_milliseconds():
+    field_array = np.array([100, 150, 200, 30, 499])
+
+    # Minutes
+    converter = converters.DatetimeConverter(since=TEST_EPOCH, units="milliseconds")
+    converted = converter.convert(field_array)
+    assert field_array.size == converted.size
+
+    for i in range(converted.size):
+        assert isinstance(converted[i], datetime)
+        assert converted[i] == TEST_EPOCH + timedelta(
+            seconds=int(field_array[i]) / converter._MILLISECONDS_PER_SECOND
+        )
+
+
+def test_date_converter_direct_one_input_microseconds():
+    field_array = np.array([100, 150, 200, 30, 499])
+
+    # Microseconds
+    converter = converters.DatetimeConverter(since=TEST_EPOCH, units="microseconds")
+    converted = converter.convert(field_array)
+    assert field_array.size == converted.size
+
+    for i in range(converted.size):
+        assert isinstance(converted[i], datetime)
+        assert converted[i] == TEST_EPOCH + timedelta(
+            seconds=int(field_array[i]) / converter._MICROSECONDS_PER_SECOND
+        )
+
+
+def test_date_converter_direct_one_input_nanoseconds():
+    field_array = np.array([100, 150, 200, 30, 499])
+
+    # Nanoseconds
+    converter = converters.DatetimeConverter(since=TEST_EPOCH, units="nanoseconds")
+    converted = converter.convert(field_array)
+    assert field_array.size == converted.size
+
+    for i in range(converted.size):
+        assert isinstance(converted[i], datetime)
+        assert converted[i] == TEST_EPOCH + timedelta(
+            seconds=int(field_array[i]) / converter._NANOSECONDS_PER_SECOND
+        )
+
+
+def test_date_converter_direct_multiple_inputs():
+    field_array_seconds = np.array([100, 150, 200, 30, 499])
+    field_array_nanoseconds = np.array([9283, 18893, 4892, 448, 2243])
+    assert field_array_seconds.size == field_array_nanoseconds.size
+
+    converter = converters.DatetimeConverter(since=TEST_EPOCH, units=("seconds", "nanoseconds"))
+    converted = converter.convert(field_array_seconds, field_array_nanoseconds)
+    assert field_array_seconds.size == converted.size
+
+    for i in range(converted.size):
+        assert isinstance(converted[i], datetime)
+
+        expected = TEST_EPOCH
+        expected += timedelta(seconds=int(field_array_seconds[i]))
+        expected += timedelta(
+            seconds=float(field_array_nanoseconds[i] / converter._NANOSECONDS_PER_SECOND)
+        )
+        assert converted[i] == expected
 
 
 def _create_simple_ccsds_packet(n=1):

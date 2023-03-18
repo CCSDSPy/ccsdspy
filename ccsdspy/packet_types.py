@@ -63,9 +63,9 @@ class _BasePacket:
 
         Parameters
         ----------
-        input_field_name : str
-           Name of input field. There must be one field named that exists in the packet
-           definition.
+        input_field_name : str or list/tuple
+           Name of input field, or list/tuple of names of fields. There must be field(s)
+           which exists in the packet definition corresponding to these name(s).
         output_field_name : str
            Name of output field. When the packet is decoded using `pkt.load()`,
            a new field named this will be present in the output dictionary.
@@ -81,17 +81,36 @@ class _BasePacket:
         ValueError
            The provided `input_field_name` is not present in the packet definition
         """
-        if not isinstance(input_field_name, str):
-            raise TypeError("input_field_name must be a str")
         if not isinstance(output_field_name, str):
             raise TypeError("output_field_name must be a str")
         if not isinstance(converter, Converter):
             raise TypeError("converter must be an instance of a Converter subclass")
 
-        if not any(input_field_name == field._name for field in self._fields):
-            raise ValueError("input_field_name must be present in the packet definition")
+        # Get tuple of input field names for storing; this handles the input_field_name
+        # argument being either a str, or list/tuple
+        if isinstance(input_field_name, str):
+            input_field_names = (input_field_name,)
+        elif isinstance(input_field_name, (list, tuple)):
+            input_field_names = tuple(input_field_name)
+        else:
+            raise TypeError("input_field_name must be either str, list, or tuple")
 
-        self._converters[input_field_name] = (output_field_name, converter)
+        del input_field_name  # don't use the variable again in this function
+
+        # Check that each of the input field names exists in the packet, and report
+        # the missing fields if not
+        fields_in_packet_set = {field._name for field in self._fields}
+        input_field_names_set = set(input_field_names)
+        all_fields_present = input_field_names_set <= fields_in_packet_set  # subset
+
+        if not all_fields_present:
+            missing_fields = input_field_names_set - fields_in_packet  # set op A \ B
+            raise ValueError(
+                "Some fields specified as inputs to converters were missing: "
+                f"{sorted(missing_fields)}"
+            )
+
+        self._converters[input_field_names] = (output_field_name, converter)
 
 
 class FixedLength(_BasePacket):
@@ -635,8 +654,14 @@ def _apply_converters(field_arrays, converters):
     """
     converted = field_arrays.copy()
 
-    for input_field_name, (output_field_name, converter) in converters.items():
-        input_array = field_arrays[input_field_name]
-        converted[output_field_name] = converter.convert_many(input_array)
+    for input_field_names, (output_field_name, converter) in converters.items():
+        # Collect list of input arrays to pass as *args to converter function
+        input_arrays = []
+
+        for input_field_name in input_field_names:
+            input_arrays.append(field_arrays[input_field_name])
+
+        # Call converter function
+        converted[output_field_name] = converter.convert(*input_arrays)
 
     return converted
