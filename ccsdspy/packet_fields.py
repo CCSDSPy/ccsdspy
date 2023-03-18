@@ -15,9 +15,7 @@ from .converters import Converter
 class PacketField:
     """A field contained in a packet."""
 
-    def __init__(
-        self, name, data_type, bit_length, bit_offset=None, byte_order="big", converter=None
-    ):
+    def __init__(self, name, data_type, bit_length, bit_offset=None, byte_order="big"):
         """
         Parameters
         ----------
@@ -34,10 +32,6 @@ class PacketField:
             from its position inside the packet definition.
         byte_order : {'big', 'little'}, optional
             Byte order of the field. Defaults to big endian.
-        converter : instance of subclass of  `:py:class:~ccsdspy.converter`, optional
-           A converter object to apply post-processing conversions, such as
-           calibration curves, value replacement, or time conversion. Converter objects
-           can be found in`:py:mod:~ccsdspy.converters`.
 
         Raises
         ------
@@ -63,15 +57,11 @@ class PacketField:
         if byte_order not in valid_byte_orders:
             raise ValueError(f"byte_order must be one of {valid_byte_orders}")
 
-        if converter is not None and not isinstance(converter, Converter):
-            raise ValueError("converter must be an instance of a Converter subclass")
-
         self._name = name
         self._data_type = data_type
         self._bit_length = bit_length
         self._bit_offset = bit_offset
         self._byte_order = byte_order
-        self._converter = converter
 
         self._field_type = "element"
         self._array_shape = None
