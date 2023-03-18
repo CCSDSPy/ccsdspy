@@ -66,7 +66,8 @@ An example of using a built in transformation to parse time, apply a linear tran
     )
     
     result = pkt.load("MyCCSDS.bin")
-		
+
+    print(result["Time_Converted"])
     print(result["FirstField_Converted"])
     print(result["SecondField_Converted"])    
 
