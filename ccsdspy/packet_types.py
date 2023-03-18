@@ -104,7 +104,7 @@ class _BasePacket:
         all_fields_present = input_field_names_set <= fields_in_packet_set  # subset
 
         if not all_fields_present:
-            missing_fields = input_field_names_set - fields_in_packet  # set op A \ B
+            missing_fields = input_field_names_set - fields_in_packet_set  # set op A \ B
             raise ValueError(
                 "Some fields specified as inputs to converters were missing: "
                 f"{sorted(missing_fields)}"

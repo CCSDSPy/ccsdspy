@@ -119,7 +119,7 @@ class EnumConverter(Converter):
 
         Raises
         ------
-        ValueError
+        TypeError
            Either one of the keys of the replacement dictionary is not an
            integer, or one of the values is not a string.
         """
@@ -127,14 +127,14 @@ class EnumConverter(Converter):
 
         for key, value in replace_dict.items():
             if not isinstance(key, int):
-                raise ValueError(
+                raise TypeError(
                     f"Found key in EnumConverter replacement dictionary that is "
                     f"not an integer: {repr(key)}"
                 )
             if not isinstance(value, str):
-                raise ValueError(
+                raise TypeError(
                     f"Found value in EnumConverter replacement dictionary that is "
-                    f"not a string: {repr(kevalue)}"
+                    f"not a string: {repr(value)}"
                 )
 
     def convert(self, field_array):
@@ -273,8 +273,6 @@ class DatetimeConverter(Converter):
                     converted_time += timedelta(seconds=offset_raw / self._MICROSECONDS_PER_SECOND)
                 elif unit == "nanoseconds":
                     converted_time += timedelta(seconds=offset_raw / self._NANOSECONDS_PER_SECOND)
-                else:
-                    raise RuntimeError(f"Invalid unit encountered: {unit}")
 
             converted.append(converted_time)
 

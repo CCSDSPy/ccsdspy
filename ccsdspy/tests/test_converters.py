@@ -60,6 +60,17 @@ def test_linear_converter_direct_simple(do_2darray):
     assert np.allclose(got, expected)
 
 
+def test_enum_converter_invalid_types():
+    with pytest.raises(TypeError):
+        converters.EnumConverter({3.4: "fizz", 1: "buzz"})
+
+    with pytest.raises(TypeError):
+        converters.EnumConverter({0: (1, 2, 3), 1: "buzz"})
+
+    with pytest.raises(TypeError):
+        converters.EnumConverter({0: 5.2, 1: "buzz"})
+
+
 @pytest.mark.parametrize("do_2darray", [False, True])
 def test_enum_converter_direct_happy_path(do_2darray):
     replace_dict = {0: "OFF", 1: "ON", 2: "STANDBY", 3: "EMERGENCY"}
@@ -119,6 +130,19 @@ def test_date_converter_direct_one_input_days():
     for i in range(converted.size):
         assert isinstance(converted[i], datetime)
         assert converted[i] == TEST_EPOCH + timedelta(days=int(field_array[i]))
+
+
+def test_date_converter_direct_one_input_hours():
+    field_array = np.array([100, 150, 200, 30, 499])
+
+    # Hours
+    converter = converters.DatetimeConverter(since=TEST_EPOCH, units="hours")
+    converted = converter.convert(field_array)
+    assert field_array.size == converted.size
+
+    for i in range(converted.size):
+        assert isinstance(converted[i], datetime)
+        assert converted[i] == TEST_EPOCH + timedelta(hours=int(field_array[i]))
 
 
 def test_date_converter_direct_one_input_minutes():
@@ -244,6 +268,33 @@ def _create_simple_ccsds_packet(n=1):
 
     packet.tofile(TEST_FILENAME)
     return packet
+
+
+def test_add_converted_field_constructor_errors():
+    boo_conv = converters.EnumConverter({0: "NO", 1: "YES", 2: "MAYBE"})
+
+    pkt = VariableLength(
+        [
+            PacketField(name="BOO", data_type="uint", bit_length=16),
+            PacketField(name="FOO", data_type="uint", bit_length=16),
+            PacketField(name="BLAH", data_type="uint", bit_length=32),
+        ]
+    )
+
+    # No warning
+    pkt.add_converted_field("BOO", "BOO_conv", boo_conv)
+
+    with pytest.raises(TypeError):
+        pkt.add_converted_field("BOO", ("BOO_Conv",), boo_conv)
+
+    with pytest.raises(TypeError):
+        pkt.add_converted_field("BOO", ("BOO_Conv",), "BooConv")
+
+    with pytest.raises(TypeError):
+        pkt.add_converted_field({"BOO", "BIZZ"}, "BOO_Conv", boo_conv)
+
+    with pytest.raises(ValueError):
+        pkt.add_converted_field("DOES_NOT_EXIST", "BOO_Conv", boo_conv)
 
 
 @pytest.mark.parametrize("cls", [FixedLength, VariableLength])
