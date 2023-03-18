@@ -116,7 +116,7 @@ html_theme_options = {
     "show_related": True,
     "github_banner": True,
     "github_button": False,
-    "github_user": "ddasilva",
+    "github_user": "ccsdspy",
     "github_repo": "ccsdspy",
     "extra_nav_links": {"CCSDS Blue Books": "https://public.ccsds.org/publications/bluebooks.aspx"},
 }

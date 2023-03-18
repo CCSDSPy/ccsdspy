@@ -2,15 +2,15 @@
 CCSDSPy
 =======
 
-.. image:: https://github.com/ddasilva/ccsdspy/actions/workflows/ccsdspy-ci.yml/badge.svg
-    :target: https://github.com/ddasilva/ccsdspy/actions
+.. image:: https://github.com/ccsdspy/ccsdspy/actions/workflows/ccsdspy-ci.yml/badge.svg
+    :target: https://github.com/ccsdspy/ccsdspy/actions
     :alt: CI Status
 
 .. image:: https://img.shields.io/pypi/pyversions/ccsdspy.svg
     :target: https://pypi.org/project/ccsdspy/
 
-.. image:: https://codecov.io/gh/ddasilva/ccsdspy/branch/main/graph/badge.svg?token=Ia45f4cW8f
-    :target: https://codecov.io/gh/ddasilva/ccsdspy
+.. image:: https://codecov.io/gh/ccsdspy/ccsdspy/branch/main/graph/badge.svg?token=Ia45f4cW8f
+    :target: https://codecov.io/gh/ccsdspy/ccsdspy
     :alt: Code Coverage
 
 CCSDSPy provides an IO Interface for reading CCSDS_ data in Python.
@@ -39,7 +39,7 @@ Used By
 
 Do you know of other missions that use CCSDSPy? Let us know `through a github issue`_!
 
-.. _through a github issue: https://github.com/ddasilva/ccsdspy/issues/new
+.. _through a github issue: https://github.com/ccsdspy/ccsdspy/issues/new
 
 Install ccsdspy
 ---------------
