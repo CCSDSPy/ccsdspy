@@ -1,13 +1,13 @@
 CCSDSPy - IO Interface for Reading CCSDS Data in Python.
 ========================================================
 
-.. image:: https://github.com/ddasilva/ccsdspy/actions/workflows/ccsdspy-ci.yml/badge.svg
-    :target: https://github.com/ddasilva/ccsdspy/actions
+.. image:: https://github.com/ccsdspy/ccsdspy/actions/workflows/ccsdspy-ci.yml/badge.svg
+    :target: https://github.com/ccsdspy/ccsdspy/actions
     :alt: CI Status
 
 
-.. image:: https://codecov.io/gh/ddasilva/ccsdspy/branch/main/graph/badge.svg?token=Ia45f4cW8f
-    :target: https://codecov.io/gh/ddasilva/ccsdspy
+.. image:: https://codecov.io/gh/ccsdspy/ccsdspy/branch/main/graph/badge.svg?token=Ia45f4cW8f
+    :target: https://codecov.io/gh/ccsdspy/ccsdspy
     :alt: Code Coverage	  
 	  
 This package provides a Python interface for reading tightly packed bits in the `Consultative Committee for Space Data Systems (CCSDS) <https://public.ccsds.org/default.aspx>`__ format used by many NASA and ESA missions.
@@ -52,7 +52,7 @@ Our documentation is hosted on readthedocs and can be found `here <https://ccsds
 
 Getting Help
 ============
-For more information or to ask questions about the library or CCSDS data in general, check out the `CCSDSPy Discussion Board <https://github.com/ddasilva/ccsdspy/discussions>`__ hosted through GitHub.
+For more information or to ask questions about the library or CCSDS data in general, check out the `CCSDSPy Discussion Board <https://github.com/ccsdspy/ccsdspy/discussions>`__ hosted through GitHub.
 
 Acknowledging or Citing ccsdspy
 ===============================

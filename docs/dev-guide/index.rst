@@ -12,7 +12,7 @@ Installing for development
 ==========================
 To install this package for local development, first clone this package from github using your favorite git gui or with the command::
 
-    git clone git@github.com:ddasilva/ccsdspy.git
+    git clone git@github.com:ccsdspy/ccsdspy.git
 
 Then go into the directory and install the package for editing with the following command::
 
