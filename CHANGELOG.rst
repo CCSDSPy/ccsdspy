@@ -3,8 +3,10 @@ The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`
 
 Development
 ===========
-  * Major extensions to `~ccsdspy.VariableLength` class to support arrays whose length is determined by another field
-  * Added the following utility functions to the `ccsdspy.utils` module:
+  * Added a `~ccsdspy.converters` system, which applies post-process to decoded packet fields. This post-processing includes applying linear/polynomial calibration curves, dictionary replacement, and time parsing. See the documentation at :doc:`/user-guide/converters`.
+
+  * Major extensions to `~ccsdspy.VariableLength` class to support arrays whose length is determined by another field. See documentation at :doc:`/user-guide/variablelength`.
+  * Added the following utility functions to the `ccsdspy.utils` module. See documentation at :doc:`/user-guide/utils`.
     
     * `~ccsdspy.utils.read_primary_headers()`
     * `~ccsdspy.utils.iter_packet_bytes()`

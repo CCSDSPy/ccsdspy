@@ -14,4 +14,5 @@ For more details checkout the :ref:`reference`.
    packetfields
    fixedlength
    variablelength
+   converters
    utils
