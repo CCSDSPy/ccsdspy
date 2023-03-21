@@ -9,16 +9,23 @@ import os
 import numpy as np
 import pytest
 
+from ..constants import BITS_PER_BYTE, PRIMARY_HEADER_NUM_BYTES
 from .. import utils
 
 
-def test_count_packets_missing_bytes():
+def test_count_packets_extra_fields_zero():
     dir_path = os.path.dirname(os.path.realpath(__file__))
     data_path = os.path.join(dir_path, "data", "split")
     tlm_path = os.path.join(data_path, "CYGNSS_F7_L0_2022_086_10_15_V01_F__first101pkts.tlm")
 
-    num_packets, missing_bytes = utils.count_packets(tlm_path, return_missing_bytes=True)
-    assert missing_bytes == 0
+    orig_num_packets = utils.count_packets(tlm_path)
+
+    num_packets, missing_bytes, extra_bytes = utils.count_packets(
+        tlm_path, return_missing_bytes=True, return_extra_bytes=True
+    )
+    assert orig_num_packets == num_packets
+    assert missing_bytes is None
+    assert extra_bytes == 0
 
     total_in_split = 0
 
@@ -28,12 +35,37 @@ def test_count_packets_missing_bytes():
     assert total_in_split == num_packets
 
 
+def test_count_packets_extra_fields_nonzero():
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    data_path = os.path.join(dir_path, "data", "split")
+    tlm_path = os.path.join(data_path, "CYGNSS_F7_L0_2022_086_10_15_V01_F__first101pkts.tlm")
+    extra_added = 15
+
+    byte_stream = io.BytesIO()
+
+    with open(tlm_path, "rb") as fh:
+        byte_stream.write(fh.read())
+
+    byte_stream.write(bytes([255] * extra_added))
+    byte_stream.seek(0)
+
+    num_packets, missing_bytes, extra_bytes = utils.count_packets(
+        byte_stream, return_missing_bytes=True, return_extra_bytes=True
+    )
+    assert extra_added > PRIMARY_HEADER_NUM_BYTES
+
+    # the last packet set has 1s in all the length bits, therefore the expected length
+    # should be 2**16 + !
+    assert missing_bytes == 2 ** (BITS_PER_BYTE * 2) + 1 - extra_added + PRIMARY_HEADER_NUM_BYTES
+    assert extra_bytes == extra_added
+
+
 def test_count_packets_simple():
     dir_path = os.path.dirname(os.path.realpath(__file__))
     data_path = os.path.join(dir_path, "data", "split")
     tlm_path = os.path.join(data_path, "CYGNSS_F7_L0_2022_086_10_15_V01_F__first101pkts.tlm")
 
-    assert 101 == utils.count_packets(tlm_path)
+    assert utils.count_packets(tlm_path) == len(list(utils.iter_packet_bytes(tlm_path)))
 
 
 def test_count_packets_file_like_obj():

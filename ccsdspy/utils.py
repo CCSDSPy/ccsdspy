@@ -182,7 +182,7 @@ def split_by_apid(mixed_file, valid_apids=None):
     return stream_by_apid
 
 
-def count_packets(file, return_missing_bytes=False):
+def count_packets(file, return_missing_bytes=False, return_extra_bytes=False):
     """Count the number of packets in a file and check if there are any
     missing bytes in the last packet.
 
@@ -197,45 +197,74 @@ def count_packets(file, return_missing_bytes=False):
     file : str, file-like
       Path to file on the local file system, or file-like object
     return_missing_bytes : bool, optional
-      Also return the number of missing bytes at the end of the file. This
+      Also return the number of *missing* bytes at the end of the file. This
       is the number of bytes which would need to be added to the file to
       complete the last packet expected (as set by the packet length in
       the last packet's primary header).
+    return_extra_bytes : bool, optional
+      Also return the number of *extra* bytes at the end of the file. This
+      is the number of bytes that exist after the last complete packet (as
+      set by the packet length in the last complete packet's primary header).
 
     Returns
     -------
     num_packets : int
        Number of complete packets in the file
-    missing_bytes : int, optional
+    missing_bytes : int or None, optional
       The number of bytes which would need to be added to the file to
       complete the last packet expected (as set by the packet length in
       the last packet's primary header).
+    extra_bytes : int, optional
+      The number of bytes at exist after the last complete packet (as set by
+      the packet lacket in the last complete packet's primary header).
+
     """
     if hasattr(file, "read"):
         file_bytes = np.frombuffer(file.read(), "u1")
     else:
         file_bytes = np.fromfile(file, "u1")
 
-    offset = 0
+    start_next_packet = 0
     num_packets = 0
 
-    while offset < len(file_bytes):
-        packet_nbytes = get_packet_total_bytes(
-            file_bytes[offset : offset + PRIMARY_HEADER_NUM_BYTES].tobytes()
-        )
-        offset += packet_nbytes
+    while True:
+        next_primary_header = file_bytes[
+            start_next_packet : start_next_packet + PRIMARY_HEADER_NUM_BYTES
+        ].tobytes()
+        next_primary_header_available = len(next_primary_header) == PRIMARY_HEADER_NUM_BYTES
+
+        # If not enough for even another primary header
+        if not next_primary_header_available:
+            extra_bytes = len(file_bytes) - start_next_packet
+            missing_bytes = None
+            break
+
+        # Read next primary header
+        packet_nbytes = get_packet_total_bytes(next_primary_header)
+        packet_complete = start_next_packet + packet_nbytes <= len(file_bytes)
+
+        if not packet_complete:
+            extra_bytes = len(file_bytes) - start_next_packet
+            missing_bytes = start_next_packet + packet_nbytes - len(file_bytes) + 1
+            break
+
         num_packets += 1
+        start_next_packet += packet_nbytes
 
-    missing_bytes = offset - len(file_bytes)
-
-    if offset != len(file_bytes):
-        missing_bytes = offset - len(file_bytes)
-        message = (
-            f"File appears truncated-- missing {missing_bytes} byte (or " "maybe garbage at end)"
-        )
+    if extra_bytes > 0:
+        message = f"File appears truncated-- {extra_bytes} bytes at end"
         warnings.warn(message)
 
+    # Return value depends on whether return_missing_bytes and return_extra_bytes
+    # are set
+    return_val = [num_packets]
+
     if return_missing_bytes:
-        return num_packets, missing_bytes
+        return_val.append(missing_bytes)
+    if return_extra_bytes:
+        return_val.append(extra_bytes)
+
+    if len(return_val) == 1:
+        return return_val[0]
     else:
-        return num_packets
+        return tuple(return_val)
