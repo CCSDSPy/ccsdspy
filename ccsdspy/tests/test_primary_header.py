@@ -6,7 +6,7 @@ import pytest
 from .. import FixedLength, VariableLength, PacketField
 from ..packet_types import _inspect_primary_header_fields
 
-TEST_FILENAME = "ccsds_test.bin"
+TEST_FILENAME = "ccsds_primary_headers_test.bin"
 
 
 def create_simple_ccsds_packet(n=1):
@@ -33,7 +33,7 @@ def create_simple_ccsds_packet(n=1):
         packet[1 + i * total_packet_length] = (sequence_flag << 14) + packet_counter + i
         packet[2 + i * total_packet_length] = (
             packet_data_length * 2 - 1
-        )  # packet lenght in octets minus 2
+        )  # packet length in octets minus 2
 
         packet[3 + i * total_packet_length] = 314
         packet[4 + i * total_packet_length] = 512
@@ -58,7 +58,7 @@ def test_primary_header_contents_no_offset(cls):
         ]
     )
 
-    result = pkt.load("ccsds_test.bin", include_primary_header=True)
+    result = pkt.load(TEST_FILENAME, include_primary_header=True)
     assert (result["CCSDS_VERSION_NUMBER"] == np.zeros(num_packets, dtype="uint")).all()
     assert (result["CCSDS_PACKET_TYPE"] == np.zeros(num_packets, dtype="uint")).all()
     assert (result["CCSDS_SECONDARY_FLAG"] == np.zeros(num_packets, dtype="uint")).all()
@@ -86,7 +86,7 @@ def test_primary_header_contents_offset():
         ]
     )
 
-    result = pkt.load("ccsds_test.bin", include_primary_header=True)
+    result = pkt.load(TEST_FILENAME, include_primary_header=True)
     assert (result["CCSDS_VERSION_NUMBER"] == np.zeros(num_packets, dtype="uint")).all()
     assert (result["CCSDS_PACKET_TYPE"] == np.zeros(num_packets, dtype="uint")).all()
     assert (result["CCSDS_SECONDARY_FLAG"] == np.zeros(num_packets, dtype="uint")).all()
@@ -142,7 +142,7 @@ def test_primary_header_contents_offset():
         ]
     )
 
-    result = pkt.load("ccsds_test.bin", include_primary_header=True)
+    result = pkt.load(TEST_FILENAME, include_primary_header=True)
     assert (result["CCSDS_VERSION_NUMBER"] == np.zeros(num_packets, dtype="uint")).all()
     assert (result["CCSDS_PACKET_TYPE"] == np.zeros(num_packets, dtype="uint")).all()
     assert (result["CCSDS_SECONDARY_FLAG"] == np.zeros(num_packets, dtype="uint")).all()

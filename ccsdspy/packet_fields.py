@@ -9,6 +9,8 @@ __author__ = "Daniel da Silva <mail@danieldasilva.org>"
 
 import numpy as np
 
+from .converters import Converter
+
 
 class PacketField:
     """A field contained in a packet."""

@@ -73,7 +73,7 @@ The API method:
 
   from ccsdspy.utils import split_by_apid
 
-  with open('mixed_file.tlm', 'rb') as mixed_file):
+  with open('mixed_file.tlm', 'rb') as mixed_file:
       # dictionary mapping integer apid to BytesIO
       stream_by_apid = split_by_apid(mixed_file)
 

@@ -159,6 +159,10 @@ def split_by_apid(mixed_file, valid_apids=None):
       Dictionary mapping integer apid number to BytesIO instance with the file
       pointer at the beginning of the stream.
     """
+    # If not None, convert valid_apids to set for faster lookup times
+    if valid_apids is not None:
+        valid_apids = set(valid_apids)
+
     stream_by_apid = {}
 
     for packet_bytes in iter_packet_bytes(mixed_file):

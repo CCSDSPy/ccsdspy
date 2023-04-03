@@ -116,9 +116,9 @@ html_theme_options = {
     "show_related": True,
     "github_banner": True,
     "github_button": False,
-    "github_user": "ddasilva",
+    "github_user": "ccsdspy",
     "github_repo": "ccsdspy",
-    "extra_nav_links": {"CCSDS blue books": "https://public.ccsds.org/publications/bluebooks.aspx"},
+    "extra_nav_links": {"CCSDS Blue Books": "https://public.ccsds.org/publications/bluebooks.aspx"},
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,

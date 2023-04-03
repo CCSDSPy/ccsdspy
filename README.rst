@@ -1,16 +1,16 @@
 CCSDSPy - IO Interface for Reading CCSDS Data in Python.
 ========================================================
 
-.. image:: https://github.com/ddasilva/ccsdspy/actions/workflows/ccsdspy-ci.yml/badge.svg
-    :target: https://github.com/ddasilva/ccsdspy/actions
+.. image:: https://github.com/ccsdspy/ccsdspy/actions/workflows/ccsdspy-ci.yml/badge.svg
+    :target: https://github.com/ccsdspy/ccsdspy/actions
     :alt: CI Status
 
 
-.. image:: https://codecov.io/gh/ddasilva/ccsdspy/branch/main/graph/badge.svg?token=Ia45f4cW8f
-    :target: https://codecov.io/gh/ddasilva/ccsdspy
+.. image:: https://codecov.io/gh/ccsdspy/ccsdspy/branch/main/graph/badge.svg?token=Ia45f4cW8f
+    :target: https://codecov.io/gh/ccsdspy/ccsdspy
     :alt: Code Coverage	  
 	  
-This package provides a Python interface for reading and writing tightly packed bits in the `Consultative Committee for Space Data Systems (CCSDS) <https://public.ccsds.org/default.aspx>`__ format used by many NASA and ESA missions.
+This community-developed package provides a Python interface for reading and writing tightly packed bits in the `Consultative Committee for Space Data Systems (CCSDS) <https://public.ccsds.org/default.aspx>`__ format used by many NASA and ESA missions. The library is developed with requirements sourced from the community and extensive automated testing.
  
 Installation
 ============
@@ -52,7 +52,7 @@ Our documentation is hosted on readthedocs and can be found `here <https://ccsds
 
 Getting Help
 ============
-For more information or to ask questions about the library or CCSDS data in general, check out the `CCSDSPy Discussion Board <https://github.com/ddasilva/ccsdspy/discussions>`__ hosted through GitHub.
+For more information or to ask questions about the library or CCSDS data in general, check out the `CCSDSPy Discussion Board <https://github.com/ccsdspy/ccsdspy/discussions>`__ hosted through GitHub.
 
 Acknowledging or Citing ccsdspy
 ===============================
@@ -61,3 +61,4 @@ If you use ccsdspy, it would be appreciated if you let us know and mention it in
 Code of Conduct
 ===============
 When interacting with this package please behave consistent with the following `Code of Conduct <https://www.contributor-covenant.org/version/2/1/code_of_conduct/>`__.
+

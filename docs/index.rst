@@ -2,19 +2,24 @@
 CCSDSPy
 =======
 
-.. image:: https://github.com/ddasilva/ccsdspy/actions/workflows/ccsdspy-ci.yml/badge.svg
-    :target: https://github.com/ddasilva/ccsdspy/actions
+.. image:: https://github.com/ccsdspy/ccsdspy/actions/workflows/ccsdspy-ci.yml/badge.svg
+    :target: https://github.com/ccsdspy/ccsdspy/actions
     :alt: CI Status
 
 .. image:: https://img.shields.io/pypi/pyversions/ccsdspy.svg
     :target: https://pypi.org/project/ccsdspy/
 
-.. image:: https://codecov.io/gh/ddasilva/ccsdspy/branch/main/graph/badge.svg?token=Ia45f4cW8f
-    :target: https://codecov.io/gh/ddasilva/ccsdspy
+.. image:: https://codecov.io/gh/ccsdspy/ccsdspy/branch/main/graph/badge.svg?token=Ia45f4cW8f
+    :target: https://codecov.io/gh/ccsdspy/ccsdspy
     :alt: Code Coverage
 
+<<<<<<< HEAD
 CCSDSPy provides an IO Interface for reading and writing CCSDS_ data in Python.
 The CCSDS format is used for many NASA and ESA missions for low-level telemetry, and often contains tightly packed bits to reduce downlink requirements.
+=======
+CCSDSPy provides an IO Interface for reading CCSDS_ data in Python.
+The CCSDS format is used for many NASA and ESA missions for low-level telemetry, and often contains tightly packed bits to reduce downlink requirements. The library is developed with requirements sourced from the community and extensive automated testing. 
+>>>>>>> 6a8416dba24c24637f7e754084aef07587799f4d
 
 .. _CCSDS: https://public.ccsds.org/default.aspx
 
@@ -39,7 +44,7 @@ Used By
 
 Do you know of other missions that use CCSDSPy? Let us know `through a github issue`_!
 
-.. _through a github issue: https://github.com/ddasilva/ccsdspy/issues/new
+.. _through a github issue: https://github.com/ccsdspy/ccsdspy/issues/new
 
 Install ccsdspy
 ---------------
