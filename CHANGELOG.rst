@@ -1,8 +1,8 @@
 Notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`__.
 
-Development
-===========
+Version 1.1.0 - 2023-04-11
+==========================
   * Added a `~ccsdspy.converters` system, which applies post-process to decoded packet fields. This post-processing includes applying linear/polynomial calibration curves, dictionary replacement, and time parsing. See the documentation at :doc:`/user-guide/converters`.
 
   * Major extensions to `~ccsdspy.VariableLength` class to support arrays whose length is determined by another field. See documentation at :doc:`/user-guide/variablelength`.
