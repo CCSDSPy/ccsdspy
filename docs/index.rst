@@ -36,6 +36,8 @@ Used By
     :target: https://punch.space.swri.edu/
 .. image:: _static/used-by/small/mms.jpg
     :target: https://mms.gsfc.nasa.gov/
+.. image:: _static/used-by/small/spherex.png
+    :target: https://www.jpl.nasa.gov/missions/spherex
 .. image:: _static/used-by/small/elfin.jpg
     :target: https://elfin.igpp.ucla.edu/
 
