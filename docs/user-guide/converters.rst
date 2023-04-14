@@ -45,7 +45,7 @@ An example of using a built in transformation to parse time, apply a linear tran
     pkt.add_converted_field(
         ("CoarseTime", "FineTime"),
 	"Time_Converted",
-	converters.DateTimeConverter(
+	converters.DatetimeConverter(
 	   since=datetime(1970, 1, 1),
            units=("seconds", "nanoseconds"),
 	)
