@@ -11,6 +11,9 @@ Both `~ccsdspy.FixedLength` and `~ccsdspy.VariableLength` packet types provide t
 :py:meth:`ccsdspy.FixedLength.to_file` and :py:func:`ccsdspy.VariableLength.to_file` methods.
 You'll first have to define the packet as usual as if you are going to parse a file with packets in it.
 
+.. contents::
+   :depth: 2
+
 Fixed Length
 ============
 Fixed length packets are ones that only include `~ccsdspy.PacketField` that do not vary in size.
