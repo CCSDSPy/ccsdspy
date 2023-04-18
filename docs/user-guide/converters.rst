@@ -83,6 +83,8 @@ Below is an example of creating a user-defined transformation to return False if
     from ccsdspy import FixedLength, converters
 
     class CustomConverter(converters.Converter):
+        def __init__(self):
+	    pass
         def convert(field_array):
             return (field_array > 0)
     
