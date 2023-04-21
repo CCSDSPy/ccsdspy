@@ -9,7 +9,7 @@ Overview
 The `Consultative Committee for Space Data Systems (CCSDS) <https://public.ccsds.org/default.aspx>`__ is a multi-national forum for the development of communications & data systems standards for spaceflight.
 It maintains space communications & data handling `standards <https://public.ccsds.org/Publications/default.aspx>`__ to enhance interoperability across governmental & commercial projects.
 One of the standards published by this group is the `CCSDS Space Packet protocol <https://public.ccsds.org/Pubs/133x0b2e1.pdf>`__ which defines how space missions transfer space application data both sending and receiving.
-The maximum length of a CCSDS packet is 65536
+The maximum length of a CCSDS packet is 65536 octets.
 
 A CCSDS packet is made of three parts: a required primary header, an optional secondary header, and a User data section.
 The packet data consists of all parts that are not the required primary header inclusive of the optional secondary header.
@@ -71,7 +71,7 @@ The mandatory packet primary header consists of four fields contained within 6 o
      -
    * - Sequence flag
      - 2
-     - Set to '01' if the data is a continuation segment, set to '00' if it contains the first segment of data.
+     - Set to '01' if the data is a continuation segment, set to '00' if it contains the first or only segment of data.
    * - Packet sequence count or packet name
      - 14
      - the sequential binary count of each packet for a specific APID. The purpose is to allow packets to be ordered.

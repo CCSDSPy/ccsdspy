@@ -182,20 +182,36 @@ class FixedLength(_BasePacket):
 
         return packet_arrays
 
-    def to_file(self, file, pkt_type, apid, sec_header_flag, seq_flag, data):
+    def to_file(self, file, pkt_type, apid, sec_header_flag, seq_flag, data, seq_count=0):
         """Encode a file containing a sequence of packet fields.
+        For more information about the CCSDS primary header see :ref:`ccsds_standard`.
 
         Parameters
         ----------
         file : str
             Path to file on the local file system, or file-like object
+        pkt_type : int
+            For the CCSDS primary header, for telemetry (or reporting), set to 0, for commanding set to 1.
+        apid : uint
+            For the CCSDS primary header, the Application process identifier (0 to 2047)
+        sec_header_flag : uint
+            For the CCSDS primary header, identicates the presence or absence of a secondary header. Set to 1 if present.
+        seq_flag : uint
+            For the CCSDS primary header, tet to 1 if the data is a continuation segment, set to 0 if it contains the first or only segment of data.
+        seq_count : uint
+            For the CCSDS primary header, the start sequence number for the packets
         data : dict
-            The data to add to the file
+            The data to add to the file where the keys must match the packet field names and values are `~numpy.ndarray` of the same length.
 
         Returns
         -------
         file : str
             A binary file with the packet data
+
+        Raises
+        -----
+        ValueError
+            If the number of elements in the data values are not the same.
         """
 
         return _to_file(
@@ -321,18 +337,35 @@ class VariableLength(_BasePacket):
 
     def to_file(self, file, pkt_type, apid, sec_header_flag, seq_flag, data):
         """Encode a file containing a sequence of packet fields.
+        For more information about the CCSDS primary header see :ref:`ccsds_standard`.
 
         Parameters
         ----------
         file : str
             Path to file on the local file system, or file-like object
+        pkt_type : int
+            For the CCSDS primary header, for telemetry (or reporting), set to 0, for commanding set to 1.
+        apid : uint
+            For the CCSDS primary header, the Application process identifier (0 to 2047)
+        sec_header_flag : uint
+            For the CCSDS primary header, identicates the presence or absence of a secondary header. Set to 1 if present.
+        seq_flag : uint
+            For the CCSDS primary header, tet to 1 if the data is a continuation segment, set to 0 if it contains the first or only segment of data.
+        seq_count : uint
+            For the CCSDS primary header, the start sequence number for the packets
         data : dict
-            The data to add to the file
+            The data to add to the file where the keys must match the packet field names and values are `~numpy.ndarray` except for variable length fields which must be lists.
+            The number of elements must be the same.
 
         Returns
         -------
         file : str
             A binary file with the packet data
+        
+        Raises
+        -----
+        ValueError
+            If the number of elements in the data values are not the same.
         """
 
         return _to_file(
