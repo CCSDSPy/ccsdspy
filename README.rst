@@ -9,6 +9,11 @@ CCSDSPy - IO Interface for Reading CCSDS Data in Python.
 .. image:: https://codecov.io/gh/ccsdspy/ccsdspy/branch/main/graph/badge.svg?token=Ia45f4cW8f
     :target: https://codecov.io/gh/ccsdspy/ccsdspy
     :alt: Code Coverage	  
+    
+
+.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.7819991.svg
+    :target: https://doi.org/10.5281/zenodo.7819991
+    :alt: Zenodo DOI
 	  
 This community-developed package provides a Python interface for reading tightly packed bits in the `Consultative Committee for Space Data Systems (CCSDS) <https://public.ccsds.org/default.aspx>`__ format used by many NASA and ESA missions. The library is developed with requirements sourced from the community and extensive automated testing.
  
@@ -56,7 +61,7 @@ For more information or to ask questions about the library or CCSDS data in gene
 
 Acknowledging or Citing ccsdspy
 ===============================
-If you use ccsdspy, it would be appreciated if you let us know and mention it in your publications. The continued growth and development of this package is dependent on the community being aware of it.
+If you use ccsdspy, it would be appreciated if you let us know and mention it in your publications. The code can be cited using the `DOI provided by Zenodo <https://zenodo.org/record/7819991>`__. The continued growth and development of this package is dependent on the community being aware of it.
 
 Code of Conduct
 ===============
