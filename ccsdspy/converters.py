@@ -14,6 +14,7 @@ __all__ = [
     "LinearConverter",
     "EnumConverter",
     "DatetimeConverter",
+    "StringifyBytesConverter",
 ]
 
 
@@ -282,13 +283,20 @@ class DatetimeConverter(Converter):
 
 
 class StringifyBytesConverter(Converter):
-    """Post-processing conversion which converts an array of bytes to string
-    representations using an encoding such as binary, hexidecimal, or octal.
+    """Post-processing conversion which converts byte arrays or multi-byte
+    numbers to strings in numeric representations such as binary, hexidecimal,
+    or octal.
 
-    If the field is an array, the shape of the array is retained.
+    To convert individual bytes, the input field should be defined as a
+    `~ccsdspy.PacketArray` constructed with `data_type="uint"` and
+    `bit_length=8`. Otherwise, each element is converted as a single entity.
 
-    The converted strings contain prefixes such as "0b" (binary), "0x" (hex), or
-    "0o" (octal). They are not padded to be a fixed length.
+    If the field is an array, the shape of the array is retained. The strings
+    generated are not padded to a fixed length.
+
+    The converted strings contain prefixes such as `0b` (binary), `0x` (hex),
+    or `0o` (octal). If the number is signed and negative, the prefixes change
+    to `-0b` (binary), `-0x` (hex), or `-0o` (octal).
     """
 
     def __init__(self, format="hex"):
@@ -328,7 +336,7 @@ class StringifyBytesConverter(Converter):
             return oct(num)
 
     def convert(self, field_array):
-        """Apply the bytes to string conversion.
+        """Apply the conversion.
 
         Parameters
         ----------
