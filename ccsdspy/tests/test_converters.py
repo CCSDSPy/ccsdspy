@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 import os
 
 import numpy as np
+from numpy.testing import assert_array_equal
 import pytest
 
 from .. import converters
@@ -234,6 +235,141 @@ def test_date_converter_direct_multiple_inputs():
             seconds=float(field_array_nanoseconds[i] / converter._NANOSECONDS_PER_SECOND)
         )
         assert converted[i] == expected
+
+
+def test_stringify_bytes_invalid_format():
+    with pytest.raises(ValueError):
+        converters.StringifyBytesConverter(format="foobar")
+
+    with pytest.raises(ValueError):
+        converters.StringifyBytesConverter(format="")
+
+    with pytest.raises(ValueError):
+        converters.StringifyBytesConverter(format=None)
+
+
+@pytest.mark.parametrize("format", ["bin", "oct", "hex"])
+def test_stringify_bytes_converter_1d_uint8(format):
+    field_array = np.arange(0, 60, 10, dtype=np.uint8)
+    converter = converters.StringifyBytesConverter(format=format)
+    result = converter.convert(field_array)
+
+    assert isinstance(result, np.ndarray)
+    assert np.issubdtype(result.dtype, object)
+
+    if format == "bin":
+        assert_array_equal(
+            result,
+            np.array(
+                [
+                    "0b0",  #   0
+                    "0b1010",  #  10
+                    "0b10100",  #  20
+                    "0b11110",  #  30
+                    "0b101000",  #  40
+                    "0b110010",  #  50
+                ],
+                dtype=object,
+            ),
+        )
+    elif format == "hex":
+        assert_array_equal(
+            result,
+            np.array(
+                [
+                    "0x0",  #   0
+                    "0xa",  #  10
+                    "0x14",  #  20
+                    "0x1e",  #  30
+                    "0x28",  #  40
+                    "0x32",  #  50
+                ],
+                dtype=object,
+            ),
+        )
+    elif format == "oct":
+        assert_array_equal(
+            result,
+            np.array(
+                [
+                    "0o0",  #   0
+                    "0o12",  #  10
+                    "0o24",  #  20
+                    "0o36",  #  30
+                    "0o50",  #  40
+                    "0o62",  #  50
+                ],
+                dtype=object,
+            ),
+        )
+
+
+@pytest.mark.parametrize("format", ["bin", "oct", "hex"])
+def test_stringify_bytes_converter_2d_uint16(format):
+    field_array = np.arange(230, 290, 10, dtype=">u2").reshape((2, 3))
+    converter = converters.StringifyBytesConverter(format=format)
+    result = converter.convert(field_array)
+
+    assert isinstance(result, np.ndarray)
+    assert np.issubdtype(result.dtype, object)
+
+    if format == "bin":
+        assert_array_equal(
+            result,
+            np.array(
+                [
+                    [
+                        "0b11100110",
+                        "0b11110000",
+                        "0b11111010",
+                    ],
+                    [
+                        "0b100000100",
+                        "0b100001110",
+                        "0b100011000",
+                    ],
+                ],
+                dtype=object,
+            ),
+        )
+    elif format == "hex":
+        assert_array_equal(
+            result,
+            np.array(
+                [
+                    [
+                        "0xe6",
+                        "0xf0",
+                        "0xfa",
+                    ],
+                    [
+                        "0x104",
+                        "0x10e",
+                        "0x118",
+                    ],
+                ],
+                dtype=object,
+            ),
+        )
+    elif format == "oct":
+        assert_array_equal(
+            result,
+            np.array(
+                [
+                    [
+                        "0o346",
+                        "0o360",
+                        "0o372",
+                    ],
+                    [
+                        "0o404",
+                        "0o416",
+                        "0o430",
+                    ],
+                ],
+                dtype=object,
+            ),
+        )
 
 
 def _create_simple_ccsds_packet(n=1):
