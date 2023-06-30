@@ -4,8 +4,6 @@
 Post-Processing Transformations
 ********************************
 
-
-
 Post-processing transformations are done through the Converters API, exposed through the `~ccsdspy.converters` module. Using Converters, one can create new fields transformed from another field. Examples including applying calibration curves, replacing enumerated values with strings, or converting your own time definition to a `datetime` instance. The following converters are built in, and you can write your own converter by extending the `~ccsdspy.converters.Converter` class (more on this below). When new fields are transformed from other fields, they are created as new entries in the returned dictionary.
 
 #. Polynomial Transformation (`~ccsdspy.converters.PolyConverter`)
@@ -24,6 +22,10 @@ Post-processing transformations are done through the Converters API, exposed thr
 
    This converts fields to datetime instances, computed using offset(s) from a reference time. The offsets can span multiple fields (for example, one a coarse time, and another for a fine time). If the reference time has a timezone, the result will too.
 
+#. Stringify Bytes Transformation (`~ccsdspy.converters.StringifyBytesConverter`)
+
+   This converts byte arrays or multi-byte numbers to strings in numeric representations such as binary, hexidecimal, or octal.
+   
 .. contents::
    :depth: 2
 
