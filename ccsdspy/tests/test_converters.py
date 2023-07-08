@@ -305,6 +305,122 @@ def test_stringify_bytes_converter_1d_uint8(format):
 
 
 @pytest.mark.parametrize("format", ["bin", "oct", "hex"])
+def test_stringify_bytes_converter_2d_jagged_uint8(format):
+    field_array = np.array(
+        [
+            np.array([0, 10, 20], dtype=np.uint8),
+            np.array([], dtype=np.uint8),
+            np.array([30], dtype=np.uint8),
+            np.array([40, 50], dtype=np.uint8),
+        ],
+        dtype=object,
+    )
+
+    converter = converters.StringifyBytesConverter(format=format)
+    result = converter.convert(field_array)
+
+    assert isinstance(result, np.ndarray)
+    assert np.issubdtype(result.dtype, object)
+
+    if format == "bin":
+        expected = np.array(
+            [
+                np.array(
+                    [
+                        "0b0",  #   0
+                        "0b1010",  #  10
+                        "0b10100",  #  20
+                    ],
+                    dtype=object,
+                ),
+                np.array([], dtype=object),
+                np.array(
+                    [
+                        "0b11110",  #  30
+                    ],
+                    dtype=object,
+                ),
+                np.array(
+                    [
+                        "0b101000",  #  40
+                        "0b110010",  #  50
+                    ],
+                    dtype=object,
+                ),
+            ],
+            dtype=object,
+        )
+    elif format == "hex":
+        expected = np.array(
+            [
+                np.array(
+                    [
+                        "0x0",  #   0
+                        "0xa",  #  10
+                        "0x14",  #  20
+                    ],
+                    dtype=object,
+                ),
+                np.array([], dtype=object),
+                np.array(
+                    [
+                        "0x1e",  #  30
+                    ],
+                    dtype=object,
+                ),
+                np.array(
+                    [
+                        "0x28",  #  40
+                        "0x32",  #  50
+                    ],
+                    dtype=object,
+                ),
+            ],
+            dtype=object,
+        )
+
+    elif format == "oct":
+        expected = np.array(
+            [
+                np.array(
+                    [
+                        "0o0",  #   0
+                        "0o12",  #  10
+                        "0o24",  #  20
+                    ],
+                    dtype=object,
+                ),
+                np.array([], dtype=object),
+                np.array(
+                    [
+                        "0o36",  #  30
+                    ],
+                    dtype=object,
+                ),
+                np.array(
+                    [
+                        "0o50",  #  40
+                        "0o62",  #  50
+                    ],
+                    dtype=object,
+                ),
+            ],
+            dtype=object,
+        )
+    else:
+        raise RuntimeError("Invalid format")
+
+    assert expected.shape == result.shape
+
+    for i in range(expected.shape[0]):
+        assert np.issubdtype(result[i].dtype, object)
+        assert_array_equal(
+            result[i],
+            expected[i],
+        )
+
+
+@pytest.mark.parametrize("format", ["bin", "oct", "hex"])
 def test_stringify_bytes_converter_2d_uint16(format):
     field_array = np.arange(230, 290, 10, dtype=">u2").reshape((2, 3))
     converter = converters.StringifyBytesConverter(format=format)
@@ -369,6 +485,40 @@ def test_stringify_bytes_converter_2d_uint16(format):
                 ],
                 dtype=object,
             ),
+        )
+
+
+@pytest.mark.parametrize("format", ["bin", "oct", "hex"])
+def test_stringify_bytes_converter_1d_uint16(format):
+    field_array = np.arange(230, 290, 10, dtype=">u2")
+    converter = converters.StringifyBytesConverter(format=format)
+    result = converter.convert(field_array)
+
+    assert isinstance(result, np.ndarray)
+    assert np.issubdtype(result.dtype, object)
+
+    if format == "bin":
+        assert_array_equal(
+            result,
+            np.array(
+                [
+                    "0b11100110",
+                    "0b11110000",
+                    "0b11111010",
+                    "0b100000100",
+                    "0b100001110",
+                    "0b100011000",
+                ],
+                dtype=object,
+            ),
+        )
+    elif format == "hex":
+        assert_array_equal(
+            result, np.array(["0xe6", "0xf0", "0xfa", "0x104", "0x10e", "0x118"], dtype=object)
+        )
+    elif format == "oct":
+        assert_array_equal(
+            result, np.array(["0o346", "0o360", "0o372", "0o404", "0o416", "0o430"], dtype=object)
         )
 
 

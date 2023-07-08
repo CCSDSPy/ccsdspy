@@ -348,11 +348,12 @@ class StringifyBytesConverter(Converter):
         converted : NumPy array
             converted form of the converted packet field values
         """
-        # field_arrays may either be a 1-D array or an N-D array where N>1.
-        # These are implemented separately.
+        # field_arrays may either be a 1-D array, or an N-D array where N>1
+        # (this includes jagged arrays where the outer array is of
+        # dtype=object). These are implemented separately.
         ndims = len(field_array.shape)
 
-        if ndims == 1:
+        if ndims == 1 and field_array.dtype != object:
             converted = []
 
             for num in field_array:
@@ -364,6 +365,7 @@ class StringifyBytesConverter(Converter):
             for i in range(field_array.shape[0]):
                 cur_array_flat = field_array[i].flatten()
                 n_items = cur_array_flat.shape[0]
+                cur_shape = field_array[i].shape
 
                 # Loop over elements, converting individually
                 curr_array_strings = []
@@ -373,9 +375,7 @@ class StringifyBytesConverter(Converter):
                     curr_array_strings.append(as_string)
 
                 # Put back into original array shape
-                curr_array_strings = np.array(curr_array_strings, dtype=object).reshape(
-                    field_array.shape[1:]
-                )
+                curr_array_strings = np.array(curr_array_strings, dtype=object).reshape(cur_shape)
                 converted.append(curr_array_strings)
 
         converted = np.array(converted, dtype=object)
