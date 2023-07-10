@@ -14,6 +14,7 @@ __all__ = [
     "LinearConverter",
     "EnumConverter",
     "DatetimeConverter",
+    "StringifyBytesConverter",
 ]
 
 
@@ -275,6 +276,107 @@ class DatetimeConverter(Converter):
                     converted_time += timedelta(seconds=offset_raw / self._NANOSECONDS_PER_SECOND)
 
             converted.append(converted_time)
+
+        converted = np.array(converted, dtype=object)
+
+        return converted
+
+
+class StringifyBytesConverter(Converter):
+    """Post-processing conversion which converts byte arrays or multi-byte
+    numbers to strings in numeric representations such as binary, hexidecimal,
+    or octal.
+
+    To convert individual bytes, the input field should be defined as a
+    `~ccsdspy.PacketArray` constructed with `data_type="uint"` and
+    `bit_length=8`. Otherwise, each element is converted as a single entity.
+
+    If the field is an array, the shape of the array is retained. The strings
+    generated are not padded to a fixed length.
+
+    The converted strings contain prefixes such as `0b` (binary), `0x` (hex),
+    or `0o` (octal). If the number is signed and negative, the prefixes change
+    to `-0b` (binary), `-0x` (hex), or `-0o` (octal).
+    """
+
+    def __init__(self, format="hex"):
+        """Instantiate a StringifyBytesConverter object
+
+        Parameters
+        ----------
+        format : {"bin", "hex", "oct"}
+           Format used to encode the bytes in a string.
+        """
+        if format not in ("bin", "hex", "oct"):
+            raise ValueError(
+                "The format= keyword passed to StringifyBytesConverter "
+                f"must be either 'bin', 'hex', or 'oct'. Got {repr(format)}"
+            )
+
+        self._format = format
+
+    def _stringify_number(self, num, nbytes):
+        """Internal helper method to convert a number to a string.
+
+        Parameters
+        ----------
+        number : int
+           A single number to convert to string
+
+        Returns
+        --------
+        as_string : the byte converted to a string using the format
+           specified when this object was created.
+        """
+        if self._format == "bin":
+            return bin(num)
+        elif self._format == "hex":
+            return hex(num)
+        else:
+            return oct(num)
+
+    def convert(self, field_array):
+        """Apply the conversion.
+
+        Parameters
+        ----------
+        field_array : NumPy array
+            decoded packet field values, must have at least two dimensions
+
+        Returns
+        -------
+        converted : NumPy array
+            converted form of the converted packet field values
+        """
+        # field_arrays may either be a 1-D array, or an N-D array where N>1
+        # (this includes jagged arrays where the outer array is of
+        # dtype=object). These are implemented separately.
+        ndims = len(field_array.shape)
+
+        if ndims == 1 and field_array.dtype != object:
+            converted = []
+
+            for num in field_array:
+                as_string = self._stringify_number(num, field_array.itemsize)
+                converted.append(as_string)
+        else:
+            converted = []
+
+            for i in range(field_array.shape[0]):
+                cur_array_flat = field_array[i].flatten()
+                n_items = cur_array_flat.shape[0]
+                cur_shape = field_array[i].shape
+
+                # Loop over elements, converting individually
+                curr_array_strings = []
+
+                for element in cur_array_flat:
+                    as_string = self._stringify_number(element, cur_array_flat.itemsize)
+                    curr_array_strings.append(as_string)
+
+                # Put back into original array shape
+                curr_array_strings = np.array(curr_array_strings, dtype=object).reshape(cur_shape)
+                converted.append(curr_array_strings)
 
         converted = np.array(converted, dtype=object)
 
