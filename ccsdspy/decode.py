@@ -216,7 +216,13 @@ def _decode_fixed_length(file_bytes, fields):
     for field in fields:
         meta = field_meta[field]
         arr = field_bytes[field]
-        arr.dtype = meta.np_dtype
+
+        if field._data_type == "int":
+            # Signed integers will be treated as unsigned integers in the following
+            # block, and then get special treatmenet later
+            arr.dtype = meta.np_dtype.replace("i", "u")
+        else:
+            arr.dtype = meta.np_dtype
 
         if field._data_type in ("int", "uint"):
             xbytes = meta.nbytes_final - meta.nbytes_file
@@ -233,16 +239,27 @@ def _decode_fixed_length(file_bytes, fields):
                 meta.np_dtype
             )
 
-            bitmask = np.zeros(arr.shape, meta.np_dtype)
+            bitmask = np.zeros(arr.shape, arr.dtype)
             bitmask |= (1 << int(BITS_PER_BYTE * meta.nbytes_final - bitmask_left)) - 1
             tmp = np.left_shift([1], bitmask_right)
-            bitmask &= np.bitwise_not(tmp[0] - 1).astype(meta.np_dtype)
+            bitmask &= np.bitwise_not(tmp[0] - 1).astype(arr.dtype)
 
             arr &= bitmask
             arr >>= bitmask_right
 
             if field._byte_order == "little":
                 arr.byteswap(inplace=True)
+
+            if field._data_type == "int":
+                arr.dtype = meta.np_dtype
+                sign_bit = (arr >> (field._bit_length - 1)) & 1
+
+                # Set bits between start_bit and stop_bit to 1
+                one = np.zeros_like(arr) + 1
+                stop_bit = arr.itemsize * BITS_PER_BYTE
+                start_bit = stop_bit - xbytes * BITS_PER_BYTE
+                mask = ((one << (start_bit - one)) - one) ^ ((one << stop_bit) - one)
+                arr |= sign_bit * mask
 
         field_arrays[field._name] = arr
 
@@ -347,9 +364,14 @@ def _decode_variable_length(file_bytes, fields):
 
             # Switch dtype of byte arrays to the final dtype, and apply masks and shifts
             # to interpret the correct bits.
-            field_raw_data.dtype = numpy_dtypes[field._name]
+            if field._data_type == "int":
+                # Signed integers will be treated as unsigned integers in the following
+                # block, and then get special treatmenet later
+                field_raw_data.dtype = numpy_dtypes[field._name].replace("i", "u")
+            else:
+                field_raw_data.dtype = numpy_dtypes[field._name]
 
-            if field._data_type in ("int", "uint"):
+            if field._data_type in ("uint", "int"):
                 if not isinstance(field._array_shape, str):
                     last_byte = start_byte + nbytes_file
                     end_last_parent_byte = last_byte * BITS_PER_BYTE
@@ -375,6 +397,17 @@ def _decode_variable_length(file_bytes, fields):
 
                 if field._byte_order == "little":
                     field_raw_data.byteswap(inplace=True)
+
+                if field._data_type == "int":
+                    field_raw_data.dtype = numpy_dtypes[field._name]
+                    sign_bit = (field_raw_data >> (field._bit_length - 1)) & 1
+                    if sign_bit:
+                        # Set bits between start_bit and stop_bit to 1
+                        one = np.zeros_like(field_raw_data) + 1
+                        stop_bit = field_raw_data.itemsize * BITS_PER_BYTE
+                        start_bit = stop_bit - (nbytes_final - nbytes_file) * BITS_PER_BYTE
+                        mask = ((one << (start_bit - one)) - one) ^ ((one << stop_bit) - one)
+                        field_raw_data |= mask
 
             # Set the field in the final array
             if isinstance(field._array_shape, str):
