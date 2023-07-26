@@ -1,11 +1,12 @@
 """Regression Tests"""
 
+import io
 import os
 
 import numpy as np
 import pytest
 
-from .. import FixedLength, VariableLength, PacketField
+from .. import FixedLength, VariableLength, PacketField, PacketArray
 
 
 @pytest.mark.parametrize("pkt_class", [FixedLength, VariableLength])
@@ -64,3 +65,64 @@ def test_odd_length_neg_ints(pkt_class):
 
     assert np.all(results["Accountability ID"] == 400)
     assert np.issubdtype(results["Accountability ID"].dtype, np.uint32)
+
+
+@pytest.mark.parametrize("pkt_class", [FixedLength, VariableLength])
+def test_nbytes_file_too_long(pkt_class):
+    """This fixes an issue where nbytes_file was incorrectly incremented
+    and sometimes reaches past the end of the file.
+
+    See: https://github.com/CCSDSPy/ccsdspy/issues/78
+    """
+
+    # Create packet definition
+    pkt = pkt_class(
+        [
+            PacketArray(
+                name="twelve", data_type="int", bit_length=12, array_shape=(8, 1), array_order="C"
+            )
+        ]
+    )
+
+    # Test with one packets
+    fakepkt = io.BytesIO(
+        b"\x00\x01\xC0\x00\x00\x0B\x00\x00\x01\x00\x20\x03\x00\x40\x05\x00\x60\x07"
+    )
+
+    with open("fake_twelve_single.ccsds", "wb") as file:
+        file.write(fakepkt.getbuffer())
+
+    result = pkt.load(fakepkt)
+
+    assert result["twelve"].shape == (1, 8, 1)
+    assert np.array_equal(result["twelve"], np.arange(8).reshape((1, 8, 1)))
+
+    # Test with two packets
+    fakepkts_even = io.BytesIO(
+        b"\x00\x01\xC0\x01\x00\x0B\x00\x00\x01\x00\x20\x03\x00\x40\x05\x00\x60\x07\x00\x01\xC0\x02\x00\x0B\x00\x00\x01\x00\x20\x03\x00\x40\x05\x00\x60\x07"
+    )
+
+    with open("fake_twelve_even.ccsds", "wb") as file:
+        file.write(fakepkts_even.getbuffer())
+
+    result = pkt.load(fakepkts_even)
+
+    expected = np.array([np.arange(8), np.arange(8)]).reshape(2, 8, 1)
+
+    assert result["twelve"].shape == (2, 8, 1)
+    assert np.array_equal(result["twelve"], expected)
+
+    # Test with three packets
+    fakepkts_odd = io.BytesIO(
+        b"\x00\x01\xC0\x01\x00\x0B\x00\x00\x01\x00\x20\x03\x00\x40\x05\x00\x60\x07\x00\x01\xC0\x02\x00\x0B\x00\x00\x01\x00\x20\x03\x00\x40\x05\x00\x60\x07\x00\x01\xC0\x03\x00\x0B\x00\x00\x01\x00\x20\x03\x00\x40\x05\x00\x60\x07"
+    )
+
+    with open("fake_twelve_odd.ccsds", "wb") as file:
+        file.write(fakepkts_odd.getbuffer())
+
+    result = pkt.load(fakepkts_odd)
+
+    expected = np.array([np.arange(8), np.arange(8), np.arange(8)]).reshape(3, 8, 1)
+
+    assert result["twelve"].shape == (3, 8, 1)
+    assert np.array_equal(result["twelve"], expected)
