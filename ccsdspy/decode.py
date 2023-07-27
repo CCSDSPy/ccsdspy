@@ -159,13 +159,6 @@ def _decode_fixed_length(file_bytes, fields):
 
     for field in fields:
         nbytes_file = np.ceil(field._bit_length / BITS_PER_BYTE).astype(int)
-
-        if (
-            bit_offset[field._name] % BITS_PER_BYTE
-            and bit_offset[field._name] % BITS_PER_BYTE + field._bit_length > BITS_PER_BYTE
-        ):
-            nbytes_file += 1
-
         nbytes_final = {3: 4, 5: 8, 6: 8, 7: 8}.get(nbytes_file, nbytes_file)
         start_byte_file = bit_offset[field._name] // BITS_PER_BYTE
 
@@ -257,7 +250,7 @@ def _decode_fixed_length(file_bytes, fields):
                 # Set bits between start_bit and stop_bit to 1
                 one = np.zeros_like(arr) + 1
                 stop_bit = arr.itemsize * BITS_PER_BYTE
-                start_bit = stop_bit - xbytes * BITS_PER_BYTE
+                start_bit = field._bit_length
                 mask = ((one << (start_bit - one)) - one) ^ ((one << stop_bit) - one)
                 arr |= sign_bit * mask
 
@@ -401,12 +394,14 @@ def _decode_variable_length(file_bytes, fields):
                 if field._data_type == "int":
                     field_raw_data.dtype = numpy_dtypes[field._name]
                     sign_bit = (field_raw_data >> (field._bit_length - 1)) & 1
+
                     if sign_bit:
                         # Set bits between start_bit and stop_bit to 1
                         one = np.zeros_like(field_raw_data) + 1
                         stop_bit = field_raw_data.itemsize * BITS_PER_BYTE
-                        start_bit = stop_bit - (nbytes_final - nbytes_file) * BITS_PER_BYTE
+                        start_bit = field._bit_length
                         mask = ((one << (start_bit - one)) - one) ^ ((one << stop_bit) - one)
+
                         field_raw_data |= mask
 
             # Set the field in the final array

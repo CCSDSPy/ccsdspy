@@ -1,11 +1,12 @@
 """Regression Tests"""
 
+import io
 import os
 
 import numpy as np
 import pytest
 
-from .. import FixedLength, VariableLength, PacketField
+from .. import FixedLength, VariableLength, PacketField, PacketArray
 
 
 @pytest.mark.parametrize("pkt_class", [FixedLength, VariableLength])
@@ -64,3 +65,90 @@ def test_odd_length_neg_ints(pkt_class):
 
     assert np.all(results["Accountability ID"] == 400)
     assert np.issubdtype(results["Accountability ID"].dtype, np.uint32)
+
+
+@pytest.mark.parametrize("pkt_class", [FixedLength, VariableLength])
+def test_nbytes_file_too_long(pkt_class):
+    """This fixes an issue where nbytes_file was incorrectly incremented
+    and sometimes reaches past the end of the file.
+
+    See: https://github.com/CCSDSPy/ccsdspy/issues/78
+    """
+
+    # Create packet definition
+    pkt = pkt_class(
+        [
+            PacketArray(
+                name="twelve", data_type="int", bit_length=12, array_shape=(8, 1), array_order="C"
+            )
+        ]
+    )
+
+    # Test with one packets
+    fakepkt = io.BytesIO(
+        b"\x00\x01\xC0\x00\x00\x0B\x00\x00\x01\x00\x20\x03\x00\x40\x05\x00\x60\x07"
+    )
+
+    with open("fake_twelve_single.ccsds", "wb") as file:
+        file.write(fakepkt.getbuffer())
+
+    result = pkt.load(fakepkt)
+
+    assert result["twelve"].shape == (1, 8, 1)
+    assert np.array_equal(result["twelve"], np.arange(8).reshape((1, 8, 1)))
+
+    # Test with two packets
+    fakepkts_even = io.BytesIO(
+        b"\x00\x01\xC0\x01\x00\x0B\x00\x00\x01\x00\x20\x03\x00\x40\x05\x00\x60\x07\x00\x01\xC0\x02\x00\x0B\x00\x00\x01\x00\x20\x03\x00\x40\x05\x00\x60\x07"
+    )
+
+    with open("fake_twelve_even.ccsds", "wb") as file:
+        file.write(fakepkts_even.getbuffer())
+
+    result = pkt.load(fakepkts_even)
+
+    expected = np.array([np.arange(8), np.arange(8)]).reshape(2, 8, 1)
+
+    assert result["twelve"].shape == (2, 8, 1)
+    assert np.array_equal(result["twelve"], expected)
+
+    # Test with three packets
+    fakepkts_odd = io.BytesIO(
+        b"\x00\x01\xC0\x01\x00\x0B\x00\x00\x01\x00\x20\x03\x00\x40\x05\x00\x60\x07\x00\x01\xC0\x02\x00\x0B\x00\x00\x01\x00\x20\x03\x00\x40\x05\x00\x60\x07\x00\x01\xC0\x03\x00\x0B\x00\x00\x01\x00\x20\x03\x00\x40\x05\x00\x60\x07"
+    )
+
+    with open("fake_twelve_odd.ccsds", "wb") as file:
+        file.write(fakepkts_odd.getbuffer())
+
+    result = pkt.load(fakepkts_odd)
+
+    expected = np.array([np.arange(8), np.arange(8), np.arange(8)]).reshape(3, 8, 1)
+
+    assert result["twelve"].shape == (3, 8, 1)
+    assert np.array_equal(result["twelve"], expected)
+
+
+@pytest.mark.parametrize("pkt_class", [FixedLength, VariableLength])
+def test_neg_ints_flip_start_bit(pkt_class):
+    """This fixes an issue where flipping the padding bits was done
+    from the incorrect start bit.
+
+    See: https://github.com/CCSDSPy/ccsdspy/issues/80
+    """
+    pkt = pkt_class(
+        [
+            PacketField(name="uinttwo", data_type="uint", bit_length=3),
+            PacketField(name="negfive", data_type="int", bit_length=5),
+            PacketField(name="postwelve", data_type="int", bit_length=12),
+            PacketField(name="negsix", data_type="int", bit_length=12),
+        ]
+    )
+
+    # 0b101, 0b11011, 0b000000001100, 0b111111110100
+    fakepkt = io.BytesIO(b"\x00\x01\xC0\x00\x00\x03\x5B\x00\xCF\xFA")
+    result = pkt.load(fakepkt)
+
+    assert np.array_equal(result["uinttwo"], np.array([2], dtype=np.uint8))
+    assert np.array_equal(result["negfive"], np.array([-5], dtype=np.int8))
+    assert np.array_equal(result["postwelve"], np.array([12], dtype=np.int16))
+    assert np.array_equal(result["negsix"], np.array([-6], dtype=np.int16))
