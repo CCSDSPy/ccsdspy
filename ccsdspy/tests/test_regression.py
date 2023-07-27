@@ -126,3 +126,29 @@ def test_nbytes_file_too_long(pkt_class):
 
     assert result["twelve"].shape == (3, 8, 1)
     assert np.array_equal(result["twelve"], expected)
+
+
+@pytest.mark.parametrize("pkt_class", [FixedLength, VariableLength])
+def test_neg_ints_flip_start_bit(pkt_class):
+    """This fixes an issue where flipping the padding bits was done
+    from the incorrect start bit.
+
+    See: https://github.com/CCSDSPy/ccsdspy/issues/80
+    """
+    pkt = pkt_class(
+        [
+            PacketField(name="uinttwo", data_type="uint", bit_length=3),
+            PacketField(name="negfive", data_type="int", bit_length=5),
+            PacketField(name="postwelve", data_type="int", bit_length=12),
+            PacketField(name="negsix", data_type="int", bit_length=12),
+        ]
+    )
+
+    # 0b101, 0b11011, 0b000000001100, 0b111111110100
+    fakepkt = io.BytesIO(b"\x00\x01\xC0\x00\x00\x03\x5B\x00\xCF\xFA")
+    result = pkt.load(fakepkt)
+
+    assert np.array_equal(result["uinttwo"], np.array([2], dtype=np.uint8))
+    assert np.array_equal(result["negfive"], np.array([-5], dtype=np.int8))
+    assert np.array_equal(result["postwelve"], np.array([12], dtype=np.int16))
+    assert np.array_equal(result["negsix"], np.array([-6], dtype=np.int16))
