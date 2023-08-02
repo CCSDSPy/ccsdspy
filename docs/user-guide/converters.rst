@@ -8,7 +8,7 @@ Post-processing transformations are done through the Converters API, exposed thr
 
 #. Polynomial Transformation (`~ccsdspy.converters.PolyConverter`)
 
-   This applies a polynomial function to each value, using user-defined coeffients.
+   This applies a polynomial function to each value, using user-defined coefficients.
    
 #. Linear Transformation (`~ccsdspy.converters.LinearConverter`)
 
@@ -24,7 +24,7 @@ Post-processing transformations are done through the Converters API, exposed thr
 
 #. Stringify Bytes Transformation (`~ccsdspy.converters.StringifyBytesConverter`)
 
-   This converts byte arrays or multi-byte numbers to strings in numeric representations such as binary, hexidecimal, or octal.
+   This converts byte arrays or multi-byte numbers to strings in numeric representations such as binary, hexadecimal, or octal.
    
 .. contents::
    :depth: 2
@@ -61,7 +61,7 @@ An example of using a built in transformation to parse time, apply a linear tran
         "SecondField",
 	"SecondField_Converted",
 	converters.EnumConverter({
-	    0: "DISBLED",
+	    0: "DISABLED",
 	    1: "ENABLED",
 	    2: "STANDBY"
 	})

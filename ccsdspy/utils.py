@@ -82,7 +82,7 @@ def iter_packet_bytes(file, include_primary_header=True):
 
 
 def split_packet_bytes(file, include_primary_header=True):
-    """Retreive a list of bytes objects corresponding to each packet in a file.
+    """Retrieve a list of bytes objects corresponding to each packet in a file.
 
     This function works with mixed files containing multiple APIDs, which may
     include both fixed length and variable length packets.
