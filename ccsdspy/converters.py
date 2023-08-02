@@ -163,7 +163,7 @@ class EnumConverter(Converter):
 
             raise EnumConverterMissingKey(
                 f"The following were encountered which did not have "
-                f"corresponding keys in the replacment dictionary: "
+                f"corresponding keys in the replacement dictionary: "
                 f"{repr(missing_keys)}"
             )
 
@@ -175,8 +175,8 @@ class DatetimeConverter(Converter):
     instances, computed using offset(s) from a reference time.
 
     This class supports the offsets stored in multiple input fields, for example
-    where one field is a coarse time (eg seconds) and a second field is a fine
-    time (eg nanoseconds). To use multiple input fields, pass a tuple of input
+    where one field is a coarse time (e.g. seconds) and a second field is a fine
+    time (e.g. nanoseconds). To use multiple input fields, pass a tuple of input
     field names when this converter is added to the packet.
     """
 
@@ -284,7 +284,7 @@ class DatetimeConverter(Converter):
 
 class StringifyBytesConverter(Converter):
     """Post-processing conversion which converts byte arrays or multi-byte
-    numbers to strings in numeric representations such as binary, hexidecimal,
+    numbers to strings in numeric representations such as binary, hexadecimal,
     or octal.
 
     To convert individual bytes, the input field should be defined as a

@@ -11,9 +11,9 @@ This package provides a number of utilities to work with CCSDS packets.
 
 Iterating through Packet Bytes
 ==============================
-During debugging it is often useful to break a stream of multiple packets into a list of byte sequences associated with each packet. That is, the i'th element of the list will be a `bytes` object assosciated with the i'th packet in the file.
+During debugging it is often useful to break a stream of multiple packets into a list of byte sequences associated with each packet. That is, the i'th element of the list will be a `bytes` object associated with the i'th packet in the file.
 
-This can be done with the `utils.split_packet_bytes()` (returns a list) and `utils.iter_packet_bytes()` (returns a generator) functions. These functions have an optional keyword arugment `include_primary_header=True` which determines whether the primary header is included in the byte sequence returned. By default, it is included.
+This can be done with the `utils.split_packet_bytes()` (returns a list) and `utils.iter_packet_bytes()` (returns a generator) functions. These functions have an optional keyword argument `include_primary_header=True` which determines whether the primary header is included in the byte sequence returned. By default, it is included.
 
 This function works with mixed files containing multiple APIDs, which may include both fixed length and variable length packets.
 

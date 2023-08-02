@@ -62,7 +62,7 @@ The mandatory packet primary header consists of four fields contained within 6 o
      - For telemetry (or reporting), set to '0', for a command (or request), set to '1'
    * - Secondary header flag
      - 1
-     - identicates the presence or absence of a secondary header. Set to '1' if present.
+     - indicates the presence or absence of a secondary header. Set to '1' if present.
    * - Application process identifier or APID
      - 11
      - The APID provides a way to uniquely identify sending or receiving applications on a space vehicle.

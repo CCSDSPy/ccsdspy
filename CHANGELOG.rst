@@ -32,7 +32,7 @@ Version 0.0.13 - 2023-01-03
   * Added the ability to parse variable length files
   * Added the ability to specify packet field that are arrays
   * Added the ability to define a packet through a csv file
-  * Added github actions to perform continuous intergration
+  * Added github actions to perform continuous integration
   * Specified black as the only accepted code formatter
 
 Version 0.0.12 - 2022-08-06
