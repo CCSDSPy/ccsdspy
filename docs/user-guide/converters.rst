@@ -4,13 +4,11 @@
 Post-Processing Transformations
 ********************************
 
-
-
 Post-processing transformations are done through the Converters API, exposed through the `~ccsdspy.converters` module. Using Converters, one can create new fields transformed from another field. Examples including applying calibration curves, replacing enumerated values with strings, or converting your own time definition to a `datetime` instance. The following converters are built in, and you can write your own converter by extending the `~ccsdspy.converters.Converter` class (more on this below). When new fields are transformed from other fields, they are created as new entries in the returned dictionary.
 
 #. Polynomial Transformation (`~ccsdspy.converters.PolyConverter`)
 
-   This applies a polynomial function to each value, using user-defined coeffients.
+   This applies a polynomial function to each value, using user-defined coefficients.
    
 #. Linear Transformation (`~ccsdspy.converters.LinearConverter`)
 
@@ -24,6 +22,10 @@ Post-processing transformations are done through the Converters API, exposed thr
 
    This converts fields to datetime instances, computed using offset(s) from a reference time. The offsets can span multiple fields (for example, one a coarse time, and another for a fine time). If the reference time has a timezone, the result will too.
 
+#. Stringify Bytes Transformation (`~ccsdspy.converters.StringifyBytesConverter`)
+
+   This converts byte arrays or multi-byte numbers to strings in numeric representations such as binary, hexadecimal, or octal.
+   
 .. contents::
    :depth: 2
 
@@ -45,7 +47,7 @@ An example of using a built in transformation to parse time, apply a linear tran
     pkt.add_converted_field(
         ("CoarseTime", "FineTime"),
 	"Time_Converted",
-	converters.DateTimeConverter(
+	converters.DatetimeConverter(
 	   since=datetime(1970, 1, 1),
            units=("seconds", "nanoseconds"),
 	)
@@ -59,7 +61,7 @@ An example of using a built in transformation to parse time, apply a linear tran
         "SecondField",
 	"SecondField_Converted",
 	converters.EnumConverter({
-	    0: "DISBLED",
+	    0: "DISABLED",
 	    1: "ENABLED",
 	    2: "STANDBY"
 	})
@@ -83,6 +85,8 @@ Below is an example of creating a user-defined transformation to return False if
     from ccsdspy import FixedLength, converters
 
     class CustomConverter(converters.Converter):
+        def __init__(self):
+	    pass
         def convert(field_array):
             return (field_array > 0)
     

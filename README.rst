@@ -9,9 +9,36 @@ CCSDSPy - IO Interface for Reading CCSDS Data in Python.
 .. image:: https://codecov.io/gh/ccsdspy/ccsdspy/branch/main/graph/badge.svg?token=Ia45f4cW8f
     :target: https://codecov.io/gh/ccsdspy/ccsdspy
     :alt: Code Coverage	  
+    
+
+.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.7819991.svg
+    :target: https://doi.org/10.5281/zenodo.7819991
+    :alt: Zenodo DOI
 	  
 This community-developed package provides a Python interface for reading and writing tightly packed bits in the `Consultative Committee for Space Data Systems (CCSDS) <https://public.ccsds.org/default.aspx>`__ format used by many NASA and ESA missions. The library is developed with requirements sourced from the community and extensive automated testing.
- 
+
+Used By
+-------
+.. image:: https://raw.githubusercontent.com/ccsdspy/ccsdspy/main/docs/_static/used-by/small/goes-r.png
+    :target: https://www.goes-r.gov/
+.. image:: https://raw.githubusercontent.com/ccsdspy/ccsdspy/main/docs/_static/used-by/small/hermes.png
+    :target: https://science.nasa.gov/missions/hermes
+.. image:: https://raw.githubusercontent.com/ccsdspy/ccsdspy/main/docs/_static/used-by/small/punch.png
+    :target: https://punch.space.swri.edu/
+.. image:: https://raw.githubusercontent.com/ccsdspy/ccsdspy/main/docs/_static/used-by/small/mms.jpg
+    :target: https://mms.gsfc.nasa.gov/
+.. image:: https://raw.githubusercontent.com/ccsdspy/ccsdspy/main/docs/_static/used-by/small/spherex.png
+    :target: https://www.jpl.nasa.gov/missions/spherex
+.. image:: https://raw.githubusercontent.com/ccsdspy/ccsdspy/main/docs/_static/used-by/small/elfin.jpg
+    :target: https://elfin.igpp.ucla.edu/
+.. image:: https://raw.githubusercontent.com/ccsdspy/ccsdspy/main/docs/_static/used-by/small/padre.png
+    :target: https://padre.ssl.berkeley.edu
+
+Do you know of other missions that use CCSDSPy? Let us know `through a github issue`_!
+
+.. _through a github issue: https://github.com/ccsdspy/ccsdspy/issues/new
+
+>>>>>>> 74245402bfbcdb174012687ac32b559fb4a910f9
 Installation
 ============
 To install ccsdspy
@@ -56,7 +83,7 @@ For more information or to ask questions about the library or CCSDS data in gene
 
 Acknowledging or Citing ccsdspy
 ===============================
-If you use ccsdspy, it would be appreciated if you let us know and mention it in your publications. The continued growth and development of this package is dependent on the community being aware of it.
+If you use ccsdspy, it would be appreciated if you let us know and mention it in your publications. The code can be cited using the `DOI provided by Zenodo <https://zenodo.org/record/7819991>`__. The continued growth and development of this package is dependent on the community being aware of it.
 
 Code of Conduct
 ===============

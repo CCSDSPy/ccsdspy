@@ -76,14 +76,14 @@ Any classes, functions, or variables that are private should either:
 Utilities
 ---------
 
-Within this reposiotory, utility functions are placed in the `util.py` file.
+Within this repository, utility functions are placed in the `util.py` file.
 These functions can be private or public.
 If these might be useful for other modules are user-focused, they should be made public.
 
 
 Linting and Code Formatting
 ===========================
-We enforce a minimum level of code style with our continuous intergration testing.
+We enforce a minimum level of code style with our continuous integration testing.
 This project makes use of `black <https://github.com/psf/black>`__ to format all code.
 To run this yourself before submitting code just use the following command::
 

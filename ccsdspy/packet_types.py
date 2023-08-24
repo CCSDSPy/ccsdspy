@@ -41,7 +41,7 @@ class _BasePacket:
         ----------
         file : str
            Path to file on the local file system that defines the packet fields.
-           Currently only suports csv files.
+           Currently only supports csv files.
            See :download:`simple_csv_3col.csv <../../ccsdspy/tests/data/packet_def/simple_csv_3col.csv>`  # noqa: E501
            and :download:`simple_csv_4col.csv <../../ccsdspy/tests/data/packet_def/simple_csv_4col.csv>`  # noqa: E501
 
@@ -58,8 +58,8 @@ class _BasePacket:
         return cls(fields)
 
     def add_converted_field(self, input_field_name, output_field_name, converter):
-        """Add a converteed field to the packet definition, used to apply
-        post-processing transformatons of decoded fields.
+        """Add a converted field to the packet definition, used to apply
+        post-processing transformations of decoded fields.
 
         Parameters
         ----------
@@ -116,7 +116,7 @@ class _BasePacket:
 class FixedLength(_BasePacket):
     """Define a fixed length packet to decode binary data.
 
-    Fixed length packets correspond to packats that are the same length and
+    Fixed length packets correspond to packets that are the same length and
     layout every time. A common example of this is housekeeping or status
     messages.
     """
@@ -451,7 +451,7 @@ def _expand_array_fields(existing_fields):
 
         index_vecs = [np.arange(dim) for dim in array_shape]
         index_grids = np.meshgrid(*index_vecs, indexing="ij")
-        indeces_flat = [index_grid.flatten(order=array_order) for index_grid in index_grids]
+        indices_flat = [index_grid.flatten(order=array_order) for index_grid in index_grids]
 
         expand_history[existing_field._name] = {
             "shape": array_shape,
@@ -459,8 +459,8 @@ def _expand_array_fields(existing_fields):
             "fields": {},
         }
 
-        for i, indeces in enumerate(zip(*indeces_flat)):
-            name = f"{existing_field._name}[{','.join(map(str,indeces))}]"
+        for i, indices in enumerate(zip(*indices_flat)):
+            name = f"{existing_field._name}[{','.join(map(str,indices))}]"
             if existing_field._bit_offset is None:
                 bit_offset = None
             else:
@@ -474,7 +474,7 @@ def _expand_array_fields(existing_fields):
                 byte_order=existing_field._byte_order,
             )
 
-            expand_history[existing_field._name]["fields"][name] = indeces
+            expand_history[existing_field._name]["fields"][name] = indices
             return_fields.append(return_field)
 
     return return_fields, expand_history
@@ -505,8 +505,8 @@ def _unexpand_field_arrays(field_arrays, expand_history):
         array_dtype = field_arrays[list(array_details["fields"].keys())[0]].dtype
         array = np.zeros(array_shape, dtype=array_dtype)
 
-        for element_name, indeces in array_details["fields"].items():
-            array.__setitem__((slice(None),) + indeces, field_arrays[element_name])
+        for element_name, indices in array_details["fields"].items():
+            array.__setitem__((slice(None),) + indices, field_arrays[element_name])
             del return_field_arrays[element_name]
 
         return_field_arrays[array_name] = array
