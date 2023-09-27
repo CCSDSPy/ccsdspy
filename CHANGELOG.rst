@@ -1,6 +1,12 @@
 Notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`__.
 
+Version 1.2.0 - 2023-09-27
+==========================
+  * Add new class `~ccsdspy.converters.StringifyBytesConverter`, which can be used to inspect individual bytes in string representations such as binary, hexadecimal, or octal. For an introduction to post-processing transformations, see the documentation at :doc:`/user-guide/converters`.
+  * Fixed issue with parsing signed integers that are not aligned to byte boundaries (Issues `#80 <https://github.com/CCSDSPy/ccsdspy/issues/80>`_ and `#76 <https://github.com/CCSDSPy/ccsdspy/issues/76>`_)
+  * Corrected several spelling errors and typos in the documentation.
+
 Version 1.1.0 - 2023-04-11
 ==========================
   * Added a `~ccsdspy.converters` system, which applies post-process to decoded packet fields. This post-processing includes applying linear/polynomial calibration curves, dictionary replacement, and time parsing. See the documentation at :doc:`/user-guide/converters`.
