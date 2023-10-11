@@ -2,6 +2,7 @@
 from __future__ import division
 from collections import namedtuple
 import math
+import warnings
 
 import numpy as np
 
@@ -283,10 +284,16 @@ def _decode_variable_length(file_bytes, fields):
         packet_starts.append(offset)
         offset += file_bytes[offset + 4] * 256 + file_bytes[offset + 5] + 7
 
-    assert offset == len(file_bytes)
+    if offset != len(file_bytes):
+        missing_bytes = offset - len(file_bytes)
+        message = (
+            f"File appears truncated - missing {missing_bytes} bytes (or maybe garbage at end)"
+        )
+        warnings.warn(message)
+
     npackets = len(packet_starts)
 
-    # Initialize output dicitonary of field arrays, their dtypes, and the offsets
+    # Initialize output dictionary of field arrays, their dtypes, and the offsets
     # that can be determined before parsing each packet.
     # ------------------------------------------------------------------------
     field_arrays, numpy_dtypes, bit_offsets = _varlength_intialize_field_arrays(fields, npackets)
@@ -415,7 +422,7 @@ def _decode_variable_length(file_bytes, fields):
 
 def _varlength_intialize_field_arrays(fields, npackets):
     """
-    Initialize output dicitonary of field arrays, their dtypes, and the offsets
+    Initialize output dictionary of field arrays, their dtypes, and the offsets
     that can be determined before parsing each packet.
 
     Expanding fields will be an array of dtype=object (jagged array), which will be

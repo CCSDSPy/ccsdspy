@@ -565,6 +565,7 @@ def _get_fields_csv_file(csv_file):
                             name=row["name"],
                             data_type=data_type,
                             bit_length=int(row["bit_length"]),
+                            bit_offset=int(row["bit_offset"]),
                             array_shape=array_shape,
                         )
                     )

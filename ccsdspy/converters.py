@@ -204,8 +204,8 @@ class DatetimeConverter(Converter):
           it, so will the converted datetimes.
         units : str or tuple of str
           Units string of tuples of units strings for the offset of each
-          input field.  Valid units are "days", "minutes", "milliseconds",
-          "microseconds", and "nanoseconds".
+          input field.  Valid units are "days", "hours", "minutes",
+          "seconds", "milliseconds", "microseconds", and "nanoseconds".
 
         Raises
         ------
