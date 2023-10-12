@@ -29,7 +29,7 @@ Post-processing transformations are done through the Converters API, exposed thr
 .. contents::
    :depth: 2
 
-Using a Built-In Transformations
+Using Built-In Transformations
 ================================
 An example of using a built in transformation to parse time, apply a linear transformation to a first field, and apply a enumerated values transformation to a secondary field is below.
 
