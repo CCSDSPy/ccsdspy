@@ -312,8 +312,9 @@ def _decode_variable_length(file_bytes, fields):
             # Determine the bit length for field
             # ----------------------------------
             if field._array_shape == "expand":
-                footer_bits = sum(field._bit_length for fld in fields[i + 1 :])
+                footer_bits = sum(fld._bit_length for fld in fields[i + 1 :])
                 bit_length = packet_nbytes * BITS_PER_BYTE - footer_bits - offset_counter
+
             elif isinstance(field._array_shape, str):
                 # Defined by previous field
                 bit_length = field_arrays[field._array_shape][pkt_num] * field._bit_length
