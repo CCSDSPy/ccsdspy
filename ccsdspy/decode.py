@@ -159,7 +159,11 @@ def _decode_fixed_length(file_bytes, fields):
     field_meta = {}
 
     for field in fields:
-        nbytes_file = np.ceil(field._bit_length / BITS_PER_BYTE).astype(int)
+        nbytes_file = (
+            (bit_offset[field._name] + field._bit_length - 1) // BITS_PER_BYTE
+            - bit_offset[field._name] // BITS_PER_BYTE
+            + 1
+        )
         nbytes_final = {3: 4, 5: 8, 6: 8, 7: 8}.get(nbytes_file, nbytes_file)
         start_byte_file = bit_offset[field._name] // BITS_PER_BYTE
 

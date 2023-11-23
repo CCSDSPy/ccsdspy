@@ -190,8 +190,35 @@ def test_expand_with_footer_bits():
     # Try parsing the packet
     dir_path = os.path.dirname(os.path.realpath(__file__))
     bin_path = os.path.join(dir_path, "data", "europa_clipper", "expanding_footer_packet.bin")
-
     results = pkt.load(bin_path)
 
     for arr in results["FGX_CHANNELS"]:
         assert arr.shape == (1440,)
+
+
+@pytest.mark.parametrize("pkt_class", [FixedLength, VariableLength])
+def test_non_byte_aligned_uint(pkt_class):
+    pkt1 = pkt_class(
+        [
+            PacketField(name="filler", data_type="fill", bit_length=954),
+            PacketField(name="param1", data_type="uint", bit_length=7),
+            PacketField(name="filler2", data_type="fill", bit_length=159),
+        ]
+    )
+
+    pkt2 = pkt_class(
+        [
+            PacketField(name="filler", data_type="fill", bit_length=970),
+            PacketField(name="param2", data_type="uint", bit_length=7),
+            PacketField(name="filler2", data_type="fill", bit_length=143),
+        ]
+    )
+
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    bin_path = os.path.join(dir_path, "data", "csa", "apid00400.tlm")
+
+    result1 = pkt1.load(bin_path)
+    result2 = pkt2.load(bin_path)
+
+    assert all(elem == 32 for elem in result1["param1"]), f"Got: repr(result1['param1'])"
+    assert all(elem == 31 for elem in result2["param2"]), f"Got: repr(result2['param2'])"
