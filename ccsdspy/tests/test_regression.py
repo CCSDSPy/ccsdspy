@@ -152,3 +152,46 @@ def test_neg_ints_flip_start_bit(pkt_class):
     assert np.array_equal(result["negfive"], np.array([-5], dtype=np.int8))
     assert np.array_equal(result["postwelve"], np.array([12], dtype=np.int16))
     assert np.array_equal(result["negsix"], np.array([-6], dtype=np.int16))
+
+
+def test_expand_with_footer_bits():
+    """This fixes an issue where expanding field length is not calculated correctly
+    when fields follow it.
+
+    See: https://github.com/CCSDSPy/ccsdspy/discussions/102
+    """
+    pkt = VariableLength(
+        [
+            PacketField(name="Instrument SCLK Time second", bit_length=32, data_type="uint"),
+            PacketField(name="Instrument SCLK Time subsec", bit_length=16, data_type="uint"),
+            PacketField(name="Accountability ID", bit_length=32, data_type="uint"),
+            PacketArray(name="FGX_CHANNELS", data_type="uint", bit_length=8, array_shape="expand"),
+            PacketField(name="FGx_-4.7VHK", bit_length=24, data_type="int"),
+            PacketField(name="FGx_+4.7VHK", bit_length=24, data_type="int"),
+            PacketField(name="FGx_2VREF", bit_length=24, data_type="int"),
+            PacketField(name="FGx_1VREF", bit_length=24, data_type="int"),
+            PacketField(name="FGx_DRV_SNS", bit_length=24, data_type="int"),
+            PacketField(name="FGx_OP_PRTA", bit_length=24, data_type="int"),
+            PacketField(name="FGx_FBX", bit_length=24, data_type="int"),
+            PacketField(name="FGx_FBY", bit_length=24, data_type="int"),
+            PacketField(name="FGx_FBZ", bit_length=24, data_type="int"),
+            PacketField(name="FGx_BPFX", bit_length=24, data_type="int"),
+            PacketField(name="FGx_BPFY", bit_length=24, data_type="int"),
+            PacketField(name="FGx_BPFZ", bit_length=24, data_type="int"),
+            PacketField(name="FGx_+4.7_I", bit_length=24, data_type="int"),
+            PacketField(name="FGx_-4.7_I", bit_length=24, data_type="int"),
+            PacketField(name="FGx_HK_CH14", bit_length=24, data_type="int"),
+            PacketField(name="FGx_HK_CH15", bit_length=24, data_type="int"),
+            PacketField(name="Register 80", bit_length=16, data_type="uint"),
+            PacketField(name="PEC (CRC-16-CCITT)", bit_length=16, data_type="uint"),
+        ]
+    )
+
+    # Try parsing the packet
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    bin_path = os.path.join(dir_path, "data", "europa_clipper", "expanding_footer_packet.bin")
+
+    results = pkt.load(bin_path)
+
+    for arr in results["FGX_CHANNELS"]:
+        assert arr.shape == (1440,)
