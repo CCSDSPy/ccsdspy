@@ -21,6 +21,7 @@ formats: []
 # Install this module
 python:
   install:
+    - requirements: docs/requirements.txt
     - method: pip
       path: .
 
