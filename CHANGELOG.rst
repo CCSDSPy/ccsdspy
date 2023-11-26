@@ -1,6 +1,11 @@
 Notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`__.
 
+Version 1.2.1 - 2023-11-26
+==========================
+  * Fixed bug/regression introduced in 1.2.0 from signed integer patch (Discussion `#101 <https://github.com/CCSDSPy/ccsdspy/discussions/101>`_)
+  * Fixed bug with expanding fields that occur in the middle of the packet (Discussion `#102 <https://github.com/CCSDSPy/ccsdspy/discussions/102>`_)
+
 Version 1.2.0 - 2023-09-27
 ==========================
   * Add new class `~ccsdspy.converters.StringifyBytesConverter`, which can be used to inspect individual bytes in string representations such as binary, hexadecimal, or octal. For an introduction to post-processing transformations, see the documentation at :doc:`/user-guide/converters`.
