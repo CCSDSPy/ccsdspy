@@ -198,6 +198,11 @@ def test_expand_with_footer_bits():
 
 @pytest.mark.parametrize("pkt_class", [FixedLength, VariableLength])
 def test_non_byte_aligned_uint(pkt_class):
+    """Add a test to address issue #101 which broke parsing of uints not
+    aligned on bytes.
+
+    See: https://github.com/CCSDSPy/ccsdspy/discussions/101
+    """
     pkt1 = pkt_class(
         [
             PacketField(name="filler", data_type="fill", bit_length=954),
