@@ -114,7 +114,7 @@ html_theme = "alabaster"
 html_theme_options = {
     "description": "A Python package for reading CCSDS packet data.",
     "show_related": True,
-    "github_banner": True,
+    "github_banner": False,
     "github_button": False,
     "github_user": "ccsdspy",
     "github_repo": "ccsdspy",
