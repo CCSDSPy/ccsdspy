@@ -34,21 +34,23 @@ Used By
 -------
 .. image:: _static/used-by/small/goes-r.png
     :target: https://www.goes-r.gov/
+.. image:: _static/used-by/small/europa-clipper.png
+    :target: https://europa.nasa.gov/
 .. image:: _static/used-by/small/hermes.png
     :target: https://science.nasa.gov/missions/hermes
-.. image:: _static/used-by/small/punch.png
-    :target: https://punch.space.swri.edu/
 .. image:: _static/used-by/small/mms.jpg
     :target: https://mms.gsfc.nasa.gov/
+.. image:: _static/used-by/small/csa.png
+    :target: https://www.asc-csa.gc.ca/eng/
+.. image:: _static/used-by/small/punch.png
+    :target: https://punch.space.swri.edu/	     
 .. image:: _static/used-by/small/spherex.png
     :target: https://www.jpl.nasa.gov/missions/spherex
 .. image:: _static/used-by/small/elfin.jpg
     :target: https://elfin.igpp.ucla.edu/
 .. image:: _static/used-by/small/padre.png
     :target: https://padre.ssl.berkeley.edu
-.. image:: _static/used-by/small/csa.png
-    :target: https://www.asc-csa.gc.ca/eng/
-
+	     
 	     
 Do you know of other missions that use CCSDSPy? Let us know `through a github issue`_!
 
