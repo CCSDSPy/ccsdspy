@@ -434,9 +434,12 @@ def _unexpand_field_arrays(field_arrays, expand_history):
 
         for element_name, indices in array_details["fields"].items():
             array.__setitem__((slice(None),) + indices, field_arrays[element_name])
+            pos = list(return_field_arrays.keys()).index(element_name)
             del return_field_arrays[element_name]
 
-        return_field_arrays[array_name] = array
+        return_field_items = list(return_field_arrays.items())
+        return_field_items.insert(pos, (array_name, array))
+        return_field_arrays = dict(return_field_items)
 
     return return_field_arrays
 
