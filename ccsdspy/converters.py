@@ -85,7 +85,7 @@ class PolyConverter(Converter):
         converted = np.zeros(field_array.shape, dtype=np.float64)
 
         for power, coeff in enumerate(reversed(self._coeffs)):
-            converted += coeff * field_array**power
+            converted += coeff * field_array ** power
 
         return converted
 
