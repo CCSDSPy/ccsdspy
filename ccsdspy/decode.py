@@ -1,4 +1,5 @@
 """Internal decoding routines."""
+
 from __future__ import division
 from collections import namedtuple
 import math

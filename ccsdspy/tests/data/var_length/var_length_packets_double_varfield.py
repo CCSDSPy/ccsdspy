@@ -1,4 +1,5 @@
 """Create simple packets with variable lengths"""
+
 import struct
 
 import numpy as np
