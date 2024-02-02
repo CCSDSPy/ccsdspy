@@ -1,6 +1,7 @@
 """Run end-to-end test of decoding fixed-length packets
 using the test data in the data/hs directory.
 """
+
 import csv
 import glob
 import os

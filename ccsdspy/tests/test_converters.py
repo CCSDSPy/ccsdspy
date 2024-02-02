@@ -38,7 +38,7 @@ def test_poly_converter_direct_simple(do_2darray):
         field_array = np.arange(10, dtype=int)
 
     x = field_array.astype(np.float64)
-    expected = coeffs[0] * x ** 2 + coeffs[1] * x + coeffs[2]
+    expected = coeffs[0] * x**2 + coeffs[1] * x + coeffs[2]
     got = converters.PolyConverter(coeffs).convert(field_array)
 
     assert np.allclose(got, expected)
