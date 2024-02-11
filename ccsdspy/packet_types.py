@@ -296,7 +296,7 @@ class VariableLength(_BasePacket):
 
         if not include_primary_header:
             _delete_primary_header_fields(packet_arrays)
-
+            
         return packet_arrays
 
 
@@ -619,6 +619,8 @@ def _load(file, fields, converters, decoder_name, include_primary_header=False):
     else:
         file_bytes = np.fromfile(file, "u1")
 
+    orig_fields = fields
+        
     if include_primary_header:
         fields = _prepend_primary_header_fields(fields)
 
@@ -635,6 +637,7 @@ def _load(file, fields, converters, decoder_name, include_primary_header=False):
         )
 
     field_arrays = _unexpand_field_arrays(field_arrays, expand_history)
+    field_arrays = _apply_post_byte_reoderings(field_arrays, orig_fields)
     field_arrays = _apply_converters(field_arrays, converters)
 
     return field_arrays
@@ -671,3 +674,61 @@ def _apply_converters(field_arrays, converters):
         converted[output_field_name] = converter.convert(*input_arrays)
 
     return converted
+
+
+def _apply_post_byte_reoderings(field_arrays, orig_fields):
+    for field in orig_fields:
+        if field._byte_order_post is None:
+            continue
+
+        byte_order_string = field._byte_order_post
+        byte_order_ints = [int(digit) for digit in byte_order_string]
+        is_obj_array = np.issubdtype(field_arrays[field._name].dtype, np.generic)
+
+        if is_obj_array:
+            new_packet_arrays = []
+            
+            for i, packet_array in enumerate(field_arrays[field._name]):
+                field_arrays[field._name][i] = _do_array_byte_reordering(
+                    packet_array, byte_order_ints
+                )
+        else:
+            field_arrays[field._name] = _do_array_byte_reordering(
+                field_arrays[field._name], byte_order_ints
+            )
+
+    return field_arrays
+
+
+def _do_array_byte_reordering(array, byte_order_ints):
+    parsed_byte_length = array.itemsize
+    native_byte_length = max(byte_order_ints)
+
+    array_bytes = array.copy()
+    array_bytes.dtype = np.uint8
+    array_bytes = array_bytes.reshape((array.size, parsed_byte_length))
+
+    digits_zero_idx = [digit - 1 for digit in byte_order_ints]    
+    select_indeces = []
+    select_indeces.extend(digits_zero_idx)
+    select_indeces.extend(sorted(set(range(array.itemsize)) - set(digits_zero_idx)))
+        
+    padding = array.itemsize - len(byte_order_ints)    
+    reordered = np.zeros_like(array_bytes)
+
+    for i in range(reordered.shape[0]):
+        reordered[i, :] = array_bytes[i, ::-1][select_indeces]
+    
+    shifted = np.zeros_like(reordered)
+
+    if padding > 0:
+        shifted[:, padding:] = reordered[:, :-padding]
+    else:
+        shifted[:] = reordered
+
+    shifted.dtype = array.dtype
+    shifted = shifted.reshape(array.shape)
+    
+    return shifted
+                          
+                          

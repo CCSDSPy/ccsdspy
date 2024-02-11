@@ -172,7 +172,7 @@ def _decode_fixed_length(file_bytes, fields):
         #  - uint and int byte order are handled with byteswap later
         #  - fill is independent of byte order (all 1's)
         #  - byte order is not applicable to str types
-        byte_order_symbol = "<" if field._byte_order == "little" else ">"
+        byte_order_symbol = "<" if field._byte_order_parse == "little" else ">"
         np_dtype = {
             "uint": ">u%d" % nbytes_final,
             "int": ">i%d" % nbytes_final,
@@ -246,7 +246,7 @@ def _decode_fixed_length(file_bytes, fields):
             arr &= bitmask
             arr >>= bitmask_right
 
-            if field._byte_order == "little":
+            if field._byte_order_parse == "little":
                 arr.byteswap(inplace=True)
 
             if field._data_type == "int":
@@ -401,7 +401,7 @@ def _decode_variable_length(file_bytes, fields):
                     if right_shift > 0:
                         field_raw_data >>= right_shift
 
-                if field._byte_order == "little":
+                if field._byte_order_parse == "little":
                     field_raw_data.byteswap(inplace=True)
 
                 if field._data_type == "int":
@@ -515,7 +515,7 @@ def _varlength_intialize_field_arrays(fields, npackets):
         #  - uint and int byte order are handled with byteswap later
         #  - fill is independent of byte order (all 1's)
         #  - byte order is not applicable to str types
-        byte_order_symbol = "<" if field._byte_order == "little" else ">"
+        byte_order_symbol = "<" if field._byte_order_parse == "little" else ">"
         np_dtype = {
             "uint": ">u%d" % nbytes_final,
             "int": ">i%d" % nbytes_final,

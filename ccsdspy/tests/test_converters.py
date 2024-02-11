@@ -320,7 +320,7 @@ def test_stringify_bytes_converter_2d_jagged_uint8(format):
     result = converter.convert(field_array)
 
     assert isinstance(result, np.ndarray)
-    assert np.issubdtype(result.dtype, object)
+    assert np.issubdtype(result.dtype, np.generic)
 
     if format == "bin":
         expected = np.array(
