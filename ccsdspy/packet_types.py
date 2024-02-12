@@ -683,7 +683,7 @@ def _apply_post_byte_reoderings(field_arrays, orig_fields):
 
         byte_order_string = field._byte_order_post
         byte_order_ints = [int(digit) for digit in byte_order_string]
-        is_obj_array = np.issubdtype(field_arrays[field._name].dtype, np.generic)
+        is_obj_array = field_arrays[field._name].dtype == object
 
         if is_obj_array:
             new_packet_arrays = []
@@ -701,9 +701,11 @@ def _apply_post_byte_reoderings(field_arrays, orig_fields):
 
 
 def _do_array_byte_reordering(array, byte_order_ints):
+    assert array.dtype != object, 'Error in byte reordering, please report a bug:.{array.dtype}'
+
     parsed_byte_length = array.itemsize
     native_byte_length = max(byte_order_ints)
-
+    
     array_bytes = array.copy()
     array_bytes.dtype = np.uint8
     array_bytes = array_bytes.reshape((array.size, parsed_byte_length))
