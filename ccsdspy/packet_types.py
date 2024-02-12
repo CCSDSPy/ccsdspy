@@ -710,7 +710,7 @@ def _do_array_byte_reordering(array, byte_order_ints):
     array_bytes.dtype = np.uint8
     array_bytes = array_bytes.reshape((array.size, parsed_byte_length))
 
-    digits_zero_idx = [digit - 1 for digit in byte_order_ints]    
+    digits_zero_idx = [digit - 1 for digit in reversed(byte_order_ints)]    
     select_indeces = []
     select_indeces.extend(digits_zero_idx)
     select_indeces.extend(sorted(set(range(array.itemsize)) - set(digits_zero_idx)))

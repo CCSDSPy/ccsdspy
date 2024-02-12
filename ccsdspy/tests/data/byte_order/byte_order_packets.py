@@ -48,7 +48,7 @@ def write_packet(byte_order):
         for j in range(PACKET_ARRAY_LENGTH):
             cur_bytes = [array_bytes[j, int(byte_num) - 1]
                          for byte_num in byte_order]
-
+            cur_bytes.reverse()
             for b in cur_bytes:
                 this_packet += struct.pack("B", b)
                 
