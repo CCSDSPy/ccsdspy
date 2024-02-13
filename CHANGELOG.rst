@@ -1,6 +1,11 @@
 Notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`__.
 
+
+Version 1.3.0 - To Be Released
+==============================
+  * Added support for custom byte orderings in  `ccsdspy.PacketField` and `ccsdspy.PacketArray`. You can now pass strings like `byte_order="3412"` in addition to `byte_order="big"` and `byte_order="little"`. (Discussion `#110 <https://github.com/CCSDSPy/ccsdspy/discussions/110>`_)
+
 Version 1.2.1 - 2023-11-26
 ==========================
   * Fixed bug/regression introduced in 1.2.0 from signed integer patch (Discussion `#101 <https://github.com/CCSDSPy/ccsdspy/discussions/101>`_)
