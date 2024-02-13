@@ -36,10 +36,12 @@ Used By
     :target: https://www.goes-r.gov/
 .. image:: _static/used-by/small/europa-clipper.png
     :target: https://europa.nasa.gov/
-.. image:: _static/used-by/small/hermes.png
-    :target: https://science.nasa.gov/missions/hermes
 .. image:: _static/used-by/small/mms.jpg
     :target: https://mms.gsfc.nasa.gov/
+.. image:: _static/used-by/small/pace.png
+    :target: https://pace.gsfc.nasa.gov/
+.. image:: _static/used-by/small/hermes.png
+    :target: https://science.nasa.gov/missions/hermes
 .. image:: _static/used-by/small/csa.png
     :target: https://www.asc-csa.gc.ca/eng/
 .. image:: _static/used-by/small/punch.png

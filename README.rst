@@ -21,12 +21,18 @@ Used By
 -------
 .. image:: https://raw.githubusercontent.com/ccsdspy/ccsdspy/main/docs/_static/used-by/small/goes-r.png
     :target: https://www.goes-r.gov/
-.. image:: https://raw.githubusercontent.com/ccsdspy/ccsdspy/main/docs/_static/used-by/small/hermes.png
-    :target: https://science.nasa.gov/missions/hermes
-.. image:: https://raw.githubusercontent.com/ccsdspy/ccsdspy/main/docs/_static/used-by/small/punch.png
-    :target: https://punch.space.swri.edu/
+.. image:: https://raw.githubusercontent.com/ccsdspy/ccsdspy/main/docs/_static/used-by/small/europa-clipper.png
+    :target: https://europa.nasa.gov/	     
 .. image:: https://raw.githubusercontent.com/ccsdspy/ccsdspy/main/docs/_static/used-by/small/mms.jpg
     :target: https://mms.gsfc.nasa.gov/
+.. image:: https://raw.githubusercontent.com/ccsdspy/ccsdspy/main/docs/_static/used-by/small/pace.png
+    :target: https://pace.gsfc.nasa.gov/
+.. image:: https://raw.githubusercontent.com/ccsdspy/ccsdspy/main/docs/_static/used-by/small/hermes.png
+    :target: https://science.nasa.gov/missions/hermes
+.. image:: https://raw.githubusercontent.com/ccsdspy/ccsdspy/main/docs/_static/used-by/small/csa.png
+    :target: https://www.asc-csa.gc.ca/eng/	     
+.. image:: https://raw.githubusercontent.com/ccsdspy/ccsdspy/main/docs/_static/used-by/small/punch.png
+    :target: https://punch.space.swri.edu/
 .. image:: https://raw.githubusercontent.com/ccsdspy/ccsdspy/main/docs/_static/used-by/small/spherex.png
     :target: https://www.jpl.nasa.gov/missions/spherex
 .. image:: https://raw.githubusercontent.com/ccsdspy/ccsdspy/main/docs/_static/used-by/small/elfin.jpg
