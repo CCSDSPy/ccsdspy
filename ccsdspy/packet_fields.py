@@ -32,8 +32,9 @@ class PacketField:
             Bit offset into packet, including the primary header which is 48 bits long.
             If this is not specified, than the bit offset will the be calculated automatically
             from its position inside the packet definition.
-        byte_order : {'big', 'little'}, optional
-            Byte order of the field. Defaults to big endian.
+        byte_order : {'big', 'little'}, or custom string of digits like "4321"
+            Byte order of the field. Can be "big", "little", or an arbitrary ordering
+            Specified as a string of digits like "2341". Defaults to big endian.
 
         Raises
         ------
@@ -61,14 +62,14 @@ class PacketField:
             byte_order_parse = byte_order
             byte_order_post = None
         elif valid_custom_byte_order:
-            byte_order_parse = 'big'
+            byte_order_parse = "big"
             byte_order_post = byte_order
         else:
             raise ValueError(
                 f"byte_order must be one of {valid_default_byte_orders} or "
                 "a string like '1234' or '3412'."
             )
-        
+
         self._name = name
         self._data_type = data_type
         self._bit_length = bit_length

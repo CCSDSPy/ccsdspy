@@ -296,7 +296,7 @@ class VariableLength(_BasePacket):
 
         if not include_primary_header:
             _delete_primary_header_fields(packet_arrays)
-            
+
         return packet_arrays
 
 
@@ -620,7 +620,7 @@ def _load(file, fields, converters, decoder_name, include_primary_header=False):
         file_bytes = np.fromfile(file, "u1")
 
     orig_fields = fields
-        
+
     if include_primary_header:
         fields = _prepend_primary_header_fields(fields)
 
@@ -677,6 +677,23 @@ def _apply_converters(field_arrays, converters):
 
 
 def _apply_post_byte_reoderings(field_arrays, orig_fields):
+    """Step of load procedure to apply post-processing byte reorderings.
+
+    A field gets post-processing byte reordering if the attribute
+      `field._byte_order_post` is not None.
+
+    Parameters
+    ----------
+    field_arrays : dict of string to NumPy arrays
+       The decoded packet field arrays without any post-processing applied
+    orig_fields : List of PacketField
+       Original fields as specified in the packet, before any replacements
+       which occur in the processing step.
+
+    Returns
+    -------
+    Reference to argument field_arrays (object was mutuated).
+    """
     for field in orig_fields:
         if field._byte_order_post is None:
             continue
@@ -687,7 +704,7 @@ def _apply_post_byte_reoderings(field_arrays, orig_fields):
 
         if is_obj_array:
             new_packet_arrays = []
-            
+
             for i, packet_array in enumerate(field_arrays[field._name]):
                 field_arrays[field._name][i] = _do_array_byte_reordering(
                     packet_array, byte_order_ints
@@ -701,26 +718,39 @@ def _apply_post_byte_reoderings(field_arrays, orig_fields):
 
 
 def _do_array_byte_reordering(array, byte_order_ints):
-    assert array.dtype != object, 'Error in byte reordering, please report a bug:.{array.dtype}'
+    """Reorder the bytes of an array.
+
+    Parameters
+    ----------
+    array : NumPy array
+      May be multidimensional. Dtype of array must not be object.
+    byte_order_ints : list of int
+      Inceces of the bytes in order, e.g., 2314.
+
+    Returns
+    -------
+    Array with bytes reordered according to the passed order.
+    """
+    assert array.dtype != object, "Error in byte reordering, please report a bug:.{array.dtype}"
 
     parsed_byte_length = array.itemsize
     native_byte_length = max(byte_order_ints)
-    
+
     array_bytes = array.copy()
     array_bytes.dtype = np.uint8
     array_bytes = array_bytes.reshape((array.size, parsed_byte_length))
 
-    digits_zero_idx = [digit - 1 for digit in reversed(byte_order_ints)]    
+    digits_zero_idx = [digit - 1 for digit in reversed(byte_order_ints)]
     select_indeces = []
     select_indeces.extend(digits_zero_idx)
     select_indeces.extend(sorted(set(range(array.itemsize)) - set(digits_zero_idx)))
-        
-    padding = array.itemsize - len(byte_order_ints)    
+
+    padding = array.itemsize - len(byte_order_ints)
     reordered = np.zeros_like(array_bytes)
 
     for i in range(reordered.shape[0]):
         reordered[i, :] = array_bytes[i, ::-1][select_indeces]
-    
+
     shifted = np.zeros_like(reordered)
 
     if padding > 0:
@@ -730,7 +760,5 @@ def _do_array_byte_reordering(array, byte_order_ints):
 
     shifted.dtype = array.dtype
     shifted = shifted.reshape(array.shape)
-    
+
     return shifted
-                          
-                          
