@@ -149,7 +149,10 @@ class FixedLength(_BasePacket):
         file : str
            Path to file on the local file system, or file-like object
         include_primary_header : bool
-           If True, provides the primary header in the output
+           If True, provides the primary header in the output. The names of the
+           fields are: `CCSDS_VERSION_NUMBER`, `CCSDS_PACKET_TYPE`, 
+           `CCSDS_SECONDARY_FLAG`, `CCSDS_SEQUENCE_FLAG`, `CCSDS_APID`, 
+           `CCSDS_SEQUENCE_COUNT`, and `CCSDS_PACKET_LENGTH`
 
         Returns
         -------
@@ -267,7 +270,10 @@ class VariableLength(_BasePacket):
         file : str
            Path to file on the local file system, or file-like object
         include_primary_header : bool
-           If True, provides the primary header in the output
+           If True, provides the primary header in the output. The names of the
+           fields are: `CCSDS_VERSION_NUMBER`, `CCSDS_PACKET_TYPE`, 
+           `CCSDS_SECONDARY_FLAG`, `CCSDS_SEQUENCE_FLAG`, `CCSDS_APID`, 
+           `CCSDS_SEQUENCE_COUNT`, and `CCSDS_PACKET_LENGTH`
 
         Returns
         -------
