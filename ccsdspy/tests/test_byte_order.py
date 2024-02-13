@@ -103,3 +103,9 @@ def test_byte_order(bin_file, cls, decode_method):
         for pkt_num, expected_data in enumerate(expected_file_data):
             got_data = [result[f"body{i}"][pkt_num] for i in range(80)]
             np.testing.assert_array_equal(got_data, expected_data)
+
+
+def test_expanding():
+    """Simple test for expanding fields."""
+    bin_file = f"{CUR_DIR}/data/byte_order/byteorder_1234.bin"
+    test_byte_order(bin_file, VariableLength, "expand")
