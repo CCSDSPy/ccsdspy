@@ -58,7 +58,7 @@ def test_byte_order(bin_file, cls, decode_method):
 
     expected_file_data = np.array(expected_file_data)
 
-    if decode_method in ("array", "multiarray"):
+    if decode_method in ("array", "multiarray", "expand"):
         shape = {
             "array": 80,
             "multiarray": (40, 2),
