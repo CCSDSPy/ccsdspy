@@ -179,7 +179,7 @@ class FixedLength(_BasePacket):
             self._converters,
             "fixed_length",
             include_primary_header=True,
-            reset_file_obj=reset_file_obj
+            reset_file_obj=reset_file_obj,
         )
 
         # inspect the primary header and issue warning if appropriate
@@ -308,7 +308,7 @@ class VariableLength(_BasePacket):
             self._converters,
             "variable_length",
             include_primary_header=True,
-            reset_file_obj=reset_file_obj
+            reset_file_obj=reset_file_obj,
         )
 
         # inspect the primary header and issue warning if appropriate
@@ -607,7 +607,9 @@ def _get_fields_csv_file(csv_file):
     return fields
 
 
-def _load(file, fields, converters, decoder_name, include_primary_header=False, reset_file_obj=False):
+def _load(
+    file, fields, converters, decoder_name, include_primary_header=False, reset_file_obj=False
+):
     """Decode a file-like object containing a sequence of these packets.
 
     Parameters
@@ -665,7 +667,7 @@ def _load(file, fields, converters, decoder_name, include_primary_header=False, 
     field_arrays = _apply_post_byte_reoderings(field_arrays, orig_fields)
     field_arrays = _apply_converters(field_arrays, converters)
 
-    if hasattr(file, 'read') and reset_file_obj:
+    if hasattr(file, "read") and reset_file_obj:
         file.seek(pos)
     return field_arrays
 
