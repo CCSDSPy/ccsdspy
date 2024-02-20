@@ -156,7 +156,7 @@ class FixedLength(_BasePacket):
         reset_file_obj : bool
            If True, leave the file object, when it is file buffer, where it was before load is called.
            Otherwise, (default), leave the file stream pos after the read packets.
-           Does not apply when file is a file location.
+           Does not apply when file is a string.
 
         Returns
         -------
@@ -282,7 +282,7 @@ class VariableLength(_BasePacket):
         reset_file_obj : bool
            If True, leave the file object, when it is file buffer, where it was before load is called.
            Otherwise, (default), leave the file stream pos after the read packets.
-           Does not apply when file is a file location.
+           Does not apply when file is a string.
 
         Returns
         -------
@@ -628,7 +628,7 @@ def _load(
     reset_file_obj : bool
            If True, leave the file object, when it is a file buffer, where it was before _load is called.
            Otherwise, (default), leave the file stream pos after the read packets.
-           Does not apply when file is a file location.
+           Does not apply when file is a string.
 
     Returns
     -------
@@ -641,7 +641,7 @@ def _load(
       the decoder_name is not one of the allowed values
     """
     if hasattr(file, "read"):
-        pos = file.tell()
+        file_pos = file.tell()
         file_bytes = np.frombuffer(file.read(), "u1")
     else:
         file_bytes = np.fromfile(file, "u1")
@@ -668,7 +668,7 @@ def _load(
     field_arrays = _apply_converters(field_arrays, converters)
 
     if hasattr(file, "read") and reset_file_obj:
-        file.seek(pos)
+        file.seek(file_pos)
     return field_arrays
 
 

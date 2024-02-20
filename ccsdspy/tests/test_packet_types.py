@@ -238,6 +238,7 @@ def test_variable_length_rejects_bit_offset():
 
 
 def test_load_without_moving_file_buffer_pos():
+    """Tests that load(..., reset_file_obj=True) works as intended."""
     pkts = FixedLength.from_file(random_packet_def)
     with open(random_binary_file, "rb") as fp:
         pos = fp.tell()
