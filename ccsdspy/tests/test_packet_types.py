@@ -20,6 +20,12 @@ csv_file_3col = os.path.join(packet_def_dir, "simple_csv_3col.csv")
 csv_file_4col_with_array = os.path.join(packet_def_dir, "simple_csv_4col_with_array.csv")
 csv_file_3col_with_array = os.path.join(packet_def_dir, "simple_csv_3col_with_array.csv")
 
+hs_packet_dir = os.path.join(dir_path, "data", "hs")
+random_binary_file = os.path.join(
+    hs_packet_dir, "apid001", "SSAT1_2015-180-00-00-00_2015-180-01-59-58_1_1_sim.tlm"
+)
+random_packet_def = os.path.join(hs_packet_dir, "apid001", "defs.csv")
+
 
 def test_FixedLength_initializer_copies_field_list():
     """Tests that the FixedLengthPacket initializer stores a copy of the
@@ -229,3 +235,12 @@ def test_variable_length_rejects_bit_offset():
                 ),
             ]
         )
+
+
+def test_load_without_moving_file_buffer_pos():
+    """Tests that load(..., reset_file_obj=True) works as intended."""
+    pkts = FixedLength.from_file(random_packet_def)
+    with open(random_binary_file, "rb") as fp:
+        pos = fp.tell()
+        pkts.load(fp, reset_file_obj=True)
+        assert pos == fp.tell()

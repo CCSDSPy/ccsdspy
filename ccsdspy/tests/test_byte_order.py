@@ -6,6 +6,7 @@ The test data covers all XTCE orderings requested in
 See also:
   ccsdspy/tests/data/byte_order/byte_order_packets.py
 """
+
 import glob
 import itertools
 import os
