@@ -19,7 +19,7 @@ or :ref:`four column <fourcolumn>` format.
 
 At the moment, :ref:`variable` cannot be loaded from a CSV file.
 
- .. contents::
+.. contents::
    :depth: 2
 
 .. _threecolumn:
