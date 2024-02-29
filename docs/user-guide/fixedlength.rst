@@ -33,16 +33,8 @@ The following code defines a simple fixed length packet
    ])
 
 Note that the CCSDS header need not be included as it is included by default.
-A packet need not be defined in code.
-It can also be defined in a text file.
-For example,
 
-With this file, it is then possible to define the packet object with
-
-.. code-block:: python
-
-   import ccsdspy
-   pkt = ccsdspy.FixedLength.from_file('packet_definition.csv')
+Alternatively, fixed length packets can be :ref:`loaded from a CSV file <loadfile>`.
 
 Parsing a file
 ==============
