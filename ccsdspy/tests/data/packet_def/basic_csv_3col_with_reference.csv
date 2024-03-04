@@ -1,0 +1,6 @@
+name, data_type, bit_length
+SHCOARSE, uint, 32
+SHFINE, uint, 20
+OPMODE, uint, 3
+SPACER, fill, 1
+VOLTAGE, "uint(OPMODE)", 8
