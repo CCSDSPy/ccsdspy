@@ -537,14 +537,16 @@ def _parse_csv_array_shape(data_type_str):
     array_shape : str, int, tuple of int
        Parsed array shape to be used in loading CSV.
     """
-    array_shape_str = data_type_str[data_type_str.find("(") + 1: data_type_str.find(")")]
+    array_shape_str = data_type_str[data_type_str.find("(") + 1 : data_type_str.find(")")]
     if array_shape_str == "expand":
         array_shape = "expand"
     elif "," in array_shape_str:
         try:
             array_shape = tuple(map(int, array_shape_str.split(", ")))
         except ValueError:
-            raise ValueError("Array shape must be `expand`, the name of another field, or a tuple of ints.")
+            raise ValueError(
+                "Array shape must be `expand`, the name of another field, or a tuple of ints."
+            )
     else:  # string is either another field for reference or a single integer for a one dimensional array shape
         array_shape = int(array_shape_str) if array_shape_str.isnumeric() else array_shape_str
     return array_shape
@@ -583,7 +585,7 @@ def _get_fields_csv_file(csv_file):
             if "bit_offset" not in headers:  # basic 3 col csv file
                 if (row["data_type"].count("(") == 1) and (row["data_type"].count(")") == 1):
                     data_type = row["data_type"].split("(")[0]
-                    array_shape = _parse_csv_array_shape(row['data_type'])
+                    array_shape = _parse_csv_array_shape(row["data_type"])
                     fields.append(
                         PacketArray(
                             name=row["name"],
@@ -604,7 +606,7 @@ def _get_fields_csv_file(csv_file):
                 # TODO: Check the consistency of bit_offsets versus previous bit_lengths
                 if (row["data_type"].count("(") == 1) and (row["data_type"].count(")") == 1):
                     data_type = row["data_type"].split("(")[0]
-                    array_shape = _parse_csv_array_shape(row['data_type'])
+                    array_shape = _parse_csv_array_shape(row["data_type"])
                     fields.append(
                         PacketArray(
                             name=row["name"],

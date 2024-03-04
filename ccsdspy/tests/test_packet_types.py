@@ -105,11 +105,15 @@ def test_FixedLength_from_file_not_supported(filename):
         FixedLength.from_file(filename)
 
 
-@pytest.mark.parametrize("shape_str, expected_value",
-                         [("uint(4)", 4),
-                          ("uint(1, 2)", (1, 2)),
-                          ("uint(expand)", "expand"),
-                          ("uint(OPMODE)", "OPMODE")])
+@pytest.mark.parametrize(
+    "shape_str, expected_value",
+    [
+        ("uint(4)", 4),
+        ("uint(1, 2)", (1, 2)),
+        ("uint(expand)", "expand"),
+        ("uint(OPMODE)", "OPMODE"),
+    ],
+)
 def test_parse_csv_array_shape(shape_str, expected_value):
     assert _parse_csv_array_shape(shape_str) == expected_value
 
