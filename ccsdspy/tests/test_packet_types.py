@@ -118,6 +118,11 @@ def test_parse_csv_array_shape(shape_str, expected_value):
     assert _parse_csv_array_shape(shape_str) == expected_value
 
 
+def test_parse_csv_array_shape_fails_on_invalid_shape_str():
+    with pytest.raises(ValueError):
+        _parse_csv_array_shape("uint(4, FIELD)")
+
+
 def test_VariableLength_from_file():
     """Test that from_file returns a VariableLength instance"""
     assert isinstance(VariableLength.from_file(csv_file_3col_with_expand), VariableLength)
