@@ -99,7 +99,13 @@ class _BasePacket:
 
         # Check that each of the input field names exists in the packet, and report
         # the missing fields if not
-        fields_in_packet_set = {field._name for field in self._fields}
+        # Collect valid names of fields, which include primary header fields as well
+        # as fields defined in the packet.
+        fields_in_packet_set = set()
+
+        for field in _prepend_primary_header_fields(self._fields):
+            fields_in_packet_set.add(field._name)
+
         input_field_names_set = set(input_field_names)
         all_fields_present = input_field_names_set <= fields_in_packet_set  # subset
 
