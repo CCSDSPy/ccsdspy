@@ -42,8 +42,8 @@ class _BasePacket:
         file : str
            Path to file on the local file system that defines the packet fields.
            Currently only supports csv files.
-           See :download:`simple_csv_3col.csv <../../ccsdspy/tests/data/packet_def/simple_csv_3col.csv>`  # noqa: E501
-           and :download:`simple_csv_4col.csv <../../ccsdspy/tests/data/packet_def/simple_csv_4col.csv>`  # noqa: E501
+           See :download:`basic_csv_3col.csv <../../ccsdspy/tests/data/packet_def/basic_csv_3col.csv>`  # noqa: E501
+           and :download:`extended_csv_4col.csv <../../ccsdspy/tests/data/packet_def/extended_csv_4col.csv>`  # noqa: E501
 
         Returns
         -------
@@ -524,6 +524,34 @@ def _prepend_primary_header_fields(existing_fields):
     return return_fields
 
 
+def _parse_csv_array_shape(data_type_str):
+    """Parse a data type string from a CSV to determine the array shape.
+
+    Parameters
+    ----------
+    data_type_str : str
+        Full string specifying the data type, e.g. `uint(1, 2)`
+
+    Returns
+    -------
+    array_shape : str, int, tuple of int
+       Parsed array shape to be used in loading CSV.
+    """
+    array_shape_str = data_type_str[data_type_str.find("(") + 1 : data_type_str.find(")")]
+    if array_shape_str == "expand":
+        array_shape = "expand"
+    elif "," in array_shape_str:
+        try:
+            array_shape = tuple(map(int, array_shape_str.split(", ")))
+        except ValueError:
+            raise ValueError(
+                "Array shape must be `expand`, the name of another field, or a tuple of ints."
+            )
+    else:  # string is either another field for reference or a single integer for a one dimensional array shape
+        array_shape = int(array_shape_str) if array_shape_str.isnumeric() else array_shape_str
+    return array_shape
+
+
 def _get_fields_csv_file(csv_file):
     """Parse a simple comma-delimited file that defines a packet.
 
@@ -554,19 +582,16 @@ def _get_fields_csv_file(csv_file):
             raise ValueError(f"Minimum required columns are {req_columns}.")
 
         for row in reader:  # skip the header row
-            if "bit_offset" not in headers:  # 3 col csv file
+            if "bit_offset" not in headers:  # basic 3 col csv file
                 if (row["data_type"].count("(") == 1) and (row["data_type"].count(")") == 1):
                     data_type = row["data_type"].split("(")[0]
-                    array_shape_str = row["data_type"][
-                        row["data_type"].find("(") + 1 : row["data_type"].find(")")
-                    ]
-                    array_shape = tuple(map(int, array_shape_str.split(", ")))
+                    array_shape = _parse_csv_array_shape(row["data_type"])
                     fields.append(
                         PacketArray(
                             name=row["name"],
                             data_type=data_type,
                             bit_length=int(row["bit_length"]),
-                            array_shape=(array_shape),
+                            array_shape=array_shape,
                         )
                     )
                 else:
@@ -577,14 +602,11 @@ def _get_fields_csv_file(csv_file):
                             bit_length=int(row["bit_length"]),
                         )
                     )
-            if "bit_offset" in headers:  # 4 col csv file provides bit offsets
+            if "bit_offset" in headers:  # extended 4 col csv file provides bit offsets
                 # TODO: Check the consistency of bit_offsets versus previous bit_lengths
                 if (row["data_type"].count("(") == 1) and (row["data_type"].count(")") == 1):
                     data_type = row["data_type"].split("(")[0]
-                    array_shape_str = row["data_type"][
-                        row["data_type"].find("(") + 1 : row["data_type"].find(")")
-                    ]
-                    array_shape = tuple(map(int, array_shape_str.split(", ")))
+                    array_shape = _parse_csv_array_shape(row["data_type"])
                     fields.append(
                         PacketArray(
                             name=row["name"],

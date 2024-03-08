@@ -11,14 +11,17 @@ import pytest
 
 from .. import FixedLength, VariableLength, PacketField, PacketArray
 from ..constants import BITS_PER_BYTE
-from ..packet_types import _get_fields_csv_file
+from ..packet_types import _get_fields_csv_file, _parse_csv_array_shape
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 packet_def_dir = os.path.join(dir_path, "data", "packet_def")
-csv_file_4col = os.path.join(packet_def_dir, "simple_csv_4col.csv")
-csv_file_3col = os.path.join(packet_def_dir, "simple_csv_3col.csv")
-csv_file_4col_with_array = os.path.join(packet_def_dir, "simple_csv_4col_with_array.csv")
-csv_file_3col_with_array = os.path.join(packet_def_dir, "simple_csv_3col_with_array.csv")
+csv_file_4col = os.path.join(packet_def_dir, "extended_csv_4col.csv")
+csv_file_3col = os.path.join(packet_def_dir, "basic_csv_3col.csv")
+csv_file_4col_with_array = os.path.join(packet_def_dir, "extended_csv_4col_with_array.csv")
+csv_file_3col_with_array = os.path.join(packet_def_dir, "basic_csv_3col_with_array.csv")
+csv_file_3col_with_expand = os.path.join(packet_def_dir, "basic_csv_3col_with_expand.csv")
+csv_file_3col_with_reference = os.path.join(packet_def_dir, "basic_csv_3col_with_reference.csv")
+csv_file_3col_with_all = os.path.join(packet_def_dir, "basic_csv_3col_with_all.csv")
 
 hs_packet_dir = os.path.join(dir_path, "data", "hs")
 random_binary_file = os.path.join(
@@ -100,6 +103,31 @@ def test_FixedLength_from_file_not_supported(filename):
     """Test that if given an unsupported filetype raises an error"""
     with pytest.raises(ValueError):
         FixedLength.from_file(filename)
+
+
+@pytest.mark.parametrize(
+    "shape_str, expected_value",
+    [
+        ("uint(4)", 4),
+        ("uint(1, 2)", (1, 2)),
+        ("uint(expand)", "expand"),
+        ("uint(OPMODE)", "OPMODE"),
+    ],
+)
+def test_parse_csv_array_shape(shape_str, expected_value):
+    assert _parse_csv_array_shape(shape_str) == expected_value
+
+
+def test_parse_csv_array_shape_fails_on_invalid_shape_str():
+    with pytest.raises(ValueError):
+        _parse_csv_array_shape("uint(4, FIELD)")
+
+
+def test_VariableLength_from_file():
+    """Test that from_file returns a VariableLength instance"""
+    assert isinstance(VariableLength.from_file(csv_file_3col_with_expand), VariableLength)
+    assert isinstance(VariableLength.from_file(csv_file_3col_with_reference), VariableLength)
+    assert isinstance(VariableLength.from_file(csv_file_3col_with_all), VariableLength)
 
 
 @pytest.mark.parametrize(
