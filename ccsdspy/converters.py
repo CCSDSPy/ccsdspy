@@ -381,5 +381,3 @@ class StringifyBytesConverter(Converter):
         converted = np.array(converted, dtype=object)
 
         return converted
-
-
