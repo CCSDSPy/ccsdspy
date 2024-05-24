@@ -5,8 +5,12 @@ The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`
 Version 1.3.0 - 2024-05-24
 ============================
   * Added support for custom byte orderings in  `ccsdspy.PacketField` and `ccsdspy.PacketArray`. You can now pass strings like `byte_order="3412"` in addition to `byte_order="big"` and `byte_order="little"`. (Discussion `#110 <https://github.com/CCSDSPy/ccsdspy/discussions/110>`_)
-  * Accept CCSDS header fields as converter inputs (`PR #118 <https://github.com/CCSDSPy/ccsdspy/pull/118>`_)
 
+  * Implement loading variable length packets from CSV (`Issue #115 <https://github.com/CCSDSPy/ccsdspy/issues/115>`_)
+  * Add documentation page: :doc:`/user-guide/loadfile`
+  * Accept CCSDS header fields as converter inputs (`PR #118 <https://github.com/CCSDSPy/ccsdspy/pull/118>`_)
+  * Add support `pkt.load(fh, reset_file_obj=True)` keyword argument which resets file handle to original position before loading (`Issue #111 <https://github.com/CCSDSPy/ccsdspy/issues/111>`_)
+    
 Version 1.2.1 - 2023-11-26
 ==========================
   * Fixed bug/regression introduced in 1.2.0 from signed integer patch (Discussion `#101 <https://github.com/CCSDSPy/ccsdspy/discussions/101>`_)
