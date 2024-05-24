@@ -29,6 +29,9 @@ The result will be a dictionary with the names as the keys.
 The values are arrays with the `~ccsdspy.PacketArray` field providing arrays with variable sizes.
 It is also possible to get access to the packet primary header. See :ref:`getting-header`.
 
+.. warning::
+    `bit_offset` cannot be specified for variable length packets. Instead, the packet definition must define all packets, and the bit offsets are calculated automatically.
+
 .. contents::
    :depth: 2
 

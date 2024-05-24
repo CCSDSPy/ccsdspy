@@ -67,13 +67,13 @@ The following example shows how simple it is to read in fixed length CCSDS packe
         PacketField(name='OPMODE',   data_type='uint', bit_length=3),
         PacketField(name='SPACER',   data_type='fill', bit_length=1),
         PacketField(name='VOLTAGE',  data_type='int',  bit_length=8),
-	PacketArray(
+        PacketArray(
             name='SENSOR_GRID',
             data_type='uint',
             bit_length=16,
             array_shape=(32, 32),
             array_order='C'
-	),
+        ),
    ])
    
    result = pkt.load('mypackets.bin')
