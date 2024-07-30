@@ -2,6 +2,10 @@ Notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`__.
 
 
+Version 1.3.1 - 2024-07-30
+============================
+  * Pin NumPy under 2.0 to Dependencies (Support for NumPy 2 will come at a later date)
+
 Version 1.3.0 - 2024-05-24
 ============================
   * Added support for custom byte orderings in  `ccsdspy.PacketField` and `ccsdspy.PacketArray`. You can now pass strings like `byte_order="3412"` in addition to `byte_order="big"` and `byte_order="little"`. (Discussion `#110 <https://github.com/CCSDSPy/ccsdspy/discussions/110>`_)
