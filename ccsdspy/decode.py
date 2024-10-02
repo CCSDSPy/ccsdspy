@@ -306,7 +306,9 @@ def _decode_variable_length(file_bytes, fields):
     # Loop through packets
     # ----------------------------------------------------------------------------
     for pkt_num, packet_start in enumerate(packet_starts):
-        packet_nbytes = int(file_bytes[packet_start + 4]) * 256 + int(file_bytes[packet_start + 5]) + 7
+        packet_nbytes = (
+            int(file_bytes[packet_start + 4]) * 256 + int(file_bytes[packet_start + 5]) + 7
+        )
         bit_offsets_cur = bit_offsets.copy()
         bit_lengths_cur = {}
 
@@ -341,7 +343,9 @@ def _decode_variable_length(file_bytes, fields):
             if bit_offsets_cur[field._name] < 0:
                 # Footer byte after expanding field: Referenced from end of packet
                 start_byte = (
-                    packet_start + packet_nbytes + int(bit_offsets_cur[field._name]) // BITS_PER_BYTE
+                    packet_start
+                    + packet_nbytes
+                    + int(bit_offsets_cur[field._name]) // BITS_PER_BYTE
                 )
             else:
                 # Header byte before expanding field: Referenced from start of packet
@@ -387,7 +391,7 @@ def _decode_variable_length(file_bytes, fields):
                         b = packet_nbytes * BITS_PER_BYTE + bit_offsets_cur[field._name]
 
                     last_occupied_bit = packet_start * BITS_PER_BYTE + b + bit_length
-                    
+
                     left_bits_before_shift = b % BITS_PER_BYTE
                     right_shift = end_last_parent_byte - last_occupied_bit
 
