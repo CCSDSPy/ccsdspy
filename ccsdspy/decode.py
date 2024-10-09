@@ -42,11 +42,11 @@ def _get_packet_total_bytes(primary_header_bytes):
         )
 
     # These variables are named based on 1-indexing
-    primary_header_byte5 = primary_header_bytes[4]
-    primary_header_byte6 = primary_header_bytes[5]
+    primary_header_byte5 = int(primary_header_bytes[4])
+    primary_header_byte6 = int(primary_header_bytes[5])
 
     # Number of bytes listed in the orimary header. The value in the
-    # primary header is the number of byes in the body minus one.
+    # primary header is the number of bytes in the body minus one.
     num_bytes = primary_header_byte5 << BITS_PER_BYTE
     num_bytes += primary_header_byte6
     num_bytes += 1
@@ -224,10 +224,10 @@ def _decode_fixed_length(file_bytes, fields):
             arr.dtype = meta.np_dtype
 
         if field._data_type in ("int", "uint"):
-            xbytes = meta.nbytes_final - meta.nbytes_file
+            xbytes = int(meta.nbytes_final) - int(meta.nbytes_file)
 
             bitmask_left = (
-                bit_offset[field._name]
+                int(bit_offset[field._name])
                 + BITS_PER_BYTE * xbytes
                 - BITS_PER_BYTE * meta.start_byte_file
             )
@@ -240,11 +240,11 @@ def _decode_fixed_length(file_bytes, fields):
 
             bitmask = np.zeros(arr.shape, arr.dtype)
             bitmask |= (1 << int(BITS_PER_BYTE * meta.nbytes_final - bitmask_left)) - 1
-            tmp = np.left_shift([1], bitmask_right)
+            tmp = np.left_shift([1], int(bitmask_right))
             bitmask &= np.bitwise_not(tmp[0] - 1).astype(arr.dtype)
 
             arr &= bitmask
-            arr >>= bitmask_right
+            arr >>= int(bitmask_right)
 
             if field._byte_order_parse == "little":
                 arr.byteswap(inplace=True)
@@ -287,7 +287,7 @@ def _decode_variable_length(file_bytes, fields):
 
     while offset < len(file_bytes):
         packet_starts.append(offset)
-        offset += file_bytes[offset + 4] * 256 + file_bytes[offset + 5] + 7
+        offset += int(file_bytes[offset + 4]) * 256 + int(file_bytes[offset + 5]) + 7
 
     if offset != len(file_bytes):
         missing_bytes = offset - len(file_bytes)
@@ -306,7 +306,9 @@ def _decode_variable_length(file_bytes, fields):
     # Loop through packets
     # ----------------------------------------------------------------------------
     for pkt_num, packet_start in enumerate(packet_starts):
-        packet_nbytes = file_bytes[packet_start + 4] * 256 + file_bytes[packet_start + 5] + 7
+        packet_nbytes = (
+            int(file_bytes[packet_start + 4]) * 256 + int(file_bytes[packet_start + 5]) + 7
+        )
         bit_offsets_cur = bit_offsets.copy()
         bit_lengths_cur = {}
 
@@ -322,7 +324,7 @@ def _decode_variable_length(file_bytes, fields):
 
             elif isinstance(field._array_shape, str):
                 # Defined by previous field
-                bit_length = field_arrays[field._array_shape][pkt_num] * field._bit_length
+                bit_length = int(field_arrays[field._array_shape][pkt_num]) * field._bit_length
             else:
                 bit_length = field._bit_length
 
@@ -341,14 +343,16 @@ def _decode_variable_length(file_bytes, fields):
             if bit_offsets_cur[field._name] < 0:
                 # Footer byte after expanding field: Referenced from end of packet
                 start_byte = (
-                    packet_start + packet_nbytes + bit_offsets_cur[field._name] // BITS_PER_BYTE
+                    packet_start
+                    + packet_nbytes
+                    + int(bit_offsets_cur[field._name]) // BITS_PER_BYTE
                 )
             else:
                 # Header byte before expanding field: Referenced from start of packet
-                start_byte = packet_start + bit_offsets_cur[field._name] // BITS_PER_BYTE
+                start_byte = packet_start + int(bit_offsets_cur[field._name]) // BITS_PER_BYTE
 
             if isinstance(field._array_shape, str):
-                stop_byte = start_byte + bit_lengths_cur[field._name] // BITS_PER_BYTE
+                stop_byte = start_byte + int(bit_lengths_cur[field._name]) // BITS_PER_BYTE
                 field_raw_data = file_bytes[start_byte:stop_byte]
             else:
                 # Get field_raw_data, which are the bytes of the field as uint8 for this
@@ -361,7 +365,7 @@ def _decode_variable_length(file_bytes, fields):
                 )
 
                 nbytes_final = {3: 4, 5: 8, 6: 8, 7: 8}.get(nbytes_file, nbytes_file)
-                xbytes = nbytes_final - nbytes_file
+                xbytes = int(nbytes_final) - int(nbytes_file)
                 field_raw_data = np.zeros(nbytes_final, "u1")
 
                 for i in range(xbytes, nbytes_final):
@@ -379,14 +383,15 @@ def _decode_variable_length(file_bytes, fields):
 
             if field._data_type in ("uint", "int"):
                 if not isinstance(field._array_shape, str):
-                    last_byte = start_byte + nbytes_file
+                    last_byte = int(start_byte) + int(nbytes_file)
                     end_last_parent_byte = last_byte * BITS_PER_BYTE
 
-                    b = bit_offsets_cur[field._name]
+                    b = int(bit_offsets_cur[field._name])
                     if b < 0:
                         b = packet_nbytes * BITS_PER_BYTE + bit_offsets_cur[field._name]
 
                     last_occupied_bit = packet_start * BITS_PER_BYTE + b + bit_length
+
                     left_bits_before_shift = b % BITS_PER_BYTE
                     right_shift = end_last_parent_byte - last_occupied_bit
 
