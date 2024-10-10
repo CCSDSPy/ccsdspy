@@ -6,9 +6,9 @@ CCSDS
 
 Overview
 ========
-The `Consultative Committee for Space Data Systems (CCSDS) <https://public.ccsds.org/default.aspx>`__ is a multi-national forum for the development of communications & data systems standards for spaceflight.
-It maintains space communications & data handling `standards <https://public.ccsds.org/Publications/default.aspx>`__ to enhance interoperability across governmental & commercial projects.
-One of the standards published by this group is the `CCSDS Space Packet protocol <https://public.ccsds.org/Pubs/133x0b2e1.pdf>`__ which defines how space missions transfer space application data both sending and receiving.
+The `Consultative Committee for Space Data Systems (CCSDS) <https://public.ccsds.org>`__ is a multi-national forum for the development of communications & data systems standards for spaceflight.
+It maintains space communications & data handling `standards <https://public.ccsds.org/Publications>`__ to enhance interoperability across governmental & commercial projects.
+One of the standards published by this group is the `CCSDS Space Packet protocol <https://public.ccsds.org/Pubs/133x0b2e2.pdf>`__ which defines how space missions transfer space application data both sending and receiving.
 The maximum length of a CCSDS packet is 65536
 
 A CCSDS packet is made of three parts: a required primary header, an optional secondary header, and a User data section.
@@ -66,12 +66,12 @@ The mandatory packet primary header consists of four fields contained within 6 o
    * - Application process identifier or APID
      - 11
      - The APID provides a way to uniquely identify sending or receiving applications on a space vehicle.
-   * - Packet sequence control field
+   * - Packet sequence control field or packet name
      -
-     -
+     - For telemetry packets, the sequence field shall contain the Packet Sequence Count. For command packets, this field shall contain either the Packet Sequence Count or 14-bit Packet Name.
    * - Sequence flag
      - 2
-     - Set to '01' if the data is a continuation segment, set to '00' if it contains the first segment of data.
+     - Set to '11' if unsegment data, set to '01' if the data is a continuation segment, set to '00' if it contains the first segment, '10' if the last segment.
    * - Packet sequence count or packet name
      - 14
      - the sequential binary count of each packet for a specific APID. The purpose is to allow packets to be ordered.
@@ -79,4 +79,4 @@ The mandatory packet primary header consists of four fields contained within 6 o
      - 16
      - The length in octets of the remainder of the packet minus 1 octet.
 
-For more information see Section 4.1.3 of the `CCSDS Blue book <https://public.ccsds.org/Pubs/133x0b2e1.pdf>`_.
+For more information see Section 4.1.3 of the `CCSDS Blue book <https://public.ccsds.org/Pubs/133x0b2e2.pdf>`_.
