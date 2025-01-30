@@ -635,7 +635,7 @@ def test_numpy2_dtype_poly_and_linear():
     converter = converters.PolyConverter(coeffs)
     converted = converter.convert(field_array)
 
-    # test no linearconverter (no exception)
+    # test linearconverter (no exception)
     converter = converters.LinearConverter(*coeffs)
     converted = converter.convert(field_array)
 
