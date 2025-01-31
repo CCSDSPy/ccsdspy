@@ -1,6 +1,10 @@
 Notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`__.
 
+Version 1.3.3 - 2025-01-31
+============================
+  * Fix bug where `converters.PolyConverter` and `converters.LinearConverter` would raise an exception when the field array was unsigned and coefficient was negative (`Issue #132 <https://github.com/CCSDSPy/ccsdspy/issues/132>`_)
+
 Version 1.3.2 - 2024-10-17
 ============================
   * Add support for NumPy >2.0, while maintining support for <2.0
