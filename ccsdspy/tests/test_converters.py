@@ -619,4 +619,3 @@ def test_end_to_end(cls):
     )
 
     os.remove(TEST_FILENAME)
-

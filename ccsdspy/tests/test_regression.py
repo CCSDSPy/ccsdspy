@@ -229,17 +229,17 @@ def test_non_byte_aligned_uint(pkt_class):
     assert all(elem == 32 for elem in result1["param1"]), f"Got: repr(result1['param1'])"
     assert all(elem == 31 for elem in result2["param2"]), f"Got: repr(result2['param2'])"
 
-    
+
 def test_numpy2_dtype_poly_and_linear():
     """Fixes compatability issue with converters and NumPy 2
-    
+
     See: https://github.com/CCSDSPy/ccsdspy/issues/132
     """
     # Test this doesn't throw an exception
 
     coeffs = np.array([-2, -1], np.int16)
     field_array = np.array([50], dtype=np.uint16)
-    
+
     # test polyconverter (no exception)
     converter = converters.PolyConverter(coeffs)
     converted = converter.convert(field_array)
@@ -247,5 +247,3 @@ def test_numpy2_dtype_poly_and_linear():
     # test linearconverter (no exception)
     converter = converters.LinearConverter(*coeffs)
     converted = converter.convert(field_array)
-
-    
