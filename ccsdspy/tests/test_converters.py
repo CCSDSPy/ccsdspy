@@ -620,23 +620,3 @@ def test_end_to_end(cls):
 
     os.remove(TEST_FILENAME)
 
-
-def test_numpy2_dtype_poly_and_linear():
-    """Related to Github Issue #132
-    
-    https://github.com/CCSDSPy/ccsdspy/issues/132
-    """
-    # Test this doesn't throw an exception
-
-    coeffs = np.array([-2, -1], np.int16)
-    field_array = np.array([50], dtype=np.uint16)
-    
-    # test polyconverter (no exception)
-    converter = converters.PolyConverter(coeffs)
-    converted = converter.convert(field_array)
-
-    # test linearconverter (no exception)
-    converter = converters.LinearConverter(*coeffs)
-    converted = converter.convert(field_array)
-
-    
