@@ -6,6 +6,7 @@ import os
 import numpy as np
 import pytest
 
+from .. import converters
 from .. import FixedLength, VariableLength, PacketField, PacketArray
 
 
