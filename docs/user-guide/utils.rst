@@ -130,6 +130,7 @@ Packet Validation
 =================
 
 The `utils.validate()` can be used for high-level validation of files containing CCSDS packets. This function checks the following:
+
 - **File Integrity Check**: Verifies that the total bytes accounted for by packets match the file size. If not, a `UserWarning` is issued, indicating potential truncation or extra garbage data, e.g., "File appears truncated - missing X bytes (or maybe garbage at end)".
 - **Header Checks**: Automatically checks the CCSDS header fields for consistency. See :ref:`inspecting_headers`.
 
