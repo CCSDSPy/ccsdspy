@@ -38,6 +38,8 @@ This generates the following output for a sequence of variable length packets:
   20e20003000d000700080009000a000b000c000d
   20e200040015000b000c000d000e000f001000110012001300140015
 
+These functions perform integrity checks wile iterating through the packets in the given file: 
+- **File Integrity Check**: A `UserWarning` is issued if the total bytes successfully read from packets don't match the file size, e.g., "File appears truncated-- missing X byte (or maybe garbage at end)". This applies to mixed APID files and both packet types.
 
 Counting Number of Packets in a File
 ====================================
@@ -61,7 +63,9 @@ This function works with mixed files containing multiple APIDs, which may includ
      print(f"The last packet is incomplete. {missing_bytes} bytes "
            "would need to be added to complete the last packet")
 
-  
+These functions perform integrity checks wile iterating through the packets in the given file: 
+- **File Integrity Check**: A `UserWarning` is issued if the total bytes successfully read from packets don't match the file size, e.g., "File appears truncated-- missing X byte (or maybe garbage at end)". This applies to mixed APID files and both packet types.
+
 Splitting Mixed Streams by APID
 ===============================
 Often, CCSDS data will arrive from external sources into software systems in a single file with multiple APIDs.
@@ -120,3 +124,21 @@ The output of this code block is:
   Packet 3 has APID 392
   Packet 4 has APID 394
   Packet 5 has APID 393
+
+
+Packet Validation
+=================
+
+The `utils.validate()` can be used for high-level validation of files containing CCSDS packets. This function checks the following:
+- **File Integrity Check**: Verifies that the total bytes accounted for by packets match the file size. If not, a `UserWarning` is issued, indicating potential truncation or extra garbage data, e.g., "File appears truncated - missing X bytes (or maybe garbage at end)".
+- **Header Checks**: Automatically checks the CCSDS header fields for consistency. See :ref:`inspecting_headers`.
+
+This function works with mixed files containing multiple APIDs, which may include both fixed length and variable length packets.
+
+.. code-block:: python
+
+  from ccsdspy.utils import validate
+
+  validate('mixed_file.tlm')
+
+This outputs a `List[str]` of warnigs or exceptions encountered during the validation process. If no issues are found, an empty list is returned.

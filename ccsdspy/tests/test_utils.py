@@ -11,7 +11,7 @@ import numpy as np
 import pytest
 
 from .. import utils
-
+from .test_primary_header import TEST_FILENAME, create_simple_ccsds_packet
 
 def test_count_packets_missing_bytes():
     dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -140,3 +140,35 @@ def test_read_primary_headers():
         assert np.all(header_arrays["CCSDS_APID"] == apid)
         assert np.all(np.diff(header_arrays["CCSDS_SEQUENCE_COUNT"]) > 0)
         assert np.unique(header_arrays["CCSDS_PACKET_LENGTH"]).size == 1  # fixed length
+
+def test_validate():
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    data_path = os.path.join(dir_path, "data", "split")
+    
+    # Test Header Parsing
+    valid_tlm_path = os.path.join(data_path, "CYGNSS_F7_L0_2022_086_10_15_V01_F__first101pkts.tlm")
+    result = utils.validate(valid_tlm_path)
+    assert len(result) == 3
+    assert any("UserWarning: Missing packets found" in warning for warning in result)
+    assert any("UserWarning: Sequence count are out of order." in warning for warning in result)
+    assert any("UserWarning: Found multiple AP IDs" in warning for warning in result)
+
+    # Test with a file that has missing bytes
+    with open(valid_tlm_path, "rb") as fh:
+        file_bytes = fh.read()
+    truncated_file_bytes = file_bytes[:-5]  # make last packet be incomplete
+    truncated_file = io.BytesIO(truncated_file_bytes)
+    result = utils.validate(truncated_file)
+    assert any("UserWarning: File appears truncated" in warning for warning in result)
+
+    # Test with a file that has an unknown APID
+    valid_apids = [384, 1313, 386, 391, 392, 393] # Missing 394
+    result = utils.validate(valid_tlm_path, valid_apids=valid_apids)
+    assert any("UserWarning: Found unknown APID" in warning for warning in result)
+
+    # Test with a Valid Test File
+    num_packets = 3
+    packet = create_simple_ccsds_packet(num_packets)  # noqa: F841
+    result = utils.validate(TEST_FILENAME, valid_apids=[10])
+    assert len(result) == 0
+    os.remove(TEST_FILENAME)
