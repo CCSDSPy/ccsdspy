@@ -13,6 +13,7 @@ import pytest
 from .. import utils
 from .test_primary_header import TEST_FILENAME, create_simple_ccsds_packet
 
+
 def test_count_packets_missing_bytes():
     dir_path = os.path.dirname(os.path.realpath(__file__))
     data_path = os.path.join(dir_path, "data", "split")
@@ -141,10 +142,11 @@ def test_read_primary_headers():
         assert np.all(np.diff(header_arrays["CCSDS_SEQUENCE_COUNT"]) > 0)
         assert np.unique(header_arrays["CCSDS_PACKET_LENGTH"]).size == 1  # fixed length
 
+
 def test_validate():
     dir_path = os.path.dirname(os.path.realpath(__file__))
     data_path = os.path.join(dir_path, "data", "split")
-    
+
     # Test Header Parsing
     valid_tlm_path = os.path.join(data_path, "CYGNSS_F7_L0_2022_086_10_15_V01_F__first101pkts.tlm")
     result = utils.validate(valid_tlm_path)
@@ -162,7 +164,7 @@ def test_validate():
     assert any("UserWarning: File appears truncated" in warning for warning in result)
 
     # Test with a file that has an unknown APID
-    valid_apids = [384, 1313, 386, 391, 392, 393] # Missing 394
+    valid_apids = [384, 1313, 386, 391, 392, 393]  # Missing 394
     result = utils.validate(valid_tlm_path, valid_apids=valid_apids)
     assert any("UserWarning: Found unknown APID" in warning for warning in result)
 

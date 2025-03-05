@@ -256,16 +256,19 @@ def count_packets(file, return_missing_bytes=False):
         return num_packets
 
 
-def validate(file, valid_apids=None):
+def validate(file: str | BytesIO, valid_apids: list[int] | None = None):
     """
-    Validate a file containing CCSDS packets by reusing existing functions
-    and capturing any exceptions or warnings they generate.
+    Validate a file containing CCSDS packets and capturing any exceptions or warnings they generate.
+    This function checks:
+
+    - Primary header consistency (sequence counts in order, no missing sequence numbers, found APIDs)
+    - File integrity (truncation, extra bytes)
 
     Parameters
     ----------
-    file: 
+    file: `str | BytesIO`
         A file path (str) or file-like object with a `.read()` method.
-    valid_apids: list of int, None
+    valid_apids: `list[int]| None`, optional
        Optional list of valid APIDs. If specified, warning will be issued when
        an APID is encountered outside this list.
 
