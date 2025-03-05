@@ -29,6 +29,11 @@ The result will be a dictionary with the names as the keys.
 The values are arrays with the `~ccsdspy.PacketArray` field providing arrays with variable sizes.
 It is also possible to get access to the packet primary header. See :ref:`getting-header`.
 
+During variable-length packet parsing, the library checks:
+
+- **File Integrity Check**: Verifies that the total bytes accounted for by packets match the file size. If not, a `UserWarning` is issued, indicating potential truncation or extra garbage data, e.g., "File appears truncated - missing X bytes (or maybe garbage at end)".
+- **Header Checks**: Automatically checks the CCSDS header fields for consistency. See :ref:`inspecting_headers`.
+
 .. warning::
     `bit_offset` cannot be specified for variable length packets. Instead, the packet definition must define all packets, and the bit offsets are calculated automatically.
 

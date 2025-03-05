@@ -65,6 +65,11 @@ def _get_packet_apid(primary_header_bytes):
       Bytes associated with the packet primary header, of length
       `ccsdspy.constants.PRIMARY_HEADER_NUM_BYTES`.
 
+    Returns
+    -------
+    apid : int
+        Application Process ID of the packet.
+
     Raises
     ------
     ValueError
@@ -104,6 +109,15 @@ def _decode_fixed_length(file_bytes, fields):
     -------
     dictionary mapping field names to NumPy arrays, stored in the same order as
     the fields array passed.
+
+    Raises
+    ------
+    RuntimeError
+       If a field bit offsets do not match the length of the packet.
+    AssertionError
+        If all field bit offsets are not defined and the total bitlength of the fields does not match the packet length.
+    RuntimeError
+        If the fixed length packet definition is larger than the packet length.
     """
     # Setup a dictionary mapping a bit offset to each field. It is assumed
     # that the `fields` array contains entries for the secondary header.
@@ -280,6 +294,11 @@ def _decode_variable_length(file_bytes, fields):
     -------
     dict
     A dictionary mapping field names to NumPy arrays, stored in the same order as the fields.
+
+    Warns
+    -----
+    UserWarning
+       If the file appears to be truncated.
     """
     # Get start indices of each packet -------------------------------------
     packet_starts = []
