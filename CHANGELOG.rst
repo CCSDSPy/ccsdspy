@@ -1,6 +1,15 @@
 Notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`__.
 
+Version 1.4.0 - 2025-03-05
+============================
+  * Enhanced Docstrings to call out `Raises` and `Warns` 
+  * Updated sphinx docs to include descriptions of file and packet checks when loading files. 
+  * Introduced new `utils.validate()` function for high-level validation of CCSDS packet files:
+    * Checks file integrity (e.g., truncation or extra bytes) and header consistency.
+    * Returns a list of warnings or exceptions (e.g., "UserWarning: File appears truncated" or "UserWarning: Found unknown APID") encountered during validation.
+  * Supports optional valid_apids parameter to warn about unexpected APIDs.
+
 Version 1.3.3 - 2025-01-31
 ============================
   * Fix bug where `converters.PolyConverter` and `converters.LinearConverter` would raise an exception when the field array was unsigned and coefficient was negative (`Issue #132 <https://github.com/CCSDSPy/ccsdspy/issues/132>`_)
