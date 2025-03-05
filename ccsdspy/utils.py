@@ -256,7 +256,7 @@ def count_packets(file, return_missing_bytes=False):
         return num_packets
 
 
-def validate(file: str | BytesIO, valid_apids: list[int] | None = None):
+def validate(file, valid_apids=None):
     """
     Validate a file containing CCSDS packets and capturing any exceptions or warnings they generate.
     This function checks:
