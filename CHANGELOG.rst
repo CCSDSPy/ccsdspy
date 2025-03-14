@@ -1,6 +1,11 @@
 Notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`__.
 
+Version 1.4.1 - 2025-03-14
+============================
+  * Updates the `ccsdspy.utils.validate()` function so that packets are split by APID before primary headers data is parsed. This change allows for more accurate validation of the primary headers and APIDs.
+  * This removes potentially misleading warnings from `read_primary_headers` for having multiple apids, having missing or out of order sequence counts.
+
 Version 1.4.0 - 2025-03-05
 ============================
   * Enhanced Docstrings to call out `Raises` and `Warns` 

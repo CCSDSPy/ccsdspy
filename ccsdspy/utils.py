@@ -284,11 +284,13 @@ def validate(file, valid_apids=None):
         warnings.simplefilter("always")  # Capture all warnings, even if repeated
 
         try:
-            # Check primary header consistency (sequence counts, APIDs)
-            read_primary_headers(file)
-
             # Check file integrity (truncation, extra bytes)
-            split_by_apid(file, valid_apids=valid_apids)
+            stream_by_apid = split_by_apid(file, valid_apids=valid_apids)
+
+            primary_headers_by_apid = {}
+            for apid in stream_by_apid:
+                # Check primary header consistency (sequence counts, APIDs)
+                primary_headers_by_apid[apid] = read_primary_headers(stream_by_apid[apid])
         except Exception as e:
             # Capture any exceptions as warnings
             warning_details.append(f"Exception: {str(e)}")
