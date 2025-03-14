@@ -151,9 +151,9 @@ def test_validate():
     valid_tlm_path = os.path.join(data_path, "CYGNSS_F7_L0_2022_086_10_15_V01_F__first101pkts.tlm")
     result = utils.validate(valid_tlm_path)
     assert len(result) == 3
-    assert any("UserWarning: Missing packets found" in warning for warning in result)
-    assert any("UserWarning: Sequence count are out of order." in warning for warning in result)
-    assert any("UserWarning: Found multiple AP IDs" in warning for warning in result)
+    assert all("UserWarning: Missing packets found" in warning for warning in result)
+    assert all("UserWarning: Sequence count are out of order." not in warning for warning in result)
+    assert all("UserWarning: Found multiple AP IDs" not in warning for warning in result)
 
     # Test with a file that has missing bytes
     with open(valid_tlm_path, "rb") as fh:
