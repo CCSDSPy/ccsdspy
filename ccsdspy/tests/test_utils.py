@@ -195,7 +195,7 @@ def test_validate_valid_apids():
     assert all("UserWarning: Found multiple AP IDs" not in warning for warning in result)
 
 
-def test_validatino_no_warnings():
+def test_validation_no_warnings():
     # Test with a Valid Test File
     num_packets = 3
     packet = create_simple_ccsds_packet(num_packets)  # noqa: F841
