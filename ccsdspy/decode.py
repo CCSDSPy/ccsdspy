@@ -305,8 +305,11 @@ def _decode_variable_length(file_bytes, fields):
     offset = 0
 
     while offset < len(file_bytes):
-        packet_starts.append(offset)
-        offset += int(file_bytes[offset + 4]) * 256 + int(file_bytes[offset + 5]) + 7
+        if offset + 5 < len(file_bytes):
+            packet_starts.append(offset)
+            offset += int(file_bytes[offset + 4]) * 256 + int(file_bytes[offset + 5]) + 7
+        else:
+            break
 
     if offset != len(file_bytes):
         missing_bytes = offset - len(file_bytes)
@@ -328,6 +331,9 @@ def _decode_variable_length(file_bytes, fields):
         packet_nbytes = (
             int(file_bytes[packet_start + 4]) * 256 + int(file_bytes[packet_start + 5]) + 7
         )
+        if packet_start + packet_nbytes > len(file_bytes):
+            continue
+
         bit_offsets_cur = bit_offsets.copy()
         bit_lengths_cur = {}
 
