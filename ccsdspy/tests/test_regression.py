@@ -2,6 +2,7 @@
 
 import io
 import os
+import shutil
 
 import numpy as np
 import pytest
@@ -247,3 +248,35 @@ def test_numpy2_dtype_poly_and_linear():
     # test linearconverter (no exception)
     converter = converters.LinearConverter(*coeffs)
     converted = converter.convert(field_array)
+
+
+@pytest.mark.parametrize("pkt_class", [FixedLength, VariableLength])
+@pytest.mark.parametrize("num_garbage_bytes", list(range(1, 11)))
+def test_readahead_primary_header_IndexError(pkt_class, num_garbage_bytes):
+    """Fixes IndexError from reading primary header in packet iteration when
+    file ends abruptly.
+
+    See: https://github.com/CCSDSPy/ccsdspy/issues/139
+    """
+    pkt = VariableLength(
+        [
+            PacketArray(
+                name="data",
+                data_type="uint",
+                bit_length=16,
+                array_shape="expand",
+            ),
+            PacketField(name="footer", data_type="uint", bit_length=16),
+        ]
+    )
+
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    bin_path = os.path.join(dir_path, "data", "var_length", "var_length_packets_with_footer.bin")
+    new_path = os.path.join(dir_path, "data", "garbage_at_end.bin")
+    shutil.copy(bin_path, new_path)
+
+    with open(new_path, "ab") as fh:
+        fh.write(b"a" * num_garbage_bytes)
+
+    with pytest.warns(UserWarning, match="File appears truncated"):
+        result = pkt.load(new_path)
