@@ -69,9 +69,16 @@ def iter_packet_bytes(file, include_primary_header=True):
         delta_idx = PRIMARY_HEADER_NUM_BYTES
 
     while offset < len(file_bytes):
-        packet_nbytes = get_packet_total_bytes(
-            file_bytes[offset : offset + PRIMARY_HEADER_NUM_BYTES].tobytes()
-        )
+        pri_header_bytes = file_bytes[offset : offset + PRIMARY_HEADER_NUM_BYTES].tobytes()
+
+        if len(pri_header_bytes) != PRIMARY_HEADER_NUM_BYTES:
+            warnings.warn(
+                "File appears truncated or with garbage bytes. Unable to enough "
+                "bytes for primary header"
+            )
+            break
+
+        packet_nbytes = get_packet_total_bytes(pri_header_bytes)
         packet_bytes = file_bytes[offset + delta_idx : offset + packet_nbytes].tobytes()
 
         yield packet_bytes
@@ -176,7 +183,16 @@ def split_by_apid(mixed_file, valid_apids=None):
     stream_by_apid = {}
 
     for packet_bytes in iter_packet_bytes(mixed_file):
-        apid = get_packet_apid(packet_bytes[:PRIMARY_HEADER_NUM_BYTES])
+        pri_header_bytes = packet_bytes[:PRIMARY_HEADER_NUM_BYTES]
+
+        if len(pri_header_bytes) != PRIMARY_HEADER_NUM_BYTES:
+            warnings.warn(
+                "File appears truncated or with garbage bytes. Unable to enough "
+                "bytes for primary header"
+            )
+            break
+
+        apid = get_packet_apid(pri_header_bytes)
 
         if valid_apids is not None and apid not in valid_apids:
             warnings.warn(f"Found unknown APID {apid}")

@@ -7,7 +7,7 @@ import shutil
 import numpy as np
 import pytest
 
-from .. import converters
+from .. import converters, utils
 from .. import FixedLength, VariableLength, PacketField, PacketArray
 
 
@@ -252,9 +252,9 @@ def test_numpy2_dtype_poly_and_linear():
 
 @pytest.mark.parametrize("pkt_class", [FixedLength, VariableLength])
 @pytest.mark.parametrize("num_garbage_bytes", list(range(1, 11)))
-def test_readahead_primary_header_IndexError(pkt_class, num_garbage_bytes):
+def test_load_readahead_primary_header_IndexError(pkt_class, num_garbage_bytes):
     """Fixes IndexError from reading primary header in packet iteration when
-    file ends abruptly.
+    file ends abruptly, with pkt.load()
 
     See: https://github.com/CCSDSPy/ccsdspy/issues/139
     """
@@ -280,3 +280,22 @@ def test_readahead_primary_header_IndexError(pkt_class, num_garbage_bytes):
 
     with pytest.warns(UserWarning, match="File appears truncated"):
         result = pkt.load(new_path)
+
+
+@pytest.mark.parametrize("num_garbage_bytes", list(range(1, 11)))
+def test_split_readahead_primary_header_IndexError(num_garbage_bytes):
+    """Fixes IndexError from reading primary header in packet iteration when
+    file ends abruptly, with split_by_apid()
+
+    See: https://github.com/CCSDSPy/ccsdspy/discussions/105
+    """
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    bin_path = os.path.join(dir_path, "data", "var_length", "var_length_packets_with_footer.bin")
+    new_path = os.path.join(dir_path, "data", "garbage_at_end.bin")
+    shutil.copy(bin_path, new_path)
+
+    with open(new_path, "ab") as fh:
+        fh.write(b"a" * num_garbage_bytes)
+
+    with pytest.warns(UserWarning, match="File appears truncated"):
+        utils.split_by_apid(new_path)
