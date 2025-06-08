@@ -1,6 +1,11 @@
 Notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`__.
 
+Version 1.4.2 - 2025-06-08
+============================
+  * Fixed bug in `pkt.load()` where `IndexError` would be thrown when <6 bytes of garbage at ened of file (`Issue #139 <https://github.com/CCSDSPy/ccsdspy/issues/139>`_)
+  * Fixed bug in `utils.split_by_apid()` where `IndexError` would be thrown when <6 bytes of garbage at end of file (`Discussion <https://github.com/CCSDSPy/ccsdspy/discussions/105>`_)
+
 Version 1.4.1 - 2025-03-19
 ============================
   * Updates the `ccsdspy.utils.validate()` function so that packets are split by APID before primary headers data is parsed. This change allows for more accurate validation of the primary headers and APIDs.
