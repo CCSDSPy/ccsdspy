@@ -4,7 +4,7 @@ The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`
 Version 1.4.2 - 2025-06-08
 ============================
   * Fixed bug in `pkt.load()` where `IndexError` would be thrown when <6 bytes of garbage at ened of file (`Issue #139 <https://github.com/CCSDSPy/ccsdspy/issues/139>`_)
-  * Fixed bug in `utils.split_by_apid()` where `IndexError` would be thrown when <6 bytes of garbage at end of file (`Discussion <https://github.com/CCSDSPy/ccsdspy/discussions/105>`_)
+  * Fixed bug in `utils.split_by_apid()` where `IndexError` would be thrown when <6 bytes of garbage at end of file (`Discussion #105 <https://github.com/CCSDSPy/ccsdspy/discussions/105>`_)
 
 Version 1.4.1 - 2025-03-19
 ============================
