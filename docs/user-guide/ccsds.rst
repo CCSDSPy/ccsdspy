@@ -79,4 +79,4 @@ The mandatory packet primary header consists of four fields contained within 6 o
      - 16
      - The length in octets of the remainder of the packet minus 1 octet.
 
-For more information see Section 4.1.3 of the `CCSDS Blue book <https://public.ccsds.org/Pubs/133x0b2e2.pdf>`_.
+For more information see Section 4.1.3 of the `CCSDS Blue book <https://rfi.colem.co.uk/wp-content/uploads/CCSDS-Blue-Book-Space-Packet-Protocol.pdf>`_.
