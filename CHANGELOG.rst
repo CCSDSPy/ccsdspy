@@ -1,6 +1,11 @@
 Notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`__.
 
+
+Version 1.4.3 - 2025-11-06
+============================
+  * Add explicit support up to Python 3.13.
+
 Version 1.4.2 - 2025-06-08
 ============================
   * Fixed bug in `pkt.load()` where `IndexError` would be thrown when <6 bytes of garbage at ened of file (`Issue #139 <https://github.com/CCSDSPy/ccsdspy/issues/139>`_)
