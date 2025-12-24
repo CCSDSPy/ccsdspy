@@ -48,6 +48,11 @@ class _BasePacket:
         Returns
         -------
         An instance of FixedLength.
+
+        Raises
+        ------
+        ValueError
+            If the file type is not supported. Currently on CSV files are supported.
         """
         file_extension = os.path.splitext(file)
         if file_extension[1] == ".csv":
@@ -339,6 +344,15 @@ def _inspect_primary_header_fields(packet_arrays):
     packet_arrays
         dictionary mapping field names to NumPy arrays, with key order matching
         the order fields in the packet. Modified in place
+
+    Warns
+    -----
+    UserWarning
+        If the ccsds sequence count is not in order
+    UserWarning
+        If the ccsds sequence count is missing packets
+    UserWarning
+        If there are more than one APID
     """
     seq_counts = packet_arrays["CCSDS_SEQUENCE_COUNT"]
     start, end = seq_counts[0], seq_counts[-1]
@@ -542,6 +556,12 @@ def _parse_csv_array_shape(data_type_str):
     -------
     array_shape : str, int, tuple of int
        Parsed array shape to be used in loading CSV.
+
+    Raises
+    ------
+    ValueError
+        If the array shape is not valid. Must be `expand`, the name of another field,
+        or a tuple of ints.
     """
     array_shape_str = data_type_str[data_type_str.find("(") + 1 : data_type_str.find(")")]
     if array_shape_str == "expand":
@@ -573,6 +593,13 @@ def _get_fields_csv_file(csv_file):
     -------
     fields : list
         A list of `PacketField` objects.
+
+    Raises
+    ------
+    RuntimeError
+        If the CSV file is empty.
+    ValueError
+        If the CSV file does not contain the required columns. Must have at least `name`, `data_type`, and `bit_length`.
     """
     req_columns = ["name", "data_type", "bit_length"]
 

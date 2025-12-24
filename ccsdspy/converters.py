@@ -83,6 +83,7 @@ class PolyConverter(Converter):
             converted form of the decoded packet field values
         """
         converted = np.zeros(field_array.shape, dtype=np.float64)
+        field_array = field_array.astype(float)
 
         for power, coeff in enumerate(reversed(self._coeffs)):
             converted += coeff * field_array**power

@@ -2,10 +2,12 @@
 
 import io
 import os
+import shutil
 
 import numpy as np
 import pytest
 
+from .. import converters, utils
 from .. import FixedLength, VariableLength, PacketField, PacketArray
 
 
@@ -227,3 +229,73 @@ def test_non_byte_aligned_uint(pkt_class):
 
     assert all(elem == 32 for elem in result1["param1"]), f"Got: repr(result1['param1'])"
     assert all(elem == 31 for elem in result2["param2"]), f"Got: repr(result2['param2'])"
+
+
+def test_numpy2_dtype_poly_and_linear():
+    """Fixes compatability issue with converters and NumPy 2
+
+    See: https://github.com/CCSDSPy/ccsdspy/issues/132
+    """
+    # Test this doesn't throw an exception
+
+    coeffs = np.array([-2, -1], np.int16)
+    field_array = np.array([50], dtype=np.uint16)
+
+    # test polyconverter (no exception)
+    converter = converters.PolyConverter(coeffs)
+    converted = converter.convert(field_array)
+
+    # test linearconverter (no exception)
+    converter = converters.LinearConverter(*coeffs)
+    converted = converter.convert(field_array)
+
+
+@pytest.mark.parametrize("pkt_class", [FixedLength, VariableLength])
+@pytest.mark.parametrize("num_garbage_bytes", list(range(1, 11)))
+def test_load_readahead_primary_header_IndexError(pkt_class, num_garbage_bytes):
+    """Fixes IndexError from reading primary header in packet iteration when
+    file ends abruptly, with pkt.load()
+
+    See: https://github.com/CCSDSPy/ccsdspy/issues/139
+    """
+    pkt = VariableLength(
+        [
+            PacketArray(
+                name="data",
+                data_type="uint",
+                bit_length=16,
+                array_shape="expand",
+            ),
+            PacketField(name="footer", data_type="uint", bit_length=16),
+        ]
+    )
+
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    bin_path = os.path.join(dir_path, "data", "var_length", "var_length_packets_with_footer.bin")
+    new_path = os.path.join(dir_path, "data", "garbage_at_end.bin")
+    shutil.copy(bin_path, new_path)
+
+    with open(new_path, "ab") as fh:
+        fh.write(b"a" * num_garbage_bytes)
+
+    with pytest.warns(UserWarning, match="File appears truncated"):
+        result = pkt.load(new_path)
+
+
+@pytest.mark.parametrize("num_garbage_bytes", list(range(1, 11)))
+def test_split_readahead_primary_header_IndexError(num_garbage_bytes):
+    """Fixes IndexError from reading primary header in packet iteration when
+    file ends abruptly, with split_by_apid()
+
+    See: https://github.com/CCSDSPy/ccsdspy/discussions/105
+    """
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    bin_path = os.path.join(dir_path, "data", "var_length", "var_length_packets_with_footer.bin")
+    new_path = os.path.join(dir_path, "data", "garbage_at_end.bin")
+    shutil.copy(bin_path, new_path)
+
+    with open(new_path, "ab") as fh:
+        fh.write(b"a" * num_garbage_bytes)
+
+    with pytest.warns(UserWarning, match="File appears truncated"):
+        utils.split_by_apid(new_path)

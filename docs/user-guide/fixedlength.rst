@@ -65,6 +65,24 @@ Once a `~ccsdspy.FixedLength` object is defined, it can be used to read a binary
 The result is returned as a dictionary, containing the names as keys and values are each a `~numpy.ndarray` of the interpreted data from each packet.
 The bit length of the `~numpy.ndarray` elements will be rounded up to the next nearest byte.
 
+When parsing fixed-length packets, the library performs the following checks:
+
+- **Packet Definition Length Check**: Ensures the total bit length of the defined fields matches the packet length from the primary header. If all fields lack explicit `bit_offset`, an `AssertionError` is raised if they mismatch (note: this may be disabled in optimized runs). If the definition exceeds the packet length, a `RuntimeError` is raised with details on the bit discrepancy.
+- **Header Checks**: Automatically checks the CCSDS header fields for consistency. See :ref:`inspecting_headers`.
+
+
+.. _inspecting_headers:
+
+Inspecting the CCSDS Headers
+============================
+
+When loading both fixed and variable length packets, the library checks the primary header fields in all packets to ensure they are consistent.
+The library automatically performs the following checks:
+
+- **Multiple APIDs**: Issues a `UserWarning` if more than one APID is detected, e.g., "Found multiple AP IDs {list}".
+- **Sequence Count Order**: Issues a `UserWarning` if sequence counts are out of order, e.g., "Sequence count are out of order."
+- **Missing Packets**: Issues a `UserWarning` if sequence counts have gaps, e.g., "Missing packets found {list}".
+
 .. _getting-header:
 
 Getting the CCSDS Header

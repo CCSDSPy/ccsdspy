@@ -15,15 +15,21 @@ license = { file = "LICENSE.rst" }
 requires-python = ">=3.6"
 keywords = ["python", "nasa", "ccsds", "space packet protocol"]
 classifiers = [
-  "Development Status :: 5 - Production/Stable",
-  "Intended Audience :: Science/Research",
-  "Programming Language :: Python :: 3.6",
-  "Programming Language :: Python :: 3.7",
-  "Programming Language :: Python :: 3.8",
-  "Programming Language :: Python :: 3.9",
-  "Programming Language :: Python :: 3.10",
-  "License :: OSI Approved :: BSD License",
-  "Operating System :: OS Independent",
+    "Development Status :: 5 - Production/Stable",
+        "Intended Audience :: Science/Research",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",	
+        "License :: OSI Approved :: BSD License",
+        "Operating System :: OS Independent",
+]
+dependencies = [
+  'numpy>=1.8.0',
 ]
 dependencies = ['numpy>=1.8.0', 'pyyaml>=5.3.1', 'appdirs']
 
