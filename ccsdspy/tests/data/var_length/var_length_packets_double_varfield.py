@@ -4,6 +4,8 @@ import struct
 
 import numpy as np
 
+from .logger import log
+
 out_name = "var_length_packets_double_varfield_with_footer.bin"
 include_footer = True
 num_packets = 10
@@ -48,7 +50,7 @@ for packet_num in range(num_packets):
     if include_footer:
         this_packet += struct.pack(">H", 1)
 
-    print(f"packet #{packet_num}: {np.frombuffer(this_packet, dtype='uint8')}")
+    log.info(f"packet #{packet_num}: {np.frombuffer(this_packet, dtype='uint8')}")
     packet += this_packet
 
 if include_footer:
@@ -60,7 +62,7 @@ else:
         6 * num_packets + 2 * np.sum(data1_length) + 2 * np.sum(data2_length) + 2 * num_packets
     )
 
-print(f"File length is {len(packet)}. Expected length is {expected_length}.")
+log.info(f"File length is {len(packet)}. Expected length is {expected_length}.")
 
 f = open(out_name, "wb")
 f.write(packet)

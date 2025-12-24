@@ -10,7 +10,7 @@ import os
 import sys
 
 from .utils import split_by_apid
-
+from .logger import log
 
 def module_main(argv=sys.argv, cwd=os.getcwd()):
     """Main method of the module, run with `python -m ccsdspy [..]"""
@@ -42,14 +42,14 @@ def module_main(argv=sys.argv, cwd=os.getcwd()):
 
         stream_by_apid = split_by_apid(args.file, valid_apids=valid_apids)
 
-        print("Parsing done!")
+        log.info("Parsing done!")
 
         for apid in sorted(stream_by_apid):
             if valid_apids and apid not in valid_apids:
                 continue
 
             out_file_name = f"{cwd}/apid{apid:05d}.tlm"
-            print(f"Writing {out_file_name}")
+            log.info(f"Writing {out_file_name}")
 
             with open(out_file_name, "wb") as file_out:
                 file_out.write(stream_by_apid[apid].read())

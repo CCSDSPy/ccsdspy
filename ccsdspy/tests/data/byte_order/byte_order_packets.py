@@ -17,11 +17,12 @@ TEST_BYTE_ORDERS = {
 NUM_PACKETS = 10
 PACKET_ARRAY_LENGTH = 80
 
+from .logger import log
 
 def main():
     for _, byte_order_list in TEST_BYTE_ORDERS.items():
         for byte_order in byte_order_list:
-            print(f"Byte Order: {byte_order}")
+            log.info(f"Byte Order: {byte_order}")
             write_packet(byte_order)
 
 
@@ -55,17 +56,17 @@ def write_packet(byte_order):
         csv_lines.append(",".join(map(str, array.tolist())) + "\n")
 
     expected_length = 6 * NUM_PACKETS + len(byte_order) * NUM_PACKETS * PACKET_ARRAY_LENGTH
-    print(f"  Packet length is {len(file_bytes)}. Expected length is {expected_length}.")
+    log.info(f"  Packet length is {len(file_bytes)}. Expected length is {expected_length}.")
 
     with open(bin_fname, "wb") as bin_fh:
         bin_fh.write(file_bytes)
 
-    print(f"  Wrote {bin_fname}")
+    log.info(f"  Wrote {bin_fname}")
 
     with open(csv_fname, "w") as csv_fh:
         csv_fh.writelines(csv_lines)
 
-    print(f"  Wrote {csv_fname}")
+    log.info(f"  Wrote {csv_fname}")
 
 
 if __name__ == "__main__":

@@ -4,14 +4,14 @@
 
 import csv
 import os
-import warnings
+
 
 import numpy as np
 
 from .converters import Converter
 from .decode import _decode_fixed_length, _decode_variable_length
 from .packet_fields import PacketField, PacketArray
-
+from ccsdspy import log
 
 __author__ = "Daniel da Silva <mail@danieldasilva.org>"
 
@@ -344,14 +344,14 @@ def _inspect_primary_header_fields(packet_arrays):
     start, end = seq_counts[0], seq_counts[-1]
     missing_elements = sorted(set(range(start, end + 1)).difference(seq_counts))
     if len(missing_elements) != 0:
-        warnings.warn(f"Missing packets found {missing_elements}.", UserWarning)
+        log.warning(f"Missing packets found {missing_elements}.")
 
     if not np.all(seq_counts == np.sort(seq_counts)):
-        warnings.warn("Sequence count are out of order.", UserWarning)
+        log.warning("Sequence count are out of order.")
 
     individual_ap_ids = set(packet_arrays["CCSDS_APID"])
     if len(individual_ap_ids) != 1:
-        warnings.warn(f"Found multiple AP IDs {individual_ap_ids}.", UserWarning)
+        log.warning(f"Found multiple AP IDs {individual_ap_ids}.")
 
     return None
 

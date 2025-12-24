@@ -58,7 +58,7 @@ def test_count_packets_file_like_obj():
     assert result_1 == result_3
 
 
-def test_split_packet_bytes_issues_warning():
+def test_split_packet_bytes_issues_warning(caplog):
     dir_path = os.path.dirname(os.path.realpath(__file__))
     data_path = os.path.join(dir_path, "data", "split")
     tlm_path = os.path.join(data_path, "CYGNSS_F7_L0_2022_086_10_15_V01_F__first101pkts.tlm")
@@ -68,8 +68,8 @@ def test_split_packet_bytes_issues_warning():
 
     file_bytes = file_bytes[:-5]  # make last packet be incomplete
 
-    with pytest.warns(UserWarning):
-        result = utils.split_packet_bytes(io.BytesIO(file_bytes))
+    result = utils.split_packet_bytes(io.BytesIO(file_bytes))
+    assert caplog.records[0].levelname == "WARNING"
 
 
 def test_split_packet_bytes_file_like_obj():

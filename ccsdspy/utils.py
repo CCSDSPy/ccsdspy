@@ -3,13 +3,15 @@
 __author__ = "Daniel da Silva <mail@danieldasilva.org>"
 
 from io import BytesIO
-import warnings
+
 
 import numpy as np
 
 from . import VariableLength, PacketArray
 from .constants import BITS_PER_BYTE, PRIMARY_HEADER_NUM_BYTES
 from . import decode
+
+from ccsdspy import log
 
 
 def get_packet_total_bytes(primary_header_bytes):
@@ -78,7 +80,7 @@ def iter_packet_bytes(file, include_primary_header=True):
         message = (
             f"File appears truncated-- missing {missing_bytes} byte (or " "maybe garbage at end)"
         )
-        warnings.warn(message)
+        log.warning(message)
 
 
 def split_packet_bytes(file, include_primary_header=True):
@@ -169,7 +171,7 @@ def split_by_apid(mixed_file, valid_apids=None):
         apid = get_packet_apid(packet_bytes[:PRIMARY_HEADER_NUM_BYTES])
 
         if valid_apids is not None and apid not in valid_apids:
-            warnings.warn(f"Found unknown APID {apid}")
+            log.warning(f"Found unknown APID {apid}")
 
         if apid not in stream_by_apid:
             stream_by_apid[apid] = BytesIO()
@@ -233,7 +235,7 @@ def count_packets(file, return_missing_bytes=False):
         message = (
             f"File appears truncated-- missing {missing_bytes} byte (or " "maybe garbage at end)"
         )
-        warnings.warn(message)
+        log.warning(message)
 
     if return_missing_bytes:
         return num_packets, missing_bytes
