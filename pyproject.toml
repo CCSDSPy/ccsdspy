@@ -28,9 +28,7 @@ classifiers = [
   "License :: OSI Approved :: BSD License",
   "Operating System :: OS Independent",
 ]
-dependencies = [
-  'numpy>=1.8.0',
-]
+
 dependencies = ['numpy>=1.8.0', 'pyyaml>=5.3.1', 'appdirs']
 
 [project.optional-dependencies]
