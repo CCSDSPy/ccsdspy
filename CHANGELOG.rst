@@ -2,6 +2,40 @@ Notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`__.
 
 
+Version 1.4.3 - 2025-11-06
+============================
+  * Add explicit support up to Python 3.13.
+
+Version 1.4.2 - 2025-06-08
+============================
+  * Fixed bug in `pkt.load()` where `IndexError` would be thrown when <6 bytes of garbage at ened of file (`Issue #139 <https://github.com/CCSDSPy/ccsdspy/issues/139>`_)
+  * Fixed bug in `utils.split_by_apid()` where `IndexError` would be thrown when <6 bytes of garbage at end of file (`Discussion #105 <https://github.com/CCSDSPy/ccsdspy/discussions/105>`_)
+
+Version 1.4.1 - 2025-03-19
+============================
+  * Updates the `ccsdspy.utils.validate()` function so that packets are split by APID before primary headers data is parsed. This change allows for more accurate validation of the primary headers and APIDs.
+  * This removes potentially misleading warnings from `read_primary_headers` for having multiple apids, having missing or out of order sequence counts.
+
+Version 1.4.0 - 2025-03-05
+============================
+  * Enhanced Docstrings to call out `Raises` and `Warns` 
+  * Updated sphinx docs to include descriptions of file and packet checks when loading files. 
+  * Introduced new `utils.validate()` function for high-level validation of CCSDS packet files:
+    
+    * Checks file integrity (e.g., truncation or extra bytes) and header consistency.
+    * Returns a list of warnings or exceptions (e.g., "UserWarning: File appears truncated" or "UserWarning: Found unknown APID") encountered during validation.
+      
+  * Supports optional `valid_apids` parameter to warn about unexpected APIDs.
+
+Version 1.3.3 - 2025-01-31
+============================
+  * Fix bug where `converters.PolyConverter` and `converters.LinearConverter` would raise an exception when the field array was unsigned and coefficient was negative (`Issue #132 <https://github.com/CCSDSPy/ccsdspy/issues/132>`_)
+
+Version 1.3.2 - 2024-10-17
+============================
+  * Add support for NumPy >2.0, while maintining support for <2.0
+  * Fix link to bluebook and update sequence control field
+
 Version 1.3.1 - 2024-07-30
 ============================
   * Pin NumPy under 2.0 to Dependencies (Support for NumPy 2 will come at a later date)
