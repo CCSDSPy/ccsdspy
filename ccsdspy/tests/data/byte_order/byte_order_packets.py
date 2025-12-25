@@ -17,7 +17,7 @@ TEST_BYTE_ORDERS = {
 NUM_PACKETS = 10
 PACKET_ARRAY_LENGTH = 80
 
-from .logger import log
+from ccsdspy import log
 
 def main():
     for _, byte_order_list in TEST_BYTE_ORDERS.items():
