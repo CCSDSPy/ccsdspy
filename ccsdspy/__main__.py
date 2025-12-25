@@ -10,7 +10,7 @@ import os
 import sys
 
 from .utils import split_by_apid
-from .logger import log
+from ccsdspy import log
 
 def module_main(argv=sys.argv, cwd=os.getcwd()):
     """Main method of the module, run with `python -m ccsdspy [..]"""
