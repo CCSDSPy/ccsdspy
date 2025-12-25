@@ -4,7 +4,7 @@ import struct
 
 import numpy as np
 
-from .logger import log
+from ccsdspy import log
 
 out_name = "var_length_packets_with_footer.bin"
 include_footer = True
