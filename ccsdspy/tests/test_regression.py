@@ -9,6 +9,7 @@ import pytest
 
 from .. import converters, utils
 from .. import FixedLength, VariableLength, PacketField, PacketArray
+from ccsdspy import log
 
 
 @pytest.mark.parametrize("pkt_class", [FixedLength, VariableLength])
@@ -252,7 +253,7 @@ def test_numpy2_dtype_poly_and_linear():
 
 @pytest.mark.parametrize("pkt_class", [FixedLength, VariableLength])
 @pytest.mark.parametrize("num_garbage_bytes", list(range(1, 11)))
-def test_load_readahead_primary_header_IndexError(pkt_class, num_garbage_bytes):
+def test_load_readahead_primary_header_IndexError(pkt_class, num_garbage_bytes, caplog):
     """Fixes IndexError from reading primary header in packet iteration when
     file ends abruptly, with pkt.load()
 
@@ -278,12 +279,12 @@ def test_load_readahead_primary_header_IndexError(pkt_class, num_garbage_bytes):
     with open(new_path, "ab") as fh:
         fh.write(b"a" * num_garbage_bytes)
 
-    with pytest.warns(UserWarning, match="File appears truncated"):
-        result = pkt.load(new_path)
-
+    result = pkt.load(new_path)
+    assert caplog.records[0].levelname == "WARNING"
+    assert caplog.records[0].message.count("File appears truncated") == 1
 
 @pytest.mark.parametrize("num_garbage_bytes", list(range(1, 11)))
-def test_split_readahead_primary_header_IndexError(num_garbage_bytes):
+def test_split_readahead_primary_header_IndexError(num_garbage_bytes, caplog):
     """Fixes IndexError from reading primary header in packet iteration when
     file ends abruptly, with split_by_apid()
 
@@ -297,5 +298,6 @@ def test_split_readahead_primary_header_IndexError(num_garbage_bytes):
     with open(new_path, "ab") as fh:
         fh.write(b"a" * num_garbage_bytes)
 
-    with pytest.warns(UserWarning, match="File appears truncated"):
-        utils.split_by_apid(new_path)
+    utils.split_by_apid(new_path)
+    assert caplog.records[0].levelname == "WARNING"
+    assert caplog.records[0].message.count("File appears truncated") == 1

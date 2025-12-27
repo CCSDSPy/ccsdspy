@@ -11,6 +11,7 @@ from ccsdspy.constants import (
     BITS_PER_BYTE,
     PRIMARY_HEADER_NUM_BYTES,
 )
+from ccsdspy import log
 
 __author__ = "Daniel da Silva <mail@danieldasilva.org>"
 
