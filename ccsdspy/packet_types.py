@@ -2,6 +2,7 @@
 (FixedLength and VariableLength) supported by the package.
 """
 
+from abc import ABC
 import csv
 import os
 import warnings
@@ -16,18 +17,24 @@ from .packet_fields import PacketField, PacketArray
 __author__ = "Daniel da Silva <mail@danieldasilva.org>"
 
 
-class _BasePacket:
+class _BasePacket(ABC):
     """Base class of FixedLength and VariableLength. Not to be instantiated
     directly.
     """
 
-    def _init(self, fields):
+    def __init__(self, fields):
         """
         Parameters
         ----------
         fields : list of `ccsdspy.PacketField`
             Layout of packet fields contained in the definition.
         """
+        if type(self) is _BasePacket:
+            raise NotImplementedError(
+                "The _BasePacket class is an abstract base class and "
+                "cannot be instantiated directly."
+            )
+
         # List of PacketField instances
         self._fields = fields[:]
 
@@ -150,7 +157,7 @@ class FixedLength(_BasePacket):
                 "Instead, use the VariableLength class."
             )
 
-        self._init(fields)
+        super().__init__(fields)
 
     def load(self, file, include_primary_header=False, reset_file_obj=False):
         """Decode a file-like object containing a sequence of these packets.
@@ -276,7 +283,7 @@ class VariableLength(_BasePacket):
                 "determined automatically."
             )
 
-        self._init(fields)
+        super().__init__(fields)
 
     def load(self, file, include_primary_header=False, reset_file_obj=False):
         """Decode a file-like object containing a sequence of these packets.
