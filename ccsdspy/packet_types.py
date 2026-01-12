@@ -42,8 +42,17 @@ class _BasePacket(ABC):
 
         # Dictionary mapping input name to tuple (output_name: str, Converter instance)
         self._converters = {}
-        
-        self._description = description
+
+        # Set the description of the packet
+        if description is not None:
+            if type(description) is not str:
+                raise TypeError("description must be a str")
+
+            self._description = description
+        else:
+            # If no description provided, use the class docstring
+            self._description = self.__doc__
+
 
     @classmethod
     def from_file(cls, file):
