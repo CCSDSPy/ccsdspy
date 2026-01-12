@@ -17,7 +17,7 @@ from .converters import Converter
 class PacketField:
     """A field contained in a packet."""
 
-    def __init__(self, name, data_type, bit_length, bit_offset=None, byte_order="big"):
+    def __init__(self, name, data_type, bit_length, bit_offset=None, byte_order="big", description=None):
         """
         Parameters
         ----------
@@ -51,6 +51,8 @@ class PacketField:
             raise TypeError("bit_length parameter must be an int")
         if not (bit_offset is None or isinstance(bit_offset, (int, np.integer))):
             raise TypeError("bit_offset parameter must be an int")
+        if not (description is None or isinstance(description, str)):
+            raise TypeError("description parameter must be a str")
 
         valid_data_types = ("uint", "int", "float", "str", "fill")
         if data_type not in valid_data_types:
@@ -80,6 +82,7 @@ class PacketField:
         self._field_type = "element"
         self._array_shape = None
         self._array_order = None
+        self._description = description
 
     def __repr__(self):
         values = {k: repr(v) for (k, v) in self.__dict__.items()}
@@ -109,6 +112,11 @@ class PacketField:
                 ("byteOrder", self._byte_order),
             ]
         )
+        
+    @property
+    def description(self):
+        """str: Description of the field."""
+        return self._description
 
 
 class PacketArray(PacketField):
