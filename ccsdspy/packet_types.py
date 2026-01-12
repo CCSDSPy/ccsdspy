@@ -22,12 +22,14 @@ class _BasePacket(ABC):
     directly.
     """
 
-    def __init__(self, fields):
+    def __init__(self, fields, description=None):
         """
         Parameters
         ----------
         fields : list of `ccsdspy.PacketField`
             Layout of packet fields contained in the definition.
+        description : str, optional
+            Description of the packet.
         """
         if type(self) is _BasePacket:
             raise NotImplementedError(
@@ -40,6 +42,8 @@ class _BasePacket(ABC):
 
         # Dictionary mapping input name to tuple (output_name: str, Converter instance)
         self._converters = {}
+        
+        self._description = description
 
     @classmethod
     def from_file(cls, file):
@@ -68,6 +72,11 @@ class _BasePacket(ABC):
             raise ValueError(f"File type {file_extension[1]} not supported.")
 
         return cls(fields)
+    
+    @property
+    def description(self) -> str:
+        """str: Description of the packet."""
+        return self._description
 
     def add_converted_field(self, input_field_name, output_field_name, converter):
         """Add a converted field to the packet definition, used to apply
@@ -139,7 +148,7 @@ class FixedLength(_BasePacket):
     messages.
     """
 
-    def __init__(self, fields):
+    def __init__(self, fields, **kwargs):
         """
         Parameters
         ----------
@@ -157,7 +166,7 @@ class FixedLength(_BasePacket):
                 "Instead, use the VariableLength class."
             )
 
-        super().__init__(fields)
+        super().__init__(fields, **kwargs)
 
     def load(self, file, include_primary_header=False, reset_file_obj=False):
         """Decode a file-like object containing a sequence of these packets.
@@ -229,7 +238,7 @@ class VariableLength(_BasePacket):
       * Do not specify explicit bit_offsets (they will be computed automatically)
     """
 
-    def __init__(self, fields):
+    def __init__(self, fields, **kwargs):
         """
         Parameters
         ----------
@@ -283,7 +292,7 @@ class VariableLength(_BasePacket):
                 "determined automatically."
             )
 
-        super().__init__(fields)
+        super().__init__(fields, **kwargs)
 
     def load(self, file, include_primary_header=False, reset_file_obj=False):
         """Decode a file-like object containing a sequence of these packets.
