@@ -29,8 +29,14 @@ class _BasePacket(ABC):
         ----------
         fields : list of `ccsdspy.PacketField`
             Layout of packet fields contained in the definition.
+        apid : int, optional
+            APID of the packet.
+        name : str, optional
+            Name of the packet.
         description : str, optional
             Description of the packet.
+        sub_apid : bool, optional
+            Whether the packet uses sub-APIDs.
         """
         if type(self) is _BasePacket:
             raise NotImplementedError(
