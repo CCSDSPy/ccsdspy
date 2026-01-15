@@ -23,7 +23,7 @@ class _BasePacket(ABC):
     """
 
     def __init__(self, fields, apid:int=None, name:str=None,
-                 description:str=None, sub_apid:bool=None):
+                 description:str=None):
         """
         Parameters
         ----------
@@ -35,8 +35,6 @@ class _BasePacket(ABC):
             Name of the packet.
         description : str, optional
             Description of the packet.
-        sub_apid : bool, optional
-            Whether the packet uses sub-APIDs.
         """
         if type(self) is _BasePacket:
             raise NotImplementedError(
@@ -61,8 +59,7 @@ class _BasePacket(ABC):
 
         self._apid = apid
         self._name = name
-        self._sub_apid = sub_apid
-        self._description = decription if description is not None else self.__doc__
+        self._description = description if description is not None else self.__doc__
 
 
     @classmethod
@@ -119,33 +116,6 @@ class _BasePacket(ABC):
         if not isinstance(value, int):
             raise TypeError("apid must be an int")
         self._apid = value
-
-    @property
-    def sub_apid(self) -> bool:
-        """bool: Whether the packet uses sub-APIDs."""
-        return self._sub_apid
-    
-    @sub_apid.setter
-    def sub_apid(self, value: bool):
-        """Set whether the packet uses sub-APIDs.
-
-        Parameters
-        ----------
-        value : bool
-            New sub-APID value.
-
-        Raises
-        ------
-        ValueError
-            If the sub-APID flag has already been set.
-        TypeError
-            If the provided value is not a bool.
-        """
-        if self._sub_apid is not None:
-            raise ValueError("Cannot change sub_apid once it has been set.")
-        if not isinstance(value, bool):
-            raise TypeError("sub_apid must be a bool")
-        self._sub_apid = value
     
     @property
     def description(self) -> str:
