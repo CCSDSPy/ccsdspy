@@ -22,19 +22,18 @@ class _BasePacket(ABC):
     directly.
     """
 
-    def __init__(self, fields, apid:int=None, name:str=None,
-                 description:str=None):
+    def __init__(self, fields, apid=None, name=None, description=None):
         """
         Parameters
         ----------
         fields : list of `ccsdspy.PacketField`
             Layout of packet fields contained in the definition.
         apid : int, optional
-            APID of the packet.
+            APID of the packet. 
         name : str, optional
-            Name of the packet.
+            Name of the packet. Used for documentation.
         description : str, optional
-            Description of the packet.
+            Description of the packet. Used for documentation.
         """
         if type(self) is _BasePacket:
             raise NotImplementedError(
@@ -239,7 +238,7 @@ class FixedLength(_BasePacket):
     messages.
     """
 
-    def __init__(self, fields, **kwargs):
+    def __init__(self, fields, apid=None, name=None, description=None):
         """
         Parameters
         ----------
@@ -257,7 +256,7 @@ class FixedLength(_BasePacket):
                 "Instead, use the VariableLength class."
             )
 
-        super().__init__(fields, **kwargs)
+        super().__init__(fields, apid=apid, name=name, description=description)
 
     def load(self, file, include_primary_header=False, reset_file_obj=False):
         """Decode a file-like object containing a sequence of these packets.
@@ -329,7 +328,7 @@ class VariableLength(_BasePacket):
       * Do not specify explicit bit_offsets (they will be computed automatically)
     """
 
-    def __init__(self, fields, **kwargs):
+    def __init__(self, fields, apid=None, name=None, description=None):
         """
         Parameters
         ----------
@@ -383,7 +382,7 @@ class VariableLength(_BasePacket):
                 "determined automatically."
             )
 
-        super().__init__(fields, **kwargs)
+        super().__init__(fields, apid=apid, name=name, description=description)
 
     def load(self, file, include_primary_header=False, reset_file_obj=False):
         """Decode a file-like object containing a sequence of these packets.
