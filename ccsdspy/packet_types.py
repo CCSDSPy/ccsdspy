@@ -46,8 +46,6 @@ class _BasePacket(ABC):
             raise TypeError("apid must be an int")
         if name is not None and not isinstance(name, str):
             raise TypeError("name must be a str")
-        if sub_apid is not None and not isinstance(sub_apid, bool):
-            raise TypeError("sub_apid must be a bool")
         if description is not None and not isinstance(description, str):
             raise TypeError("description must be a str")
 
