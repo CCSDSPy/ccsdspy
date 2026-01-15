@@ -2,7 +2,6 @@
 (FixedLength and VariableLength) supported by the package.
 """
 
-from abc import ABC
 import csv
 import os
 import warnings
@@ -17,7 +16,7 @@ from .packet_fields import PacketField, PacketArray
 __author__ = "Daniel da Silva <mail@danieldasilva.org>"
 
 
-class _BasePacket(ABC):
+class _BasePacket:
     """Base class of FixedLength and VariableLength. Not to be instantiated
     directly.
     """
