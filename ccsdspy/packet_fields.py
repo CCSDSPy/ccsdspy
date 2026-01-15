@@ -114,6 +114,56 @@ class PacketField:
         )
         
     @property
+    def name(self):
+        """str: Name of the field."""
+        return self._name
+
+    @property
+    def data_type(self):
+        """str: Data type of the field."""
+        return self._data_type
+
+    @property
+    def bit_length(self):
+        """int: Bit length of the field."""
+        return self._bit_length
+
+    @property
+    def bit_offset(self):
+        """int: Bit offset of the field."""
+        return self._bit_offset
+
+    @property
+    def byte_order(self):
+        """str: Byte order of the field."""
+        return self._byte_order
+
+    @property
+    def byte_order_parse(self):
+        """str: Byte order used for parsing the field."""
+        return self._byte_order_parse
+
+    @property
+    def byte_order_post(self):
+        """str: Byte order used after parsing the field."""
+        return self._byte_order_post
+
+    @property
+    def field_type(self):
+        """str: Type of the field."""
+        return self._field_type
+
+    @property
+    def array_shape(self):
+        """tuple: Shape of the array."""
+        return self._array_shape
+
+    @property
+    def array_order(self):
+        """str: Order of the array ('C' for row-major, 'F' for column-major)."""
+        return self._array_order
+
+    @property
     def description(self):
         """str: Description of the field."""
         return self._description
