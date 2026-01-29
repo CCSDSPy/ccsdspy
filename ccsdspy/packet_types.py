@@ -28,7 +28,8 @@ class _BasePacket:
         fields : list of `ccsdspy.PacketField`
             Layout of packet fields contained in the definition.
         apid : int, optional
-            APID of the packet. 
+            APID of the packet. Acts as a unique identifier for the packet type. Used
+            for documentation purposes.
         name : str, optional
             Name of the packet. Used for documentation.
         description : str, optional
@@ -243,6 +244,13 @@ class FixedLength(_BasePacket):
         ----------
         fields : list of :py:class:`~ccsdspy.PacketField` or :py:class:`~ccsdspy.PacketArray`
             Layout of packet fields contained in the definition.
+        apid : int, optional
+            APID of the packet. Acts as a unique identifier for the packet type. Used
+            for documentation purposes.
+        name : str, optional
+            Name of the packet. Used for documentation.
+        description : str, optional
+            Description of the packet. Used for documentation.
 
         Raises
         ------
@@ -335,6 +343,13 @@ class VariableLength(_BasePacket):
             Layout of packet fields contained in the definition. No more than
             one field should have array_shape="expand". The field must have no
             bit_offset's. Do not include the primary header fields.
+        apid : int, optional
+            APID of the packet. Acts as a unique identifier for the packet type. Used
+            for documentation purposes.
+        name : str, optional
+            Name of the packet. Used for documentation.
+        description : str, optional
+            Description of the packet. Used for documentation.
 
         Raises
         ------

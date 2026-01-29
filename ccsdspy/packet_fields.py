@@ -35,6 +35,8 @@ class PacketField:
         byte_order : {'big', 'little'}, or custom string of digits like "4321"
             Byte order of the field. Can be "big", "little", or an arbitrary ordering
             Specified as a string of digits like "2341". Defaults to big endian.
+        description: str, optional
+            Description of the field for documentation purposes.
 
         Raises
         ------
