@@ -55,7 +55,7 @@ class _BasePacket:
 
         self._apid = apid
         self._name = name
-        self._description = description if description is not None else self.__doc__
+        self._description = description
 
 
     @classmethod
