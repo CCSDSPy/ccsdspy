@@ -74,20 +74,8 @@ messages with the level set by ``setLevel`` or higher will be included (i.e.
 ``filter_level`` is only filtering a subset of the messages normally emitted
 by the logger).
 
-Similarly, it is possible to filter a subset of the messages by origin by
-specifying ``filter_origin=`` followed by a string. If the origin of a message
-starts with that string, the message will be included in the context manager.
-For example, ``filter_origin='astropy.wcs'`` will include only messages
-emitted in the ``astropy.wcs`` sub-package.
-
 Using the configuration file
 ============================
 
 Options for the logger can be set in the ``[logger]`` section
 of the CCSDSPy configuration file. For more information on the configuration file, see :ref:`customization`.
-
-Reference/API
-=============
-
-.. automodapi:: ccsdspy.logger
-    :no-inheritance-diagram:
