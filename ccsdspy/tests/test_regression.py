@@ -283,6 +283,7 @@ def test_load_readahead_primary_header_IndexError(pkt_class, num_garbage_bytes, 
     assert caplog.records[0].levelname == "WARNING"
     assert caplog.records[0].message.count("File appears truncated") == 1
 
+
 @pytest.mark.parametrize("num_garbage_bytes", list(range(1, 11)))
 def test_split_readahead_primary_header_IndexError(num_garbage_bytes, caplog):
     """Fixes IndexError from reading primary header in packet iteration when

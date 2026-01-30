@@ -10,6 +10,7 @@ TEST_FILENAME = "ccsds_primary_headers_test.bin"
 
 from ccsdspy import log
 
+
 def create_simple_ccsds_packet(n=1):
     packet_version_number = int("000", 2)
     packet_type = int("0", 2)

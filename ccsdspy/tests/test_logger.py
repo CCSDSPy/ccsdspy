@@ -191,16 +191,16 @@ def test_log_to_file(tmp_path, level):
     # Check list content
 
     print(log_entries)
-    assert log_entries[0].split(' - ')[-1].strip() == "Error message"
+    assert log_entries[0].split(" - ")[-1].strip() == "Error message"
 
     if len(log_entries) >= 2:
-        assert log_entries[1].split(' - ')[-1].strip() == "Warning message"
+        assert log_entries[1].split(" - ")[-1].strip() == "Warning message"
 
     if len(log_entries) >= 3:
-        assert log_entries[2].split(' - ')[-1].strip() == "Information message"
+        assert log_entries[2].split(" - ")[-1].strip() == "Information message"
 
     if len(log_entries) >= 4:
-        assert log_entries[3].split(' - ')[-1].strip() == "Debug message"
+        assert log_entries[3].split(" - ")[-1].strip() == "Debug message"
 
 
 def test_log_to_file_level(tmp_path):
@@ -219,5 +219,4 @@ def test_log_to_file_level(tmp_path):
     log_file.close()
 
     assert len(log_entries) == 1
-    assert log_entries[0].split(' - ')[-1].strip() == "Error message"
-
+    assert log_entries[0].split(" - ")[-1].strip() == "Error message"

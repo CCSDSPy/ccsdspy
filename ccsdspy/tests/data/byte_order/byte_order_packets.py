@@ -19,6 +19,7 @@ PACKET_ARRAY_LENGTH = 80
 
 from ccsdspy import log
 
+
 def main():
     for _, byte_order_list in TEST_BYTE_ORDERS.items():
         for byte_order in byte_order_list:

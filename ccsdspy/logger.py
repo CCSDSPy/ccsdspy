@@ -7,27 +7,28 @@ from . import config as _config
 
 class JSONFormatter(logging.Formatter):
     """Structured JSON log formatter for log aggregation systems."""
+
     def format(self, record):
         log_data = {
             "timestamp": self.formatTime(record, self.datefmt),
             "level": record.levelname,
             "message": record.msg,
-            "module": record.module
+            "module": record.module,
         }
         return json.dumps(log_data)
 
 
 class CCSDSpyLogger(logging.Logger):
     """
-        This class is used to set up a custom logger.
+    This class is used to set up a custom logger.
 
-        The main functionality added by this class over the built-in
-        logging.Logger class is the ability to add two context managers that
-        temporarily log messages to a file or to a list.
+    The main functionality added by this class over the built-in
+    logging.Logger class is the ability to add two context managers that
+    temporarily log messages to a file or to a list.
 
-        This class is adapted from the `AstropyLogger <https://docs.astropy.org/en/stable/api/astropy.logger.AstropyLogger.html#astropy.logger.AstropyLogger>`_ class in the Astropy
-        project (https://www.astropy.org/). The original class is licensed
-        under the BSD 3-Clause license.
+    This class is adapted from the `AstropyLogger <https://docs.astropy.org/en/stable/api/astropy.logger.AstropyLogger.html#astropy.logger.AstropyLogger>`_ class in the Astropy
+    project (https://www.astropy.org/). The original class is licensed
+    under the BSD 3-Clause license.
     """
 
     @contextmanager
@@ -148,12 +149,16 @@ def _init_log(config=None):
     logger = logging.getLogger("ccsdspy")
     logger.setLevel(logging.DEBUG)
     log_level = level_str_to_level(config.get("logger", {}).get("log_level", "INFO"))
-    log_format = config.get("logger", {}).get("log_format", "%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    log_format = config.get("logger", {}).get(
+        "log_format", "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
     log_to_file = config.get("logger", {}).get("log_to_file", False)
     log_file_path = config.get("logger", {}).get("log_file_path", "ccsdspy.log")
     log_file_level = level_str_to_level(config.get("logger", {}).get("log_file_level", "DEBUG"))
     log_file_json = config.get("logger", {}).get("log_file_json", False)
-    log_file_format = config.get("logger", {}).get("log_file_format", "%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    log_file_format = config.get("logger", {}).get(
+        "log_file_format", "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
     log_time_format = config.get("general", {}).get("time_format", "%Y-%m-%d %H:%M:%S")
     if log_to_file and not log_file_json:
         fh = logging.FileHandler(log_file_path)

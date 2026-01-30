@@ -4,6 +4,7 @@
 IO Interface for Reading CCSDS Data in Python.
 """
 import os.path
+
 # For egg_info test builds to pass, put package imports here.
 
 try:

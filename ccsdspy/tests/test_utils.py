@@ -154,8 +154,8 @@ def test_validate_defaults():
     for i in range(3):
         print(log_list[i].message)
         assert log_list[i].message.startswith("Missing packets found")
-    #assert log_list[1].message.startswith("Sequence count are out of order.")
-    #assert log_list[2].message.startswith("Found multiple AP IDs")
+    # assert log_list[1].message.startswith("Sequence count are out of order.")
+    # assert log_list[2].message.startswith("Found multiple AP IDs")
 
 
 def test_validate_truncated_file():
@@ -202,11 +202,11 @@ def test_validate_valid_apids():
         assert this_log.levelname == "WARNING"
 
     assert log_list[0].levelname == "WARNING"
-    #assert log_list[0].message.startswith("Sequence count are out of order")
-    #assert log_list[1].message.startswith("Missing packets found")
+    # assert log_list[0].message.startswith("Sequence count are out of order")
+    # assert log_list[1].message.startswith("Missing packets found")
     assert log_list[1].levelname == "WARNING"
     assert log_list[2].levelname == "WARNING"
-    #assert log_list[2].message.startswith("Found multiple AP IDs")
+    # assert log_list[2].message.startswith("Found multiple AP IDs")
 
 
 def test_validation_no_warnings():

@@ -304,5 +304,5 @@ def validate(file, valid_apids=None):
         for apid in stream_by_apid:
             # Check primary header consistency (sequence counts, APIDs)
             primary_headers_by_apid[apid] = read_primary_headers(stream_by_apid[apid])
-        
+
     return log_list
