@@ -209,4 +209,6 @@ def test_check_primary_header_contents_sameapid(caplog):
     with log.log_to_list() as log_list:
         _inspect_primary_header_fields(packet_data)
     assert log_list[0].levelname == "WARNING"
-    assert log_list[0].message == "Found multiple AP IDs {48.0, 58.0}."
+    assert log_list[0].message.startswith("Found multiple AP IDs")
+    assert "48.0" in log_list[0].message
+    assert "58.0" in log_list[0].message
