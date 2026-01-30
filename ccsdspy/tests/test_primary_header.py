@@ -8,6 +8,7 @@ from ..packet_types import _inspect_primary_header_fields
 
 TEST_FILENAME = "ccsds_primary_headers_test.bin"
 
+from ccsdspy import log
 
 def create_simple_ccsds_packet(n=1):
     packet_version_number = int("000", 2)
@@ -190,9 +191,10 @@ def test_check_primary_header_contents_nonconseq(caplog):
         "CCSDS_SEQUENCE_COUNT": np.flip(np.arange(1, num_packets)),
         "CCSDS_APID": 1 * np.ones(num_packets),
     }
-    _inspect_primary_header_fields(packet_data)
-    assert caplog.records[0].levelname == "WARNING"
-    assert caplog.records[0].message == "Sequence count are out of order."
+    with log.log_to_list() as log_list:
+        _inspect_primary_header_fields(packet_data)
+    assert log_list[0].levelname == "WARNING"
+    assert log_list[0].message == "Sequence count are out of order."
 
 
 def test_check_primary_header_contents_sameapid(caplog):
@@ -204,6 +206,7 @@ def test_check_primary_header_contents_sameapid(caplog):
     }
 
     packet_data["CCSDS_APID"][100:200] = 58
-    _inspect_primary_header_fields(packet_data)
-    assert caplog.records[0].levelname == "WARNING"
-    assert caplog.records[0].message == "Found multiple AP IDs {np.float64(48.0), np.float64(58.0)}."
+    with log.log_to_list() as log_list:
+        _inspect_primary_header_fields(packet_data)
+    assert log_list[0].levelname == "WARNING"
+    assert log_list[0].message == "Found multiple AP IDs {48.0, 58.0}."

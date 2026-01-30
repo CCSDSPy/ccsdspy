@@ -10,11 +10,11 @@ import os
 import shutil
 import yaml
 from pathlib import Path
+import warnings
 
 from appdirs import AppDirs
 
 import ccsdspy
-from ccsdspy.exceptions import warn_user
 
 __all__ = ["load_config", "copy_default_config", "print_config", "CONFIG_DIR"]
 
@@ -118,7 +118,7 @@ def copy_default_config(overwrite=False):
                 "User config file already exists. "
                 "This will be overwritten with a backup written in the same location."
             )
-            warn_user(message)
+            warnings.warn(message)
             os.rename(str(user_config_file), str(user_config_file) + ".bak")
             shutil.copyfile(config_file, user_config_file)
         else:
@@ -126,7 +126,7 @@ def copy_default_config(overwrite=False):
                 "User config file already exists. "
                 "To overwrite it use `copy_default_config(overwrite=True)`"
             )
-            warn_user(message)
+            warnings.warn(message)
     else:
         shutil.copyfile(config_file, user_config_file)
 

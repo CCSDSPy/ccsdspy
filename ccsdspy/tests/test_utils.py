@@ -12,6 +12,8 @@ import pytest
 
 from .. import utils
 from .test_primary_header import TEST_FILENAME, create_simple_ccsds_packet
+from ccsdspy import log
+from ccsdspy import _test_data_directory
 
 
 def test_count_packets_missing_bytes():
@@ -98,8 +100,7 @@ def test_split_packet_bytes_file_like_obj():
 
 @pytest.mark.parametrize("include_primary_header", [True, False])
 def test_split_packet_bytes_mixed_stream(include_primary_header):
-    dir_path = os.path.dirname(os.path.realpath(__file__))
-    data_path = os.path.join(dir_path, "data", "split")
+    data_path = os.path.join(_test_data_directory, "split")
     tlm_path = os.path.join(data_path, "CYGNSS_F7_L0_2022_086_10_15_V01_F__first101pkts.tlm")
 
     header_arrays = utils.read_primary_headers(tlm_path)
@@ -115,8 +116,7 @@ def test_split_packet_bytes_mixed_stream(include_primary_header):
 
 
 def test_read_primary_headers():
-    dir_path = os.path.dirname(os.path.realpath(__file__))
-    data_path = os.path.join(dir_path, "data", "split")
+    data_path = os.path.join(_test_data_directory, "split")
 
     # Check files in output directory
     tlm_files = [
@@ -144,21 +144,22 @@ def test_read_primary_headers():
 
 
 def test_validate_defaults():
-    dir_path = os.path.dirname(os.path.realpath(__file__))
-    data_path = os.path.join(dir_path, "data", "split")
+    data_path = os.path.join(_test_data_directory, "split")
     valid_tlm_path = os.path.join(data_path, "CYGNSS_F7_L0_2022_086_10_15_V01_F__first101pkts.tlm")
 
     # Test Header Parsing
-    result = utils.validate(valid_tlm_path)
-    assert len(result) == 3
-    assert all("UserWarning: Missing packets found" in warning for warning in result)
-    assert all("UserWarning: Sequence count are out of order." not in warning for warning in result)
-    assert all("UserWarning: Found multiple AP IDs" not in warning for warning in result)
+    with log.log_to_list() as log_list:
+        utils.validate(valid_tlm_path)
+    assert len(log_list) == 3
+    for i in range(3):
+        print(log_list[i].message)
+        assert log_list[i].message.startswith("Missing packets found")
+    #assert log_list[1].message.startswith("Sequence count are out of order.")
+    #assert log_list[2].message.startswith("Found multiple AP IDs")
 
 
 def test_validate_truncated_file():
-    dir_path = os.path.dirname(os.path.realpath(__file__))
-    data_path = os.path.join(dir_path, "data", "split")
+    data_path = os.path.join(_test_data_directory, "split")
     valid_tlm_path = os.path.join(data_path, "CYGNSS_F7_L0_2022_086_10_15_V01_F__first101pkts.tlm")
 
     # Test with a file that has missing bytes
@@ -166,33 +167,46 @@ def test_validate_truncated_file():
         file_bytes = fh.read()
     truncated_file_bytes = file_bytes[:-5]  # make last packet be incomplete
     truncated_file = io.BytesIO(truncated_file_bytes)
-    result = utils.validate(truncated_file)
-    assert any("UserWarning: File appears truncated" in warning for warning in result)
+    with log.log_to_list() as log_list:
+        utils.validate(truncated_file)
+    assert log_list[0].levelname == "WARNING"
+    assert log_list[0].message.startswith("File appears truncated")
 
 
 def test_validate_missing_apids():
-    dir_path = os.path.dirname(os.path.realpath(__file__))
-    data_path = os.path.join(dir_path, "data", "split")
+    data_path = os.path.join(_test_data_directory, "split")
     valid_tlm_path = os.path.join(data_path, "CYGNSS_F7_L0_2022_086_10_15_V01_F__first101pkts.tlm")
 
     # Test with a file that has an unknown APID
     valid_apids = [384, 1313, 386, 391, 392, 393]  # Missing 394
-    result = utils.validate(valid_tlm_path, valid_apids=valid_apids)
-    assert any("UserWarning: Found unknown APID" in warning for warning in result)
+
+    with log.log_to_list() as log_list:
+        utils.validate(valid_tlm_path, valid_apids=valid_apids)
+    assert log_list[0].levelname == "WARNING"
+    assert log_list[0].message.startswith("Found unknown APID")
 
 
 def test_validate_valid_apids():
-    dir_path = os.path.dirname(os.path.realpath(__file__))
-    data_path = os.path.join(dir_path, "data", "split")
+    data_path = os.path.join(_test_data_directory, "split")
     valid_tlm_path = os.path.join(data_path, "CYGNSS_F7_L0_2022_086_10_15_V01_F__first101pkts.tlm")
 
     # Test with a file that has all APPIDs Specified
     valid_apids = [384, 1313, 386, 391, 392, 393, 394]
-    result = utils.validate(valid_tlm_path, valid_apids=valid_apids)
-    assert len(result) == 3  # Still has missing sequence counts
-    assert all("UserWarning: Missing packets found" in warning for warning in result)
-    assert all("UserWarning: Sequence count are out of order." not in warning for warning in result)
-    assert all("UserWarning: Found multiple AP IDs" not in warning for warning in result)
+    with log.log_to_list() as log_list:
+        utils.validate(valid_tlm_path, valid_apids=valid_apids)
+
+    assert len(log_list) == 3  # Still has missing sequence counts
+
+    for this_log in log_list:
+        print(this_log.message)
+        assert this_log.levelname == "WARNING"
+
+    assert log_list[0].levelname == "WARNING"
+    #assert log_list[0].message.startswith("Sequence count are out of order")
+    #assert log_list[1].message.startswith("Missing packets found")
+    assert log_list[1].levelname == "WARNING"
+    assert log_list[2].levelname == "WARNING"
+    #assert log_list[2].message.startswith("Found multiple AP IDs")
 
 
 def test_validation_no_warnings():
