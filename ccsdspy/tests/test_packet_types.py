@@ -30,6 +30,31 @@ random_binary_file = os.path.join(
 random_packet_def = os.path.join(hs_packet_dir, "apid001", "defs.csv")
 
 
+def test_FixedLength_initializer_raises_TypeError_on_bad_types():
+    """Tests that the FixedLength class raises TypeError when arguments
+    are of the wrong type.
+    """
+    with pytest.raises(TypeError):
+        FixedLength([], apid='not an int')
+    with pytest.raises(TypeError):
+        FixedLength([], name=1234)
+    with pytest.raises(TypeError):
+        FixedLength([], description=4567)
+
+
+def test_FixedLength_raises_AttributeError_on_set_optionals():
+    """Tests that the FixedLength class raises AttributeError when trying to set
+    read-only properties.
+    """
+    pkt = FixedLength([], apid=100, name="TestPacket", description="A test packet")
+    with pytest.raises(AttributeError):
+        pkt.apid = 200
+    with pytest.raises(AttributeError):
+        pkt.name = "New Name"
+    with pytest.raises(AttributeError):
+        pkt.description = "New description"
+
+
 def test_FixedLength_initializer_copies_field_list():
     """Tests that the FixedLengthPacket initializer stores a copy of the
     provided fields list.
@@ -228,6 +253,31 @@ def test_fixed_length_rejects_expanding():
                 )
             ]
         )
+
+
+def test_VariableLength_initializer_raises_TypeError_on_bad_types():
+    """Tests that the VariableLength class raises TypeError when arguments
+    are of the wrong type.
+    """
+    with pytest.raises(TypeError):
+        VariableLength([], apid='not an int')
+    with pytest.raises(TypeError):
+        VariableLength([], name=1234)
+    with pytest.raises(TypeError):
+        VariableLength([], description=4567)
+
+
+def test_VariableLength_raises_AttributeError_on_set_optionals():
+    """Tests that the VariableLength class raises AttributeError when trying to set
+    read-only properties.
+    """
+    pkt = VariableLength([], apid=100, name="TestPacket", description="A test packet")
+    with pytest.raises(AttributeError):
+        pkt.apid = 200
+    with pytest.raises(AttributeError):
+        pkt.name = "New Name"
+    with pytest.raises(AttributeError):
+        pkt.description = "New description"
 
 
 def test_variable_length_rejects_multiple_expanding():
