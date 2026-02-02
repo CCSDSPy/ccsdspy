@@ -27,6 +27,8 @@ def test_PacketField_initializer_raises_TypeError_on_bad_types():
         PacketField(name="mnemonic", data_type="uint", bit_length="foobar")
     with pytest.raises(TypeError):
         PacketField(name="mnemonic", data_type="uint", bit_length=4, bit_offset="foo")
+    with pytest.raises(TypeError):
+        PacketField(name="mnemonic", data_type="uint", bit_length=4, description=12345)
 
 
 def test_PacketField_repr():
@@ -40,7 +42,11 @@ def test_PacketField_iter():
     field = PacketField(name="MyField", data_type="uint", bit_length=1)
     assert dict(field)["name"] == "MyField"
     assert dict(field)["dataType"] == "uint"
-
+    
+def test_PacketField_raises_AttributeError_on_set_description():
+    field = PacketField(name="MyField", data_type="uint", bit_length=1, description="A field")
+    with pytest.raises(AttributeError):
+        field.description = "New description"
 
 def test_PacketArray_TypeErrors():
     with pytest.raises(TypeError):
