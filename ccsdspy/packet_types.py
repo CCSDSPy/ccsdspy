@@ -92,81 +92,15 @@ class _BasePacket:
         """int: APID of the packet."""
         return self._apid
     
-    @apid.setter
-    def apid(self, value: int):
-        """Set the APID of the packet.
-
-        Parameters
-        ----------
-        value : int
-            New APID value.
-
-        Raises
-        ------
-        ValueError
-            If the APID has already been set.
-        TypeError
-            If the provided value is not an int.
-        """
-        if self._apid is not None:
-            raise ValueError("Cannot change APID once it has been set.")
-        if not isinstance(value, int):
-            raise TypeError("apid must be an int")
-        self._apid = value
-    
     @property
     def description(self) -> str:
         """str: Description of the packet."""
         return self._description
     
-    @description.setter
-    def description(self, value: str):
-        """Set the description of the packet.
-
-        Parameters
-        ----------
-        value : str
-            New description value.
-
-        Raises
-        ------
-        ValueError
-            If the description has already been set.
-        TypeError
-            If the provided value is not a str.
-        """
-        if self._description is not None:
-            raise ValueError("Cannot change description once it has been set.")
-        if not isinstance(value, str):
-            raise TypeError("description must be a str")
-        self._description = value
-    
     @property
     def name(self) -> str:
         """str: Name of the packet."""
         return self._name
-    
-    @name.setter
-    def name(self, value: str):
-        """Set the name of the packet.
-
-        Parameters
-        ----------
-        value : str
-            New name value.
-
-        Raises
-        ------
-        ValueError
-            If the name has already been set.
-        TypeError
-            If the provided value is not a str.
-        """
-        if self._name is not None:
-            raise ValueError("Cannot change name once it has been set.")
-        if not isinstance(value, str):
-            raise TypeError("name must be a str")
-        self._name = value
 
     def add_converted_field(self, input_field_name, output_field_name, converter):
         """Add a converted field to the packet definition, used to apply
