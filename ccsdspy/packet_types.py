@@ -28,11 +28,11 @@ class _BasePacket:
             Layout of packet fields contained in the definition.
         apid : int, optional
             APID of the packet. Acts as a unique identifier for the packet type. Used
-            for documentation purposes.
+            as metadata.
         name : str, optional
-            Name of the packet. Used for documentation.
+            Name of the packet. Used as metadata.
         description : str, optional
-            Description of the packet. Used for documentation.
+            Description of the packet. Used as metadata.
         """
         if type(self) is _BasePacket:
             raise NotImplementedError(
@@ -178,11 +178,11 @@ class FixedLength(_BasePacket):
             Layout of packet fields contained in the definition.
         apid : int, optional
             APID of the packet. Acts as a unique identifier for the packet type. Used
-            for documentation purposes.
+            as metadata.
         name : str, optional
-            Name of the packet. Used for documentation.
+            Name of the packet. Used as metadata.
         description : str, optional
-            Description of the packet. Used for documentation.
+            Description of the packet. Used as metadata.
 
         Raises
         ------
@@ -277,11 +277,11 @@ class VariableLength(_BasePacket):
             bit_offset's. Do not include the primary header fields.
         apid : int, optional
             APID of the packet. Acts as a unique identifier for the packet type. Used
-            for documentation purposes.
+            as metadata.
         name : str, optional
-            Name of the packet. Used for documentation.
+            Name of the packet. Used as metadata.
         description : str, optional
-            Description of the packet. Used for documentation.
+            Description of the packet. Used as metadata.
 
         Raises
         ------
