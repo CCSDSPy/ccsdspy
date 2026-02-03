@@ -17,7 +17,9 @@ from .converters import Converter
 class PacketField:
     """A field contained in a packet."""
 
-    def __init__(self, name, data_type, bit_length, bit_offset=None, byte_order="big", description=None):
+    def __init__(
+        self, name, data_type, bit_length, bit_offset=None, byte_order="big", description=None
+    ):
         """
         Parameters
         ----------
@@ -114,7 +116,7 @@ class PacketField:
                 ("byteOrder", self._byte_order),
             ]
         )
-        
+
     @property
     def name(self):
         """str: Name of the field."""

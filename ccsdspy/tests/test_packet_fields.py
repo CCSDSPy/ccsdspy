@@ -43,7 +43,7 @@ def test_PacketField_iter():
     assert dict(field)["name"] == "MyField"
     assert dict(field)["dataType"] == "uint"
 
-    
+
 def test_PacketField_raises_AttributeError_on_set_description():
     field = PacketField(name="MyField", data_type="uint", bit_length=1, description="A field")
     with pytest.raises(AttributeError):

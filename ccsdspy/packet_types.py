@@ -12,7 +12,6 @@ from .converters import Converter
 from .decode import _decode_fixed_length, _decode_variable_length
 from .packet_fields import PacketField, PacketArray
 
-
 __author__ = "Daniel da Silva <mail@danieldasilva.org>"
 
 
@@ -40,7 +39,7 @@ class _BasePacket:
                 "The _BasePacket class is an abstract base class and "
                 "cannot be instantiated directly."
             )
-            
+
         if apid is not None and not isinstance(apid, int):
             raise TypeError("apid must be an int")
         if name is not None and not isinstance(name, str):
@@ -57,7 +56,6 @@ class _BasePacket:
         self._apid = apid
         self._name = name
         self._description = description
-
 
     @classmethod
     def from_file(cls, file):
@@ -86,17 +84,17 @@ class _BasePacket:
             raise ValueError(f"File type {file_extension[1]} not supported.")
 
         return cls(fields)
-    
+
     @property
     def apid(self) -> int:
         """int: APID of the packet."""
         return self._apid
-    
+
     @property
     def description(self) -> str:
         """str: Description of the packet."""
         return self._description
-    
+
     @property
     def name(self) -> str:
         """str: Name of the packet."""

@@ -35,7 +35,7 @@ def test_FixedLength_initializer_raises_TypeError_on_bad_types():
     are of the wrong type.
     """
     with pytest.raises(TypeError):
-        FixedLength([], apid='not an int')
+        FixedLength([], apid="not an int")
     with pytest.raises(TypeError):
         FixedLength([], name=1234)
     with pytest.raises(TypeError):
@@ -260,7 +260,7 @@ def test_VariableLength_initializer_raises_TypeError_on_bad_types():
     are of the wrong type.
     """
     with pytest.raises(TypeError):
-        VariableLength([], apid='not an int')
+        VariableLength([], apid="not an int")
     with pytest.raises(TypeError):
         VariableLength([], name=1234)
     with pytest.raises(TypeError):
