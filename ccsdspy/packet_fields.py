@@ -119,47 +119,74 @@ class PacketField:
 
     @property
     def name(self):
-        """str: Name of the field."""
+        """Name of the field.
+
+        Optional metadata. If set, is a string, otherwise is None.
+        """
         return self._name
 
     @property
     def data_type(self):
-        """str: Data type of the field."""
+        """Data type of the field.
+
+        String, one of:
+
+        - 'uint' (unsigned integer)
+        - 'int' (signed integer)
+        - 'float' (IEEE floating point)
+        - 'str' (string)
+        - 'fill' (placeholder used to fill space between other fields)
+        """
         return self._data_type
 
     @property
     def bit_length(self):
-        """int: Bit length of the field."""
+        """Bit length of the field.
+
+        Integer, must be non-negative.
+        """
         return self._bit_length
 
     @property
     def bit_offset(self):
-        """int: Bit offset of the field."""
+        """Bit offset of the field.
+
+        Integer bit offset supplied in definition. If not manually specified, is
+        None.
+        """
         return self._bit_offset
 
     @property
     def byte_order(self):
-        """str: Byte order of the field."""
+        """Byte order of the field.
+
+        Applies to integer data types. Either 'big', 'small', ad-hoc byte order
+        like "4312".
+
+        Big endian stores the most significant byte of a word at the smallest
+        memory address, and little endian stores the least-significant byte at
+        the smallest address.
+
+        For ad-hoc byte orders outside of big or little endian, pass a string like
+        "4312"
+        """
         return self._byte_order
 
     @property
     def field_type(self):
-        """str: Type of the field, either "element" or "array"."""
+        """Whether the field is an element or array.
+
+        If instance created using `~PacketField`, this will be set to the string
+        "element". If created using `~PacketArray`, this will be "array".
+        """
         return self._field_type
 
     @property
-    def array_shape(self):
-        """tuple or None: Shape of the array (if `field_type` is "array") otherwise None."""
-        return self._array_shape
-
-    @property
-    def array_order(self):
-        """str or None: Order of the array ('C' for row-major, 'F' for column-major)."""
-        return self._array_order
-
-    @property
     def description(self):
-        """str or None: Description of the field."""
+        """Description of the field.
+
+        Used for metadata purposes. If set, is a string. Otherwise, is None.
+        """
         return self._description
 
 
@@ -227,3 +254,20 @@ class PacketArray(PacketField):
         self._field_type = "array"
         self._array_shape = array_shape
         self._array_order = array_order
+
+    @property
+    def array_shape(self):
+        """Shape of the array.
+
+        Tuple shape of the array, or string "expand"
+        """
+        return self._array_shape
+
+    @property
+    def array_order(self):
+        """Order of the array.
+
+        This is either the string 'C' for row-major order, or 'F' for
+        column-major order (Fortran-style).
+        """
+        return self._array_order
