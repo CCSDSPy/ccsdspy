@@ -16,7 +16,7 @@ from .converters import Converter
 
 class PacketField:
     """A field contained in a packet."""
-
+    
     def __init__(
         self, name, data_type, bit_length, bit_offset=None, byte_order="big", description=None
     ):
@@ -81,7 +81,7 @@ class PacketField:
         self._bit_length = bit_length
         self._bit_offset = bit_offset
         self._byte_order = byte_order
-        self._byte_order_parse = byte_order_parse
+        self._byte_order_parse = byte_order
         self._byte_order_post = byte_order_post
         self._field_type = "element"
         self._array_shape = None
@@ -143,33 +143,23 @@ class PacketField:
         return self._byte_order
 
     @property
-    def byte_order_parse(self):
-        """str: Byte order used for parsing the field."""
-        return self._byte_order_parse
-
-    @property
-    def byte_order_post(self):
-        """str: Byte order used after parsing the field."""
-        return self._byte_order_post
-
-    @property
     def field_type(self):
-        """str: Type of the field."""
+        """str: Type of the field, either "element" or "array"."""
         return self._field_type
 
     @property
     def array_shape(self):
-        """tuple: Shape of the array."""
+        """tuple or None: Shape of the array (if `field_type` is "array") otherwise None."""
         return self._array_shape
 
     @property
     def array_order(self):
-        """str: Order of the array ('C' for row-major, 'F' for column-major)."""
+        """str or None: Order of the array ('C' for row-major, 'F' for column-major)."""
         return self._array_order
 
     @property
     def description(self):
-        """str: Description of the field."""
+        """str or None: Description of the field."""
         return self._description
 
 
