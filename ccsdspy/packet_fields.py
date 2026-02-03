@@ -16,7 +16,7 @@ from .converters import Converter
 
 class PacketField:
     """A field contained in a packet."""
-    
+
     def __init__(
         self, name, data_type, bit_length, bit_offset=None, byte_order="big", description=None
     ):
