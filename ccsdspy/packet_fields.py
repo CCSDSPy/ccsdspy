@@ -17,7 +17,9 @@ from .converters import Converter
 class PacketField:
     """A field contained in a packet."""
 
-    def __init__(self, name, data_type, bit_length, bit_offset=None, byte_order="big"):
+    def __init__(
+        self, name, data_type, bit_length, bit_offset=None, byte_order="big", description=None
+    ):
         """
         Parameters
         ----------
@@ -35,6 +37,8 @@ class PacketField:
         byte_order : {'big', 'little'}, or custom string of digits like "4321"
             Byte order of the field. Can be "big", "little", or an arbitrary ordering
             Specified as a string of digits like "2341". Defaults to big endian.
+        description: str, optional
+            Description of the field for documentation purposes.
 
         Raises
         ------
@@ -51,6 +55,8 @@ class PacketField:
             raise TypeError("bit_length parameter must be an int")
         if not (bit_offset is None or isinstance(bit_offset, (int, np.integer))):
             raise TypeError("bit_offset parameter must be an int")
+        if not (description is None or isinstance(description, str)):
+            raise TypeError("description parameter must be a str")
 
         valid_data_types = ("uint", "int", "float", "str", "fill")
         if data_type not in valid_data_types:
@@ -80,6 +86,7 @@ class PacketField:
         self._field_type = "element"
         self._array_shape = None
         self._array_order = None
+        self._description = description
 
     def __repr__(self):
         values = {k: repr(v) for (k, v) in self.__dict__.items()}
@@ -109,6 +116,61 @@ class PacketField:
                 ("byteOrder", self._byte_order),
             ]
         )
+
+    @property
+    def name(self):
+        """str: Name of the field."""
+        return self._name
+
+    @property
+    def data_type(self):
+        """str: Data type of the field."""
+        return self._data_type
+
+    @property
+    def bit_length(self):
+        """int: Bit length of the field."""
+        return self._bit_length
+
+    @property
+    def bit_offset(self):
+        """int: Bit offset of the field."""
+        return self._bit_offset
+
+    @property
+    def byte_order(self):
+        """str: Byte order of the field."""
+        return self._byte_order
+
+    @property
+    def byte_order_parse(self):
+        """str: Byte order used for parsing the field."""
+        return self._byte_order_parse
+
+    @property
+    def byte_order_post(self):
+        """str: Byte order used after parsing the field."""
+        return self._byte_order_post
+
+    @property
+    def field_type(self):
+        """str: Type of the field."""
+        return self._field_type
+
+    @property
+    def array_shape(self):
+        """tuple: Shape of the array."""
+        return self._array_shape
+
+    @property
+    def array_order(self):
+        """str: Order of the array ('C' for row-major, 'F' for column-major)."""
+        return self._array_order
+
+    @property
+    def description(self):
+        """str: Description of the field."""
+        return self._description
 
 
 class PacketArray(PacketField):
