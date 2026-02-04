@@ -292,8 +292,7 @@ def validate(file, valid_apids=None):
 
     Returns
     -------
-    List of strings, each in the format "WarningType: message", describing
-    potential validation issues. Returns an empty list if no warnings are issued.
+    List of log events, describing potential validation issues. Returns an empty list if no warnings are issued.
     """
     with log.log_to_list() as log_list:
 
