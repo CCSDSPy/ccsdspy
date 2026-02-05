@@ -110,3 +110,7 @@ Icon
 ._*
 
 _version.py
+
+# created during tests
+*.ccsds
+*.bin

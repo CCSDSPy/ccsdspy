@@ -115,6 +115,25 @@ Documentation
   These examples should, whenever possible, be in the `doctests <https://docs.python.org/3/library/doctest.html>`__ format and will be executed as part of the test suite.
 
 
+Standard output, warnings, and errors
+=====================================
+
+The built-in ``print(...)`` function should only be used for output that is explicitly requested by the user, for example ``print_header(...)`` or ``list_catalogs(...)``.
+Any other standard output, warnings, and errors should follow these rules:
+
+* For errors/exceptions, one should always use ``raise`` with one of the built-in exception classes, or a custom exception class (e.g. ValueError, TypeError).
+  The nondescript ``Exception`` class should be avoided as much as possible, in favor of more specific exceptions (`IOError`, `ValueError`, etc.).
+
+* For informational messages, use the logging system `log.info()` with a descriptive message.
+
+* For warnings, use the logging system `log.warning()` with a descriptive message.
+  Avoid using the `warnings` module directly.
+
+* For debug messages, use the logging system `log.debug()` with a descriptive message.
+  Remember that users may access those messages as well.
+
+
+
 Releases
 ========
 

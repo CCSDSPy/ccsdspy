@@ -8,6 +8,8 @@ from ..packet_types import _inspect_primary_header_fields
 
 TEST_FILENAME = "ccsds_primary_headers_test.bin"
 
+from ccsdspy import log
+
 
 def create_simple_ccsds_packet(n=1):
     packet_version_number = int("000", 2)
@@ -156,7 +158,7 @@ def test_primary_header_contents_offset():
     os.remove(TEST_FILENAME)
 
 
-def test_check_primary_header_contents_missingseq():
+def test_check_primary_header_contents_missingseq(caplog):
     """Check that non consecutive sequence counts raises a warning."""
     num_packets = 10000
     packet_data = {
@@ -167,30 +169,36 @@ def test_check_primary_header_contents_missingseq():
     packet_data["CCSDS_SEQUENCE_COUNT"][250] = 0
 
     # TODO check that the warning states the right missing packets
-    with pytest.warns(UserWarning):
-        _inspect_primary_header_fields(packet_data)
-
+    _inspect_primary_header_fields(packet_data)
+    assert caplog.records[0].levelname == "WARNING"
+    assert caplog.records[0].message == "Missing packets found [251]."
     packet_data["CCSDS_SEQUENCE_COUNT"][500] = 0
 
+    assert caplog.records[1].levelname == "WARNING"
+    assert caplog.records[1].message == "Sequence count are out of order."
     # TODO check that the warning states the right missing packets
-    with pytest.warns(UserWarning):
-        # check that it tells you that both 100 and 249 are missing
-        _inspect_primary_header_fields(packet_data)
+    # check that it tells you that both 100 and 249 are missing
+    _inspect_primary_header_fields(packet_data)
+    assert caplog.records[2].levelname == "WARNING"
+    assert caplog.records[2].message == "Missing packets found [251, 501]."
+    assert caplog.records[3].levelname == "WARNING"
+    assert caplog.records[3].message == "Sequence count are out of order."
 
 
-def test_check_primary_header_contents_nonconseq():
+def test_check_primary_header_contents_nonconseq(caplog):
     """Check that non consecutive sequence counts raises a warning."""
     num_packets = 10000
     packet_data = {
         "CCSDS_SEQUENCE_COUNT": np.flip(np.arange(1, num_packets)),
         "CCSDS_APID": 1 * np.ones(num_packets),
     }
-
-    with pytest.warns(UserWarning, match="out of order"):
+    with log.log_to_list() as log_list:
         _inspect_primary_header_fields(packet_data)
+    assert log_list[0].levelname == "WARNING"
+    assert log_list[0].message == "Sequence count are out of order."
 
 
-def test_check_primary_header_contents_sameapid():
+def test_check_primary_header_contents_sameapid(caplog):
     """Check that all apids are the same."""
     num_packets = 10000
     packet_data = {
@@ -198,6 +206,10 @@ def test_check_primary_header_contents_sameapid():
         "CCSDS_APID": 48 * np.ones(num_packets),
     }
 
-    with pytest.warns(UserWarning, match="Found multiple AP IDs"):
-        packet_data["CCSDS_APID"][100:200] = 58
+    packet_data["CCSDS_APID"][100:200] = 58
+    with log.log_to_list() as log_list:
         _inspect_primary_header_fields(packet_data)
+    assert log_list[0].levelname == "WARNING"
+    assert log_list[0].message.startswith("Found multiple AP IDs")
+    assert "48.0" in log_list[0].message
+    assert "58.0" in log_list[0].message
