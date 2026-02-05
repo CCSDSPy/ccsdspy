@@ -32,13 +32,14 @@ def load_config():
     If a configuration file does not exist in the user's home directory,
     it will read in the defaults from the package's data directory.
 
-    The selected mission can be overridden by setting the `ccsdspy_MISSION`
+    The selected configuration can be overridden by setting the `ccsdspy_CONFIGDIR`
     environment variable. This environment variable will take precedence
     over the mission specified in the configuration file.
 
     Returns
     -------
-    dict: The loaded configuration data.
+    config : dict
+        The loaded configuration data, as a dictionary.
     """
     config_path = Path(_get_user_configdir()) / "config.yml"
     if not config_path.exists():

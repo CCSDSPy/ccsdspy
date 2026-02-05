@@ -284,9 +284,9 @@ def validate(file, valid_apids=None):
 
     Parameters
     ----------
-    file: `str | BytesIO`
-        A file path (str) or file-like object with a `.read()` method.
-    valid_apids: `list[int]| None`, optional
+    file: str or BytesIO
+        A file path or file-like object with a `.read()` method.
+    valid_apids: list of int, optional
        Optional list of valid APIDs. If specified, warning will be issued when
        an APID is encountered outside this list.
 
@@ -295,7 +295,6 @@ def validate(file, valid_apids=None):
     List of log events, describing potential validation issues. Returns an empty list if no warnings are issued.
     """
     with log.log_to_list() as log_list:
-
         # Check file integrity (truncation, extra bytes)
         stream_by_apid = split_by_apid(file, valid_apids=valid_apids)
 
