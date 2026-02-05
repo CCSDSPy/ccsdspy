@@ -36,8 +36,9 @@ def load_config():
     environment variable. This environment variable will take precedence
     over the mission specified in the configuration file.
 
-    Returns:
-        dict: The loaded configuration data.
+    Returns
+    -------
+    dict: The loaded configuration data.
     """
     config_path = Path(_get_user_configdir()) / "config.yml"
     if not config_path.exists():
@@ -56,14 +57,15 @@ def _get_user_configdir():
     The configuration directory is determined by the "ccsdspy_CONFIGDIR"
     environment variable or a default directory set by the application.
 
-    Returns:
-        str: The path to the configuration directory.
+    Returns
+    -------
+    str: The path to the configuration directory.
 
-    Raises:
-        RuntimeError: If the configuration directory is not writable.
+    Raises
+    ------
+    RuntimeError: If the configuration directory is not writable.
     """
     configdir = os.environ.get("ccsdspy_CONFIGDIR", CONFIG_DIR)
-
     if not _is_writable_dir(configdir):
         raise RuntimeError(f'Could not write to ccsdspy_CONFIGDIR="{configdir}"')
     return configdir
@@ -73,14 +75,18 @@ def _is_writable_dir(path):
     """
     Check if the specified path is a writable directory.
 
-    Args:
-        path (str or Path): The path to check.
+    Parameters
+    ----------
+    path: str or Path
+        The path to check.
 
-    Returns:
-        bool: True if the path is a writable directory, False otherwise.
+    Returns
+    -------
+    bool: True if the path is a writable directory, False otherwise.
 
-    Raises:
-        FileExistsError: If a file exists at the path instead of a directory.
+    Raises
+    ------
+    FileExistsError: If a file exists at the path instead of a directory.
     """
     # Worried about multiple threads creating the directory at the same time.
     try:
@@ -98,19 +104,21 @@ def copy_default_config(overwrite=False):
     If the configuration file already exists, it will be overwritten if the
     `overwrite` parameter is set to True.
 
-    Args:
-        overwrite (bool): Whether to overwrite an existing configuration file.
+    Parameters
+    ----------
+    overwrite : bool
+         Whether to overwrite an existing configuration file.
 
-    Raises:
-        RuntimeError: If the configuration directory is not writable.
+    Raises
+    ------
+    RuntimeError: If the configuration directory is not writable.
     """
     config_filename = "config.yml"
     config_file = Path(ccsdspy.__file__).parent / "data" / config_filename
+
+    # Note: get_user_configdir() ensures directory is writable
     user_config_dir = Path(_get_user_configdir())
     user_config_file = user_config_dir / config_filename
-
-    if not _is_writable_dir(user_config_dir):
-        raise RuntimeError(f"Could not write to config directory {user_config_dir}")
 
     if user_config_file.exists():
         if overwrite:
@@ -134,9 +142,6 @@ def copy_default_config(overwrite=False):
 def print_config():
     """
     Print the current configuration options.
-
-    Args:
-        config (dict): The configuration data to print.
     """
     config = load_config()
     print("FILES USED:")
@@ -158,8 +163,9 @@ def _find_config_files():
     """
     Find the locations of configuration files.
 
-    Returns:
-        list: A list of paths to the configuration files.
+    Returns
+    -------
+    list: A list of paths to the configuration files.
     """
     config_files = []
     config_filename = "config.yml"

@@ -2,6 +2,7 @@
 Tests for the logging module
 """
 
+import json
 import logging
 import os.path
 import re
@@ -10,7 +11,8 @@ import re
 import pytest
 
 from ccsdspy import config, log
-from ccsdspy.logger import level_str_to_level
+from ccsdspy.config import copy_default_config
+from ccsdspy.logger import _init_log, level_str_to_level, CCSDSPyLogger
 
 
 def test_logger_name():
@@ -220,3 +222,43 @@ def test_log_to_file_level(tmp_path):
 
     assert len(log_entries) == 1
     assert log_entries[0].split(" - ")[-1].strip() == "Error message"
+
+
+def test_level_str_to_level():
+    """Tests the level_str_to_level function"""
+    to_test = dict(
+        CRITICAL=logging.CRITICAL,
+        ERROR=logging.ERROR,
+        WARNING=logging.WARNING,
+        ASDF=logging.NOTSET,
+    )
+
+    for level_str, level in to_test.items():
+        assert level_str_to_level(level_str) == level
+        assert level_str_to_level(level_str.lower()) == level
+
+
+def test_init_log_log_file_json(tmpdir):
+    """Tests the _init_log() function where log_file_json is set"""
+    log_file_path = os.path.join(tmpdir, "ccsdspy.log")
+
+    config_dict = {
+        "logger": {
+            "log_file_path": log_file_path,
+            "log_to_file": True,
+            "log_file_json": True,
+        }
+    }
+
+    logger = _init_log(config=config_dict)
+    assert isinstance(logger, CCSDSPyLogger)
+
+    logger.warning("test")
+
+    for handler in logger.handlers:
+        handler.flush()
+
+    with open(log_file_path) as fh:
+        log_dict = json.load(fh)
+
+    assert log_dict["message"] == "test"

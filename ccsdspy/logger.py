@@ -18,7 +18,7 @@ class JSONFormatter(logging.Formatter):
         return json.dumps(log_data)
 
 
-class CCSDSpyLogger(logging.Logger):
+class CCSDSPyLogger(logging.Logger):
     """
     This class is used to set up a custom logger.
 
@@ -145,7 +145,7 @@ def _init_log(config=None):
         config = _config
 
     logger = logging.getLoggerClass()
-    logging.setLoggerClass(CCSDSpyLogger)
+    logging.setLoggerClass(CCSDSPyLogger)
     logger = logging.getLogger("ccsdspy")
     logger.setLevel(logging.DEBUG)
     log_level = level_str_to_level(config.get("logger", {}).get("log_level", "INFO"))
