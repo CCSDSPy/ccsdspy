@@ -142,4 +142,4 @@ This function works with mixed files containing multiple APIDs, which may includ
 
   validate('mixed_file.tlm')
 
-This outputs a `List[str]` of warnigs or exceptions encountered during the validation process. If no issues are found, an empty list is returned.
+This outputs a `List[str]` of warnings or exceptions encountered during the validation process. If no issues are found, an empty list is returned.

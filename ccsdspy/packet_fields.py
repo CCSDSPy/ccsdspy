@@ -17,7 +17,9 @@ from .converters import Converter
 class PacketField:
     """A field contained in a packet."""
 
-    def __init__(self, name, data_type, bit_length, bit_offset=None, byte_order="big"):
+    def __init__(
+        self, name, data_type, bit_length, bit_offset=None, byte_order="big", description=None
+    ):
         """
         Parameters
         ----------
@@ -35,6 +37,8 @@ class PacketField:
         byte_order : {'big', 'little'}, or custom string of digits like "4321"
             Byte order of the field. Can be "big", "little", or an arbitrary ordering
             Specified as a string of digits like "2341". Defaults to big endian.
+        description: str, optional
+            Description of the field, used as metadata.
 
         Raises
         ------
@@ -51,6 +55,8 @@ class PacketField:
             raise TypeError("bit_length parameter must be an int")
         if not (bit_offset is None or isinstance(bit_offset, (int, np.integer))):
             raise TypeError("bit_offset parameter must be an int")
+        if not (description is None or isinstance(description, str)):
+            raise TypeError("description parameter must be a str")
 
         valid_data_types = ("uint", "int", "float", "str", "fill")
         if data_type not in valid_data_types:
@@ -75,11 +81,12 @@ class PacketField:
         self._bit_length = bit_length
         self._bit_offset = bit_offset
         self._byte_order = byte_order
-        self._byte_order_parse = byte_order_parse
+        self._byte_order_parse = byte_order
         self._byte_order_post = byte_order_post
         self._field_type = "element"
         self._array_shape = None
         self._array_order = None
+        self._description = description
 
     def __repr__(self):
         values = {k: repr(v) for (k, v) in self.__dict__.items()}
@@ -109,6 +116,78 @@ class PacketField:
                 ("byteOrder", self._byte_order),
             ]
         )
+
+    @property
+    def name(self):
+        """Name of the field.
+
+        Optional metadata. If set, is a string, otherwise is None.
+        """
+        return self._name
+
+    @property
+    def data_type(self):
+        """Data type of the field.
+
+        String, one of:
+
+        - 'uint' (unsigned integer)
+        - 'int' (signed integer)
+        - 'float' (IEEE floating point)
+        - 'str' (string)
+        - 'fill' (placeholder used to fill space between other fields)
+        """
+        return self._data_type
+
+    @property
+    def bit_length(self):
+        """Bit length of the field.
+
+        Integer, must be non-negative.
+        """
+        return self._bit_length
+
+    @property
+    def bit_offset(self):
+        """Bit offset of the field.
+
+        Integer bit offset supplied in definition. If not manually specified, is
+        None.
+        """
+        return self._bit_offset
+
+    @property
+    def byte_order(self):
+        """Byte order of the field.
+
+        Applies to integer data types. Either 'big', 'small', ad-hoc byte order
+        like "4312".
+
+        Big endian stores the most significant byte of a word at the smallest
+        memory address, and little endian stores the least-significant byte at
+        the smallest address.
+
+        For ad-hoc byte orders outside of big or little endian, pass a string like
+        "4312"
+        """
+        return self._byte_order
+
+    @property
+    def field_type(self):
+        """Whether the field is an element or array.
+
+        If instance created using `~PacketField`, this will be set to the string
+        "element". If created using `~PacketArray`, this will be "array".
+        """
+        return self._field_type
+
+    @property
+    def description(self):
+        """Description of the field.
+
+        Used for metadata purposes. If set, is a string. Otherwise, is None.
+        """
+        return self._description
 
 
 class PacketArray(PacketField):
@@ -175,3 +254,20 @@ class PacketArray(PacketField):
         self._field_type = "array"
         self._array_shape = array_shape
         self._array_order = array_order
+
+    @property
+    def array_shape(self):
+        """Shape of the array.
+
+        Tuple shape of the array, or string "expand"
+        """
+        return self._array_shape
+
+    @property
+    def array_order(self):
+        """Order of the array.
+
+        This is either the string 'C' for row-major order, or 'F' for
+        column-major order (Fortran-style).
+        """
+        return self._array_order

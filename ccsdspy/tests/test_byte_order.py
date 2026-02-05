@@ -1,6 +1,6 @@
 """Tests for complex byte orderings, eg. 3412.
 
-The test data covers all XTCE orderings requested in 
+The test data covers all XTCE orderings requested in
   https://github.com/CCSDSPy/ccsdspy/discussions/110
 
 See also:

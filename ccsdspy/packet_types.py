@@ -21,18 +21,42 @@ class _BasePacket:
     directly.
     """
 
-    def _init(self, fields):
+    def __init__(self, fields, apid=None, name=None, description=None):
         """
         Parameters
         ----------
         fields : list of `ccsdspy.PacketField`
             Layout of packet fields contained in the definition.
+        apid : int, optional
+            APID of the packet. Acts as a unique identifier for the packet type. Used
+            as metadata.
+        name : str, optional
+            Name of the packet. Used as metadata.
+        description : str, optional
+            Description of the packet. Used as metadata.
         """
+        if type(self) is _BasePacket:
+            raise NotImplementedError(
+                "The _BasePacket class is an abstract base class and "
+                "cannot be instantiated directly."
+            )
+
+        if apid is not None and not isinstance(apid, int):
+            raise TypeError("apid must be an int")
+        if name is not None and not isinstance(name, str):
+            raise TypeError("name must be a str")
+        if description is not None and not isinstance(description, str):
+            raise TypeError("description must be a str")
+
         # List of PacketField instances
         self._fields = fields[:]
 
         # Dictionary mapping input name to tuple (output_name: str, Converter instance)
         self._converters = {}
+
+        self._apid = apid
+        self._name = name
+        self._description = description
 
     @classmethod
     def from_file(cls, file):
@@ -61,6 +85,21 @@ class _BasePacket:
             raise ValueError(f"File type {file_extension[1]} not supported.")
 
         return cls(fields)
+
+    @property
+    def apid(self) -> int:
+        """int: APID of the packet."""
+        return self._apid
+
+    @property
+    def description(self) -> str:
+        """str: Description of the packet."""
+        return self._description
+
+    @property
+    def name(self) -> str:
+        """str: Name of the packet."""
+        return self._name
 
     def add_converted_field(self, input_field_name, output_field_name, converter):
         """Add a converted field to the packet definition, used to apply
@@ -132,12 +171,19 @@ class FixedLength(_BasePacket):
     messages.
     """
 
-    def __init__(self, fields):
+    def __init__(self, fields, apid=None, name=None, description=None):
         """
         Parameters
         ----------
         fields : list of :py:class:`~ccsdspy.PacketField` or :py:class:`~ccsdspy.PacketArray`
             Layout of packet fields contained in the definition.
+        apid : int, optional
+            APID of the packet. Acts as a unique identifier for the packet type. Used
+            as metadata.
+        name : str, optional
+            Name of the packet. Used as metadata.
+        description : str, optional
+            Description of the packet. Used as metadata.
 
         Raises
         ------
@@ -150,7 +196,7 @@ class FixedLength(_BasePacket):
                 "Instead, use the VariableLength class."
             )
 
-        self._init(fields)
+        super().__init__(fields, apid=apid, name=name, description=description)
 
     def load(self, file, include_primary_header=False, reset_file_obj=False):
         """Decode a file-like object containing a sequence of these packets.
@@ -222,7 +268,7 @@ class VariableLength(_BasePacket):
       * Do not specify explicit bit_offsets (they will be computed automatically)
     """
 
-    def __init__(self, fields):
+    def __init__(self, fields, apid=None, name=None, description=None):
         """
         Parameters
         ----------
@@ -230,6 +276,13 @@ class VariableLength(_BasePacket):
             Layout of packet fields contained in the definition. No more than
             one field should have array_shape="expand". The field must have no
             bit_offset's. Do not include the primary header fields.
+        apid : int, optional
+            APID of the packet. Acts as a unique identifier for the packet type. Used
+            as metadata.
+        name : str, optional
+            Name of the packet. Used as metadata.
+        description : str, optional
+            Description of the packet. Used as metadata.
 
         Raises
         ------
@@ -276,7 +329,7 @@ class VariableLength(_BasePacket):
                 "determined automatically."
             )
 
-        self._init(fields)
+        super().__init__(fields, apid=apid, name=name, description=description)
 
     def load(self, file, include_primary_header=False, reset_file_obj=False):
         """Decode a file-like object containing a sequence of these packets.
