@@ -101,4 +101,4 @@ Below is an example of creating a user-defined transformation to return False if
     
     result = pkt.load("MyCCSDS.bin")
 		
-    print(result["MyField_Converted"])
+    log.info(result["MyField_Converted"])

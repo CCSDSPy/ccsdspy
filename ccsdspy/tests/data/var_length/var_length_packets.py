@@ -4,6 +4,8 @@ import struct
 
 import numpy as np
 
+from ccsdspy import log
+
 out_name = "var_length_packets_with_footer.bin"
 include_footer = True
 num_packets = 10
@@ -27,7 +29,7 @@ for packet_num in range(num_packets):
     if include_footer:
         this_packet += struct.pack(">H", 1)
 
-    print(f"packet #{packet_num}: {np.frombuffer(this_packet, dtype='uint8')}")
+    log.info(f"packet #{packet_num}: {np.frombuffer(this_packet, dtype='uint8')}")
     packet += this_packet
 
 if include_footer:
@@ -35,7 +37,7 @@ if include_footer:
 else:
     expected_length = 6 * num_packets + 2 * np.sum(data_length)
 
-print(f"Packet length is {len(packet)}. Expected length is {expected_length}.")
+log.info(f"Packet length is {len(packet)}. Expected length is {expected_length}.")
 
 f = open(out_name, "wb")
 f.write(packet)
