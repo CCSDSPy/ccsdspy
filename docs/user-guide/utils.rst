@@ -140,6 +140,8 @@ This function works with mixed files containing multiple APIDs, which may includ
 
   from ccsdspy.utils import validate
 
-  validate('mixed_file.tlm')
+  warnings = validate('mixed_file.tlm')
 
-This outputs a `List[str]` of warnings or exceptions encountered during the validation process. If no issues are found, an empty list is returned.
+The output of this function is a list of `~logging.LogRecord` objects.
+If no warnings were generated, an empty list is returned.
+This function also outputs warnings to the logger which can be configured by the user (see :ref:`logging` for more details on logging configuration).

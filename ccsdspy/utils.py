@@ -292,7 +292,7 @@ def validate(file, valid_apids=None):
 
     Returns
     -------
-    List of log events, describing potential validation issues. Returns an empty list if no warnings are issued.
+    List of `~logging.LogRecord`, describing potential validation issues. Returns an empty list if no warnings are issued.
     """
     with log.log_to_list() as log_list:
         # Check file integrity (truncation, extra bytes)
