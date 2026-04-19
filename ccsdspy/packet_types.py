@@ -240,7 +240,7 @@ class FixedLength(_BasePacket):
         )
 
         # inspect the primary header and issue warning if appropriate
-        _inspect_primary_header_fields(packet_arrays)
+        _inspect_primary_header_fields(packet_arrays, self._apid)
 
         if not include_primary_header:
             _delete_primary_header_fields(packet_arrays)
@@ -376,7 +376,7 @@ class VariableLength(_BasePacket):
         )
 
         # inspect the primary header and issue warning if appropriate
-        _inspect_primary_header_fields(packet_arrays)
+        _inspect_primary_header_fields(packet_arrays, self._apid)
 
         if not include_primary_header:
             _delete_primary_header_fields(packet_arrays)
@@ -384,7 +384,7 @@ class VariableLength(_BasePacket):
         return packet_arrays
 
 
-def _inspect_primary_header_fields(packet_arrays):
+def _inspect_primary_header_fields(packet_arrays, specified_apid=None):
     """Inspects the primary header fields.
 
     Checks for the following issues
@@ -397,15 +397,20 @@ def _inspect_primary_header_fields(packet_arrays):
     packet_arrays
         dictionary mapping field names to NumPy arrays, with key order matching
         the order fields in the packet. Modified in place
+    specified_apid 
+        integer or None if not specified. Used to check APID of packets is as
+        expected.
 
     Warns
     -----
-    UserWarning
+    logging warning
         If the ccsds sequence count is not in order
-    UserWarning
+    logging warning
         If the ccsds sequence count is missing packets
-    UserWarning
+    logging warning
         If there are more than one APID
+    logging warning
+       If APID is specified in packet metadata but APIDs read don't match
     """
     seq_counts = packet_arrays["CCSDS_SEQUENCE_COUNT"]
     start, end = seq_counts[0], seq_counts[-1]
@@ -416,9 +421,13 @@ def _inspect_primary_header_fields(packet_arrays):
     if not np.all(seq_counts == np.sort(seq_counts)):
         log.warning("Sequence count are out of order.")
 
-    individual_ap_ids = set(packet_arrays["CCSDS_APID"])
-    if len(individual_ap_ids) != 1:
-        log.warning(f"Found multiple AP IDs {individual_ap_ids}.")
+    individual_apids = np.unique(packet_arrays["CCSDS_APID"]).astype(int).tolist()
+
+    if len(individual_apids) != 1:
+        log.warning(f"Found multiple APIDs {individual_apids}.")
+
+    if specified_apid is not None and individual_apids[0] != specified_apid:
+        log.warning(f"Unexpected APID(s) {individual_apids}; Expected {specified_apid}")
 
     return None
 
