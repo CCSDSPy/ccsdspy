@@ -210,6 +210,24 @@ def test_check_primary_header_contents_sameapid(caplog):
     with log.log_to_list() as log_list:
         _inspect_primary_header_fields(packet_data)
     assert log_list[0].levelname == "WARNING"
-    assert log_list[0].message.startswith("Found multiple AP IDs")
-    assert "48.0" in log_list[0].message
-    assert "58.0" in log_list[0].message
+    assert log_list[0].message.startswith("Found multiple APIDs")
+    assert "48" in log_list[0].message
+    assert "58" in log_list[0].message
+
+
+def test_check_primary_header_contents_wrong_apid(caplog):
+    """Check that all apids are the same."""
+    num_packets = 10000
+    packet_data = {
+        "CCSDS_SEQUENCE_COUNT": np.arange(1, num_packets),
+        "CCSDS_APID": 48 * np.ones(num_packets),
+    }
+    packet_data["CCSDS_APID"][100:200] = 58
+    with log.log_to_list() as log_list:
+        _inspect_primary_header_fields(packet_data, 999)
+    assert log_list[0].levelname == "WARNING"
+    assert log_list[0].message.startswith("Found multiple APIDs")
+    assert log_list[1].message.startswith("Unexpected APID(s)")
+    assert "48" in log_list[0].message
+    assert "58" in log_list[0].message
+    assert "999" in log_list[1].message
