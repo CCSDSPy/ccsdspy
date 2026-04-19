@@ -3,7 +3,7 @@
 from __future__ import division
 from collections import namedtuple
 import math
-import warnings
+
 
 import numpy as np
 
@@ -11,6 +11,7 @@ from ccsdspy.constants import (
     BITS_PER_BYTE,
     PRIMARY_HEADER_NUM_BYTES,
 )
+from ccsdspy import log
 
 __author__ = "Daniel da Silva <mail@danieldasilva.org>"
 
@@ -316,7 +317,7 @@ def _decode_variable_length(file_bytes, fields):
         message = (
             f"File appears truncated - missing {missing_bytes} bytes (or maybe garbage at end)"
         )
-        warnings.warn(message)
+        log.warning(message)
 
     npackets = len(packet_starts)
 
