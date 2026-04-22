@@ -495,7 +495,7 @@ def _inspect_primary_header_fields(packet_arrays):
         warnings.warn(f"Found multiple AP IDs {individual_ap_ids}.", UserWarning)
 
     return None
-    
+
 
 def _delete_primary_header_fields(packet_arrays):
     """Modifies in place the packet arrays dictionary to delete primary
