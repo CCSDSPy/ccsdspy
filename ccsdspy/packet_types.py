@@ -447,7 +447,7 @@ class VariableLength(_BasePacket):
         -------
         file : str
             A binary file with the packet data
-        
+
         Raises
         -----
         ValueError
@@ -976,7 +976,16 @@ def _do_array_byte_reordering(array, byte_order_ints):
     return shifted
 
 
-def _to_file(file : str, fields, data : dict, pkt_type : int, apid: int, sec_header_flag : bool, seq_flag : bool, decoder_name):
+def _to_file(
+    file: str,
+    fields,
+    data: dict,
+    pkt_type: int,
+    apid: int,
+    sec_header_flag: bool,
+    seq_flag: bool,
+    decoder_name,
+):
     """Encode a file-like object containing a sequence of these packets.
     The number of packets is defined by the number of values in the arrays in the data dictionary.
 
@@ -1009,8 +1018,8 @@ def _to_file(file : str, fields, data : dict, pkt_type : int, apid: int, sec_hea
     ValueError
       if the arrays in the data dictionary are not all the same length
     """
-    conversion = {'s': 'u', 'i': 's', 'u': 'u', 'f': 'f'}
-#    if 'array' in [this_field._field_type for this_field in fields]:
+    conversion = {"s": "u", "i": "s", "u": "u", "f": "f"}
+    #    if 'array' in [this_field._field_type for this_field in fields]:
 
     expand_fields, expand_history = _expand_array_fields(fields)
 
@@ -1020,11 +1029,11 @@ def _to_file(file : str, fields, data : dict, pkt_type : int, apid: int, sec_hea
         raise ValueError("Length of the arrays in data are not the same.")
     num_packets = num_elements[0]
     packets = b""
-    header_fmt = 'u3u1u1u11u2u14u16'  # ccsds header
-    data_fmt = ''
+    header_fmt = "u3u1u1u11u2u14u16"  # ccsds header
+    data_fmt = ""
 
-    if decoder_name == 'fixed_length':
-        if 'array' in [this_field._field_type for this_field in fields]:
+    if decoder_name == "fixed_length":
+        if "array" in [this_field._field_type for this_field in fields]:
             array_exists = True
         else:
             array_exists = False
@@ -1039,20 +1048,22 @@ def _to_file(file : str, fields, data : dict, pkt_type : int, apid: int, sec_hea
             else:
                 values = []
                 for this_field in fields:
-                    if this_field._field_type == 'element':
+                    if this_field._field_type == "element":
                         values.append(data[this_field._name][i])
-                    elif this_field._field_type == 'array':
+                    elif this_field._field_type == "array":
                         values += list(data[this_field._name][i].flatten())
             packets += pack(data_fmt, *values)
 
-    if decoder_name == 'variable_length':
+    if decoder_name == "variable_length":
         for i in range(num_packets):
-            data_fmt = ''
+            data_fmt = ""
             for this_field in expand_fields:
                 # first figure out the data format
-                if this_field._field_type == 'array' and this_field._array_shape == 'expand':
+                if this_field._field_type == "array" and this_field._array_shape == "expand":
                     this_field_numitems = len(data[this_field._name][i])
-                    this_data_format = (conversion[this_field._data_type[0]] + str(this_field._bit_length)) * this_field_numitems
+                    this_data_format = (
+                        conversion[this_field._data_type[0]] + str(this_field._bit_length)
+                    ) * this_field_numitems
                     data_fmt += this_data_format
                 else:
                     data_fmt += conversion[this_field._data_type[0]] + str(this_field._bit_length)
@@ -1062,11 +1073,11 @@ def _to_file(file : str, fields, data : dict, pkt_type : int, apid: int, sec_hea
             packets += pack(header_fmt, *values)
             data_values = []
             for this_field in fields:
-                if this_field._field_type == 'element':
+                if this_field._field_type == "element":
                     data_values.append(data[this_field._name][i])
-                elif this_field._field_type == 'array' and this_field._array_shape != 'expand':
+                elif this_field._field_type == "array" and this_field._array_shape != "expand":
                     data_values += list(data[this_field._name][i].flatten())
-                elif this_field._field_type == 'array' and this_field._array_shape == 'expand':
+                elif this_field._field_type == "array" and this_field._array_shape == "expand":
                     data_values += list(data[this_field._name][i])
             packets += pack(data_fmt, *data_values)
 
