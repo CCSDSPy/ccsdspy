@@ -8,6 +8,8 @@ format strings, and the function bistruct.pack() is used.
 import bitstruct
 import numpy as np
 
+from .constants import BITS_PER_BYTE
+
 
 # Dictionary which maps CCSDSPy data types to a corresponding data type used
 # by the bitstruct module.
@@ -15,9 +17,6 @@ DATA_TYPE_CCSDSPY_TO_BITSTRUCT = {"str": "u", "int": "s", "uint": "u", "float": 
 
 # The CCSDSPy header specified in terms of a bitstruct format string
 PRIMARY_HEADER_FMT_BITSTRUCT = "u3u1u1u11u2u14u16"
-
-# Number of bits in a byte
-BITS_PER_BYTE = 8
 
 
 def _encode_fixed_length(

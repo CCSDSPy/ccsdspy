@@ -10,6 +10,7 @@ import numpy as np
 
 from bitstruct import pack, calcsize
 
+from .constants import BITS_PER_BYTE
 from .converters import Converter
 from .decode import _decode_fixed_length, _decode_variable_length
 from .packet_fields import PacketField, PacketArray
