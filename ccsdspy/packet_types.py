@@ -928,6 +928,53 @@ def _apply_post_byte_reoderings(field_arrays, orig_fields):
     return field_arrays
 
 
+def _do_array_byte_reordering(array, byte_order_ints):
+    """Reorder the bytes of an array.
+
+    Parameters
+    ----------
+    array : NumPy array
+      May be multidimensional. Dtype of array must not be object.
+    byte_order_ints : list of int
+      Inceces of the bytes in order, e.g., 2314.
+
+    Returns
+    -------
+    Array with bytes reordered according to the passed order.
+    """
+    assert array.dtype != object, "Error in byte reordering, please report a bug:.{array.dtype}"
+
+    parsed_byte_length = array.itemsize
+    native_byte_length = max(byte_order_ints)
+
+    array_bytes = array.copy()
+    array_bytes.dtype = np.uint8
+    array_bytes = array_bytes.reshape((array.size, parsed_byte_length))
+
+    digits_zero_idx = [digit - 1 for digit in reversed(byte_order_ints)]
+    select_indeces = []
+    select_indeces.extend(digits_zero_idx)
+    select_indeces.extend(sorted(set(range(array.itemsize)) - set(digits_zero_idx)))
+
+    padding = array.itemsize - len(byte_order_ints)
+    reordered = np.zeros_like(array_bytes)
+
+    for i in range(reordered.shape[0]):
+        reordered[i, :] = array_bytes[i, ::-1][select_indeces]
+
+    shifted = np.zeros_like(reordered)
+
+    if padding > 0:
+        shifted[:, padding:] = reordered[:, :-padding]
+    else:
+        shifted[:] = reordered
+
+    shifted.dtype = array.dtype
+    shifted = shifted.reshape(array.shape)
+
+    return shifted
+
+
 def _to_file(file : str, fields, data : dict, pkt_type : int, apid: int, sec_header_flag : bool, seq_flag : bool, decoder_name):
     """Encode a file-like object containing a sequence of these packets.
     The number of packets is defined by the number of values in the arrays in the data dictionary.
