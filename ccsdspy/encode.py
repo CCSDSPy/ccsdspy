@@ -29,9 +29,9 @@ def _apply_custom_byte_order(val_bytes, byte_order_str):
 
     Examples
     --------
-    >>> val_bytes = bytes([0x12, 0x34, 0x56, 0x78])  # Big-endian 0x12345678
+    >>> val_bytes = bytes([0x01, 0x02, 0x03, 0x04])  # Big-endian 0x01020304
     >>> _apply_custom_byte_order(val_bytes, "4321")
-    b'\\x78\\x56\\x34\\x12'  # Little-endian order
+    b'\\x04\\x03\\x02\\x01'
     """
     byte_order_ints = [int(d) for d in byte_order_str]
     # Convert to zero-indexed and reorder
