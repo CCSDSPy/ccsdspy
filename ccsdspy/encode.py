@@ -11,80 +11,32 @@ import numpy as np
 from .constants import BITS_PER_BYTE
 
 
-def _undo_array_byte_reordering(array, byte_order_ints):
-    """Apply inverse byte reordering to prepare data for encoding.
-
-    This function reverses the transformation done by packet_types._do_array_byte_reordering()
-    so that data can be encoded with the correct byte order.
-
-    The decode process does:
-    1. Reverses input bytes: reversed_bytes = bytes[::-1]
-    2. Selects: reordered = reversed_bytes[select_indices]
-    3. Applies padding shift
-
-    To invert for encoding:
-    1. Undo padding shift
-    2. Invert selection: reversed_bytes[select_indices[j]] = reordered[j]
-    3. Reverse again: bytes = reversed_bytes[::-1]
+def _apply_custom_byte_order(val_bytes, byte_order_str):
+    """Reorder bytes according to a custom byte order specification.
 
     Parameters
     ----------
-    array : NumPy array
-        User data values. May be multidimensional. Dtype must not be object.
-    byte_order_ints : list of int
-        Byte order specification, e.g., [4, 3, 2, 1] for "4321".
+    val_bytes : bytes
+        The byte representation of a value (big-endian).
+    byte_order_str : str
+        Byte order specification, e.g., "4321" or "2143".
+        Each digit (1-indexed) specifies which byte position to take.
 
     Returns
     -------
-    Array with values transformed so that when bitstruct packs them (as big-endian),
-    the decode process will recover the original values.
+    bytes
+        The reordered bytes ready to be written to file.
+
+    Examples
+    --------
+    >>> val_bytes = bytes([0x12, 0x34, 0x56, 0x78])  # Big-endian 0x12345678
+    >>> _apply_custom_byte_order(val_bytes, "4321")
+    b'\\x78\\x56\\x34\\x12'  # Little-endian order
     """
-    assert array.dtype != object, f"Error in byte reordering: {array.dtype}"
-
-    # Get byte representation of user values (as big-endian)
-    array_copy = array.copy()
-    array_copy.dtype = np.uint8
-    array_copy = array_copy.reshape((array.size, array.itemsize))
-
-    # Compute decode parameters
-    digits_zero_idx = [digit - 1 for digit in reversed(byte_order_ints)]
-    select_indeces = []
-    select_indeces.extend(digits_zero_idx)
-    select_indeces.extend(sorted(set(range(array.itemsize)) - set(digits_zero_idx)))
-    padding = array.itemsize - len(byte_order_ints)
-
-    result = np.zeros_like(array_copy)
-
-    for i in range(array_copy.shape[0]):
-        # Current bytes represent the user's value
-        user_bytes = array_copy[i, :]
-
-        # Step 1: Undo the padding shift from decode
-        # Decode did: shifted[:, padding:] = reordered[:, :-padding]
-        # So: reordered[:, :-padding] = shifted[:, padding:]
-        if padding > 0:
-            reordered_bytes = np.zeros(array.itemsize, dtype=np.uint8)
-            reordered_bytes[:-padding] = user_bytes[padding:]
-        else:
-            reordered_bytes = user_bytes.copy()
-
-        # Step 2: Invert the selection
-        # Decode did: reordered[j] = reversed_input[select_indeces[j]]
-        # So: reversed_input[select_indeces[j]] = reordered[j]
-        reversed_bytes = np.zeros(array.itemsize, dtype=np.uint8)
-        for j in range(len(select_indeces)):
-            reversed_bytes[select_indeces[j]] = reordered_bytes[j]
-
-        # Step 3: Reverse to get original (file) bytes
-        file_bytes = reversed_bytes[::-1]
-
-        result[i, :] = file_bytes
-
-    # Convert back to original dtype
-    result.dtype = array.dtype
-    result = result.reshape(array.shape)
-
-    return result
+    byte_order_ints = [int(d) for d in byte_order_str]
+    # Convert to zero-indexed and reorder
+    indices = [i - 1 for i in byte_order_ints]
+    return bytes([val_bytes[i] for i in indices])
 
 
 def _prepare_field_for_encoding(field, data, packet_num):
@@ -128,48 +80,56 @@ def _prepare_field_for_encoding(field, data, packet_num):
         if data.ndim == 0:
             data = data.reshape(1)
 
-        # First handle custom byte orders if present
-        if field._byte_order_post is not None:
-            byte_order_ints = [int(digit) for digit in field._byte_order_post]
-            data = _undo_array_byte_reordering(data, byte_order_ints)
+        # Calculate byte size from bit_length
+        byte_size = (field._bit_length + 7) // 8
+        is_signed = field._data_type == 'int'
 
-        # Then handle little endian: reverse bytes so bitstruct packs them correctly
-        # This happens AFTER custom byte order because _byte_order_parse is set to "big"
-        # when custom byte order is used
+        # Handle custom byte orders or little endian
+        if field._byte_order_post is not None:
+            # Custom byte order (e.g., "4321", "2143")
+            # Convert each value to bytes, reorder, convert back
+            flat_data = data.flatten()
+            result_list = []
+
+            for val in flat_data:
+                val_bytes = int(val).to_bytes(byte_size, byteorder='big', signed=is_signed)
+                reordered_bytes = _apply_custom_byte_order(val_bytes, field._byte_order_post)
+                result_list.append(int.from_bytes(reordered_bytes, byteorder='big', signed=is_signed))
+
+            # Return as list or reshaped array
+            if original_shape == ():
+                data = result_list[0]
+            elif len(original_shape) == 1:
+                data = np.array(result_list)
+            else:
+                data = np.array(result_list).reshape(original_shape)
+
         elif field._byte_order_parse == 'little':
+            # Little endian: reverse bytes so bitstruct packs them correctly
             # The user wants little-endian bytes in the file.
             # bitstruct.pack() always outputs big-endian bytes.
             # So we need to reverse the byte order of our values before passing to bitstruct.
             # Example: user has 0x12345678 (as int), wants file bytes [78 56 34 12] (little endian)
             # We pass 0x78563412 to bitstruct, it writes [78 56 34 12] treating it as big endian
 
-            # Calculate byte size from bit_length
-            byte_size = (field._bit_length + 7) // 8
-
-            # Convert to object array to hold Python ints
             flat_data = data.flatten()
             result_list = []
 
             for val in flat_data:
-                # Convert value to bytes using field's bit_length, reverse them, convert back
-                # Always treat as unsigned during byte reversal to avoid sign issues
-                # bitstruct will handle the sign interpretation based on format string
-                is_signed = field._data_type == 'int'
                 val_bytes = int(val).to_bytes(byte_size, byteorder='big', signed=is_signed)
                 reversed_bytes = val_bytes[::-1]
-                # Interpret reversed bytes as signed if original was signed
                 result_list.append(int.from_bytes(reversed_bytes, byteorder='big', signed=is_signed))
 
             # Return as list or reshaped array
-            if data.shape == ():
+            if original_shape == ():
                 data = result_list[0]
-            elif data.ndim == 1:
+            elif len(original_shape) == 1:
                 data = np.array(result_list)
             else:
-                data = np.array(result_list).reshape(data.shape)
-
-        # Restore original shape
-        data = data.reshape(original_shape)
+                data = np.array(result_list).reshape(original_shape)
+        else:
+            # Big endian (default) - restore original shape and return
+            data = data.reshape(original_shape)
 
         return data
 
