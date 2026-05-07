@@ -8,11 +8,10 @@ import warnings
 
 import numpy as np
 
-from bitstruct import pack, calcsize
-
 from .constants import BITS_PER_BYTE
 from .converters import Converter
 from .decode import _decode_fixed_length, _decode_variable_length
+from .encode import _encode_fixed_length, _encode_variable_length
 from .packet_fields import PacketField, PacketArray
 
 __author__ = "Daniel da Silva <mail@danieldasilva.org>"
@@ -1018,68 +1017,20 @@ def _to_file(
     ValueError
       if the arrays in the data dictionary are not all the same length
     """
-    conversion = {"s": "u", "i": "s", "u": "u", "f": "f"}
-    #    if 'array' in [this_field._field_type for this_field in fields]:
-
+    # Expand array fields for encoding
     expand_fields, expand_history = _expand_array_fields(fields)
 
-    # check that each element in data has the same number of elements for x packets
-    num_elements = [len(val) for val in data.values()]
-    if num_elements.count(num_elements[0]) != len(num_elements):
-        raise ValueError("Length of the arrays in data are not the same.")
-    num_packets = num_elements[0]
-    packets = b""
-    header_fmt = "u3u1u1u11u2u14u16"  # ccsds header
-    data_fmt = ""
-
+    # Use the encode module functions which handle byte order properly
     if decoder_name == "fixed_length":
-        if "array" in [this_field._field_type for this_field in fields]:
-            array_exists = True
-        else:
-            array_exists = False
-        for this_field in expand_fields:
-            data_fmt += conversion[this_field._data_type[0]] + str(this_field._bit_length)
-        packet_length = calcsize(data_fmt) / BITS_PER_BYTE - 1
-        for i in range(num_packets):
-            values = [0, pkt_type, sec_header_flag, apid, seq_flag, i, packet_length]
-            packets += pack(header_fmt, *values)
-            if not array_exists:
-                values = [data[this_field._name][i] for this_field in fields]
-            else:
-                values = []
-                for this_field in fields:
-                    if this_field._field_type == "element":
-                        values.append(data[this_field._name][i])
-                    elif this_field._field_type == "array":
-                        values += list(data[this_field._name][i].flatten())
-            packets += pack(data_fmt, *values)
-
-    if decoder_name == "variable_length":
-        for i in range(num_packets):
-            data_fmt = ""
-            for this_field in expand_fields:
-                # first figure out the data format
-                if this_field._field_type == "array" and this_field._array_shape == "expand":
-                    this_field_numitems = len(data[this_field._name][i])
-                    this_data_format = (
-                        conversion[this_field._data_type[0]] + str(this_field._bit_length)
-                    ) * this_field_numitems
-                    data_fmt += this_data_format
-                else:
-                    data_fmt += conversion[this_field._data_type[0]] + str(this_field._bit_length)
-
-            packet_length = int(calcsize(data_fmt) / BITS_PER_BYTE - 1)
-            values = [0, pkt_type, sec_header_flag, apid, seq_flag, i, packet_length]
-            packets += pack(header_fmt, *values)
-            data_values = []
-            for this_field in fields:
-                if this_field._field_type == "element":
-                    data_values.append(data[this_field._name][i])
-                elif this_field._field_type == "array" and this_field._array_shape != "expand":
-                    data_values += list(data[this_field._name][i].flatten())
-                elif this_field._field_type == "array" and this_field._array_shape == "expand":
-                    data_values += list(data[this_field._name][i])
-            packets += pack(data_fmt, *data_values)
+        packets = _encode_fixed_length(
+            fields, expand_fields, data, pkt_type, apid, sec_header_flag, seq_flag
+        )
+    elif decoder_name == "variable_length":
+        packets = _encode_variable_length(
+            fields, expand_fields, data, pkt_type, apid, sec_header_flag, seq_flag
+        )
+    else:
+        raise ValueError(f"Unknown decoder_name: {decoder_name}")
 
     with open(file, "wb") as fp:
         fp.write(packets)
