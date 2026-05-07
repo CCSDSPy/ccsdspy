@@ -60,15 +60,15 @@ def _prepare_field_for_encoding(field, data, packet_num):
     Transformed data ready for bitstruct.pack().
     """
     # For str and fill types, no byte order transformation needed
-    if field._data_type in ('str', 'fill'):
+    if field._data_type in ("str", "fill"):
         return data
 
     # Float types are handled by bitstruct format string, no pre-processing needed
-    if field._data_type == 'float':
+    if field._data_type == "float":
         return data
 
     # Handle int and uint types with byte order
-    if field._data_type in ('int', 'uint'):
+    if field._data_type in ("int", "uint"):
         # Convert to numpy array for consistent handling
         if not isinstance(data, np.ndarray):
             data = np.array(data)
@@ -83,7 +83,7 @@ def _prepare_field_for_encoding(field, data, packet_num):
 
         # Calculate byte size from bit_length
         byte_size = (field._bit_length + 7) // 8
-        is_signed = field._data_type == 'int'
+        is_signed = field._data_type == "int"
 
         # Handle custom byte orders or little endian
         if field._byte_order_post is not None:
@@ -93,9 +93,11 @@ def _prepare_field_for_encoding(field, data, packet_num):
             result_list = []
 
             for val in flat_data:
-                val_bytes = int(val).to_bytes(byte_size, byteorder='big', signed=is_signed)
+                val_bytes = int(val).to_bytes(byte_size, byteorder="big", signed=is_signed)
                 reordered_bytes = _apply_custom_byte_order(val_bytes, field._byte_order_post)
-                result_list.append(int.from_bytes(reordered_bytes, byteorder='big', signed=is_signed))
+                result_list.append(
+                    int.from_bytes(reordered_bytes, byteorder="big", signed=is_signed)
+                )
 
             # Return as list or reshaped array, preserving dtype to avoid float conversion
             if original_shape == ():
@@ -105,7 +107,7 @@ def _prepare_field_for_encoding(field, data, packet_num):
             else:
                 data = np.array(result_list, dtype=original_dtype).reshape(original_shape)
 
-        elif field._byte_order_parse == 'little':
+        elif field._byte_order_parse == "little":
             # Little endian: reverse bytes so bitstruct packs them correctly
             # The user wants little-endian bytes in the file.
             # bitstruct.pack() always outputs big-endian bytes.
@@ -117,9 +119,11 @@ def _prepare_field_for_encoding(field, data, packet_num):
             result_list = []
 
             for val in flat_data:
-                val_bytes = int(val).to_bytes(byte_size, byteorder='big', signed=is_signed)
+                val_bytes = int(val).to_bytes(byte_size, byteorder="big", signed=is_signed)
                 reversed_bytes = val_bytes[::-1]
-                result_list.append(int.from_bytes(reversed_bytes, byteorder='big', signed=is_signed))
+                result_list.append(
+                    int.from_bytes(reversed_bytes, byteorder="big", signed=is_signed)
+                )
 
             # Return as list or reshaped array, preserving dtype to avoid float conversion
             if original_shape == ():
