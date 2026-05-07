@@ -275,7 +275,7 @@ class FixedLength(_BasePacket):
             A binary file with the packet data
 
         Raises
-        -----
+        ------
         ValueError
             If the number of elements in the data values are not the same.
         """
@@ -448,7 +448,7 @@ class VariableLength(_BasePacket):
             A binary file with the packet data
 
         Raises
-        -----
+        ------
         ValueError
             If the number of elements in the data values are not the same.
         """
