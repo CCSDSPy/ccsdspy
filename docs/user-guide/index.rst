@@ -15,5 +15,6 @@ For more details checkout the :ref:`reference`.
    fixedlength
    variablelength
    loadfile
+   synthetic
    converters
    utils
