@@ -312,9 +312,6 @@ class TestEncodeByteOrderComprehensive:
         Mirrors the comprehensive coverage in test_byte_order.py.
         Tests various byte lengths (1, 2, 3, 4, 6, 7, 8 bytes).
         """
-        # Known encoding bugs for specific 8-byte orders - TODO: investigate and fix
-        if byte_order in ("78563412", "87654321"):
-            pytest.skip(f"Known encoding bug for byte order {byte_order}")
 
         # Calculate bit length from byte order string length
         num_bytes = len(byte_order)
@@ -361,7 +358,9 @@ class TestEncodeByteOrderComprehensive:
         "byte_order",
         [
             pytest.param(order, id=f"byteorder_{order}")
-            for orders in TEST_BYTE_ORDERS.values()
+            # Exclude non-power-of-2 byte lengths (3, 6, 7) - decode doesn't support signed int for these
+            for byte_length, orders in TEST_BYTE_ORDERS.items()
+            if byte_length in (1, 2, 4, 8)
             for order in orders
         ],
     )
@@ -369,15 +368,10 @@ class TestEncodeByteOrderComprehensive:
         """Test encoding with all byte orders for signed integers.
 
         Tests both positive and negative values with various byte orders.
-        Note: Non-power-of-2 byte lengths (3, 6, 7) are not fully supported
-        by the decode side for signed integers.
+        Only tests power-of-2 byte lengths (1, 2, 4, 8) as decode doesn't
+        support signed integers with non-power-of-2 byte lengths.
         """
-        # Skip non-power-of-2 byte lengths for signed integers - not supported by decode
         num_bytes = len(byte_order)
-        if num_bytes in (3, 6, 7):
-            pytest.skip(f"Signed integers with {num_bytes}-byte length not supported by decode")
-
-        # Calculate bit length from byte order string length
         bit_length = num_bytes * 8
 
         # Create packet with array field using the byte order
@@ -422,24 +416,19 @@ class TestEncodeByteOrderComprehensive:
         "byte_order",
         [
             pytest.param(order, id=f"byteorder_{order}")
-            for orders in TEST_BYTE_ORDERS.values()
+            # Exclude non-power-of-2 byte lengths (3, 6, 7) - decode has issues with variable length
+            for byte_length, orders in TEST_BYTE_ORDERS.items()
+            if byte_length in (1, 2, 4, 8)
             for order in orders
         ],
     )
     def test_encode_all_byte_orders_variable_length(self, byte_order):
         """Test encoding with all byte orders for VariableLength packets.
 
-        Note: Non-power-of-2 byte lengths (3, 6, 7) and certain 64-bit byte
-        orders have decode issues and are skipped.
+        Only tests power-of-2 byte lengths (1, 2, 4, 8) as decode has issues
+        with variable length for non-power-of-2 byte lengths.
         """
-        # Skip unsupported combinations
         num_bytes = len(byte_order)
-        if num_bytes in (3, 6, 7):
-            pytest.skip(f"Variable length with {num_bytes}-byte length has decode issues")
-        if byte_order in ("78563412", "87654321"):
-            pytest.skip(f"Byte order {byte_order} has decode issues with variable length")
-
-        # Calculate bit length from byte order string length
         bit_length = num_bytes * 8
 
         # Create variable length packet with expanding array

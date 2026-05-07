@@ -77,6 +77,7 @@ def _prepare_field_for_encoding(field, data, packet_num):
 
         # Ensure at least 1D for consistent handling
         original_shape = data.shape
+        original_dtype = data.dtype  # Preserve original dtype to avoid float conversion
         if data.ndim == 0:
             data = data.reshape(1)
 
@@ -96,13 +97,13 @@ def _prepare_field_for_encoding(field, data, packet_num):
                 reordered_bytes = _apply_custom_byte_order(val_bytes, field._byte_order_post)
                 result_list.append(int.from_bytes(reordered_bytes, byteorder='big', signed=is_signed))
 
-            # Return as list or reshaped array
+            # Return as list or reshaped array, preserving dtype to avoid float conversion
             if original_shape == ():
                 data = result_list[0]
             elif len(original_shape) == 1:
-                data = np.array(result_list)
+                data = np.array(result_list, dtype=original_dtype)
             else:
-                data = np.array(result_list).reshape(original_shape)
+                data = np.array(result_list, dtype=original_dtype).reshape(original_shape)
 
         elif field._byte_order_parse == 'little':
             # Little endian: reverse bytes so bitstruct packs them correctly
@@ -120,13 +121,13 @@ def _prepare_field_for_encoding(field, data, packet_num):
                 reversed_bytes = val_bytes[::-1]
                 result_list.append(int.from_bytes(reversed_bytes, byteorder='big', signed=is_signed))
 
-            # Return as list or reshaped array
+            # Return as list or reshaped array, preserving dtype to avoid float conversion
             if original_shape == ():
                 data = result_list[0]
             elif len(original_shape) == 1:
-                data = np.array(result_list)
+                data = np.array(result_list, dtype=original_dtype)
             else:
-                data = np.array(result_list).reshape(original_shape)
+                data = np.array(result_list, dtype=original_dtype).reshape(original_shape)
         else:
             # Big endian (default) - restore original shape and return
             data = data.reshape(original_shape)
@@ -164,16 +165,19 @@ def _encode_fixed_length(
             for packet_num in range(len(field_data)):
                 encoded_val = _prepare_field_for_encoding(field, field_data[packet_num], packet_num)
                 encoded_values.append(encoded_val)
-            field_arrays_encoded[field._name] = np.array(encoded_values)
+            # Preserve the original dtype to avoid unwanted float conversion for large integers
+            field_arrays_encoded[field._name] = np.array(encoded_values, dtype=field_data.dtype)
         elif field._field_type == "array":
             # For array fields, process each packet's array
             encoded_arrays = []
             for packet_num in range(len(field_data)):
                 encoded_arr = _prepare_field_for_encoding(field, field_data[packet_num], packet_num)
                 encoded_arrays.append(encoded_arr)
-            field_arrays_encoded[field._name] = np.array(encoded_arrays, dtype=object) if any(
-                isinstance(x, np.ndarray) for x in encoded_arrays
-            ) else np.array(encoded_arrays)
+            # Preserve the original dtype to avoid unwanted float conversion for large integers
+            if any(isinstance(x, np.ndarray) for x in encoded_arrays):
+                field_arrays_encoded[field._name] = np.array(encoded_arrays, dtype=object)
+            else:
+                field_arrays_encoded[field._name] = np.array(encoded_arrays, dtype=field_data.dtype)
 
     # The bitstruct.pack() function is used to pack the individual bits. This
     # function takes a pack format string which specifies something analogous
