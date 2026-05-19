@@ -8,8 +8,10 @@ import warnings
 
 import numpy as np
 
+from .constants import BITS_PER_BYTE
 from .converters import Converter
 from .decode import _decode_fixed_length, _decode_variable_length
+from .encode import _encode_fixed_length, _encode_variable_length
 from .packet_fields import PacketField, PacketArray
 
 __author__ = "Daniel da Silva <mail@danieldasilva.org>"
@@ -246,6 +248,42 @@ class FixedLength(_BasePacket):
 
         return packet_arrays
 
+    def to_file(self, file, pkt_type, apid, sec_header_flag, seq_flag, data, seq_count=0):
+        """Encode a file containing a sequence of packet fields.
+        For more information about the CCSDS primary header see :ref:`ccsds_standard`.
+
+        Parameters
+        ----------
+        file : str
+            Path to file on the local file system, or file-like object
+        pkt_type : int
+            For the CCSDS primary header, for telemetry (or reporting), set to 0, for commanding set to 1.
+        apid : uint
+            For the CCSDS primary header, the Application process identifier (0 to 2047)
+        sec_header_flag : uint
+            For the CCSDS primary header, identicates the presence or absence of a secondary header. Set to 1 if present.
+        seq_flag : uint
+            For the CCSDS primary header, tet to 1 if the data is a continuation segment, set to 0 if it contains the first or only segment of data.
+        seq_count : uint
+            For the CCSDS primary header, the start sequence number for the packets
+        data : dict
+            The data to add to the file where the keys must match the packet field names and values are `~numpy.ndarray` of the same length.
+
+        Returns
+        -------
+        file : str
+            A binary file with the packet data
+
+        Raises
+        ------
+        ValueError
+            If the number of elements in the data values are not the same.
+        """
+
+        return _to_file(
+            file, self._fields, data, pkt_type, apid, sec_header_flag, seq_flag, "fixed_length"
+        )
+
 
 class VariableLength(_BasePacket):
     """Define a variable length packet to decode binary data.
@@ -381,6 +419,43 @@ class VariableLength(_BasePacket):
             _delete_primary_header_fields(packet_arrays)
 
         return packet_arrays
+
+    def to_file(self, file, pkt_type, apid, sec_header_flag, seq_flag, data):
+        """Encode a file containing a sequence of packet fields.
+        For more information about the CCSDS primary header see :ref:`ccsds_standard`.
+
+        Parameters
+        ----------
+        file : str
+            Path to file on the local file system, or file-like object
+        pkt_type : int
+            For the CCSDS primary header, for telemetry (or reporting), set to 0, for commanding set to 1.
+        apid : uint
+            For the CCSDS primary header, the Application process identifier (0 to 2047)
+        sec_header_flag : uint
+            For the CCSDS primary header, identicates the presence or absence of a secondary header. Set to 1 if present.
+        seq_flag : uint
+            For the CCSDS primary header, tet to 1 if the data is a continuation segment, set to 0 if it contains the first or only segment of data.
+        seq_count : uint
+            For the CCSDS primary header, the start sequence number for the packets
+        data : dict
+            The data to add to the file where the keys must match the packet field names and values are `~numpy.ndarray` except for variable length fields which must be lists.
+            The number of elements must be the same.
+
+        Returns
+        -------
+        file : str
+            A binary file with the packet data
+
+        Raises
+        ------
+        ValueError
+            If the number of elements in the data values are not the same.
+        """
+
+        return _to_file(
+            file, self._fields, data, pkt_type, apid, sec_header_flag, seq_flag, "variable_length"
+        )
 
 
 def _inspect_primary_header_fields(packet_arrays):
@@ -898,3 +973,66 @@ def _do_array_byte_reordering(array, byte_order_ints):
     shifted = shifted.reshape(array.shape)
 
     return shifted
+
+
+def _to_file(
+    file: str,
+    fields,
+    data: dict,
+    pkt_type: int,
+    apid: int,
+    sec_header_flag: bool,
+    seq_flag: bool,
+    decoder_name,
+):
+    """Encode a file-like object containing a sequence of these packets.
+    The number of packets is defined by the number of values in the arrays in the data dictionary.
+
+    Parameters
+    ----------
+    file: str
+       Path to file on the local file system, or file-like object
+    fields : list of `ccsdspy.PacketField`
+       Layout of packet fields contained in the definition.
+    data : dictionary
+        A dictionary with keys as the packet field names and values are arrays with values for each packet.
+    pkt_type : int
+        Packet type as defined in CCSDS primary header.
+    apid : int
+        Application ID as defined in the CCSDS primary header.
+    sec_header_flag : bool
+        Secondary header flag as defined in the CCSDS header.
+    seq_flag : bool
+        The sequence flag as defined in the CCSDS primary header.
+    decoder_name: {'fixed_length', 'variable_length'}
+       String identifying which decoder to use.
+
+    Returns
+    -------
+    file: str
+       Path to file on the local file system, or file-like object
+
+    Raises
+    ------
+    ValueError
+      if the arrays in the data dictionary are not all the same length
+    """
+    # Expand array fields for encoding
+    expand_fields, expand_history = _expand_array_fields(fields)
+
+    # Use the encode module functions which handle byte order properly
+    if decoder_name == "fixed_length":
+        packets = _encode_fixed_length(
+            fields, expand_fields, data, pkt_type, apid, sec_header_flag, seq_flag
+        )
+    elif decoder_name == "variable_length":
+        packets = _encode_variable_length(
+            fields, expand_fields, data, pkt_type, apid, sec_header_flag, seq_flag
+        )
+    else:
+        raise ValueError(f"Unknown decoder_name: {decoder_name}")
+
+    with open(file, "wb") as fp:
+        fp.write(packets)
+
+    return file
