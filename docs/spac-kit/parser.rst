@@ -1,8 +1,8 @@
 .. _spac-kit-parser:
 
-**************
+***************
 Parsing Packets
-**************
+***************
 
 The ``spac-parse`` command converts CCSDS binary data files into Excel spreadsheets with separate sheets for each packet type.
 
