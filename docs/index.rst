@@ -18,7 +18,9 @@ CCSDSPy
     :alt: Zenodo DOI
 
 CCSDSPy provides an IO Interface for reading CCSDS_ data in Python.
-The CCSDS format is used for many NASA and ESA missions for low-level telemetry, and often contains tightly packed bits to reduce downlink requirements. The library is developed with requirements sourced from the community and extensive automated testing. 
+The CCSDS format is used for many NASA and ESA missions for low-level telemetry, and often contains tightly packed bits to reduce downlink requirements. The library is developed with requirements sourced from the community and extensive automated testing.
+
+**SPaC-Kit** is a companion toolkit built on CCSDSPy that provides command-line tools and workflows for parsing CCSDS files to Excel, generating test packets, and working with mission-specific packet definitions through a plugin system. See :ref:`spac-kit` for details.
 
 .. _CCSDS: https://public.ccsds.org/default.aspx
 
@@ -27,6 +29,7 @@ The CCSDS format is used for many NASA and ESA missions for low-level telemetry,
 
    whatsnew/index
    user-guide/index
+   spac-kit/index
    dev-guide/index
    api
 
