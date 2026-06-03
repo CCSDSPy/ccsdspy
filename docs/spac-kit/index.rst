@@ -18,7 +18,7 @@ SPaC-Kit provides command-line tools and Python APIs to:
 
 .. admonition:: Acknowledgements
 
-   The development of this library has been initialized during the development of the Europa-Clipper Science Data System, the sample file and documentation generators feature and the packaging of the code have been specifically funded through a NASA ROSES 2024 call.
+   This library started development in tandem with the Europa-Clipper Science Data System. Sample data, documentation generation feature, and packaging of this code was funded through a NASA ROSES 2024 call.
 
 Quick Start
 ===========
@@ -84,7 +84,7 @@ To get the generated documentation for your CCSDS packets, add to your Sphinx ``
 Want to start your own CCSDS packet library for your mission or instrument ?
 ============================================================================
 
-Use the documented SPac-Kit plugin `github template <https://github.com/CCSDSPy/spac-kit-plugin-template>`_.
+Use the `SPac-Kit plugin template <https://github.com/CCSDSPy/spac-kit-plugin-template>`_.
 
 
 Details
