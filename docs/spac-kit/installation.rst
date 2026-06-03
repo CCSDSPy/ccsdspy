@@ -19,7 +19,7 @@ Create a virtual environment (recommended):
    python3 -m venv .venv
    source .venv/bin/activate
 
-Install a plugin first:
+Install a plugin first, for example:
 
 .. code-block:: bash
 
@@ -67,10 +67,17 @@ Update lock file before committing:
 
    poetry lock
 
+Contributing
+============
+
+Development should be done on a feature branch. When your changes are ready for review, open a pull request (PR) against the main branch.
+Automated tests and linting are run on all PRs — make sure both pass before requesting a review.
+
+
 Building and Publishing
 =======================
 
-Update version in ``pyproject.toml``, then:
+Update version in ``pyproject.toml``, then
 
 .. code-block:: bash
 
