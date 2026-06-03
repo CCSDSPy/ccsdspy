@@ -4,9 +4,8 @@
 SPaC-Kit
 ********
 
-**SPaC-Kit** is collection of Python tools for working with **CCSDS Space Packets**.
-It supports mission or instrument-specific CCSDS packet structures via **plugin** packages built on the CCSDSPy library and developed following the `github template repository <https://github.com/CCSDSPy/spac-kit-plugin-template>`_ .
-
+**SPaC-Kit** is a collection of Python tools for working with **CCSDS Space Packets**.
+It supports mission or instrument-specific CCSDS packet structures via **plugin** packages built on the CCSDSPy library. Plugins should follow the `SPaC-Kit plugin template <https://github.com/CCSDSPy/spac-kit-plugin-template>`_.
 
 Overview
 ========
