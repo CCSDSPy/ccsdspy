@@ -472,7 +472,7 @@ def _inspect_primary_header_fields(packet_arrays, specified_apid=None):
     packet_arrays
         dictionary mapping field names to NumPy arrays, with key order matching
         the order fields in the packet. Modified in place
-    specified_apid 
+    specified_apid
         integer or None if not specified. Used to check APID of packets is as
         expected.
 
