@@ -1,9 +1,13 @@
 Notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`__.
 
-Version 2.0.0 - Unreleased
+
+Version 2.0.0 - 2026-06-10
 ===========================
+  * New capabilities to generate synthetic packets based on existing packet definitions. See documentation at :doc:`/user-guide/synthetic`.
   * Change to use built-in logging module instead of issuing `Warning`'s. See documentation at :doc:`/user-guide/logging`.
+  * Optional fields in packet definitions to supply and acccess metadata such as descriptions of packet fields and APID for packets. 
+  * Drop support for Python <3.10.
 
 Version 1.4.3 - 2025-11-06
 ============================
