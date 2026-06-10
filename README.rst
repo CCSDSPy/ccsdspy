@@ -1,5 +1,6 @@
- CCSDSPy - IO Interface for Reading CCSDS Data in Python.
+CCSDSPy - IO Interface for Reading CCSDS Data in Python.
 ========================================================
+
 
 .. image:: https://github.com/ccsdspy/ccsdspy/actions/workflows/ccsdspy-ci.yml/badge.svg
     :target: https://github.com/ccsdspy/ccsdspy/actions
@@ -14,7 +15,8 @@
 .. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.7819991.svg
     :target: https://doi.org/10.5281/zenodo.7819991
     :alt: Zenodo DOI
-	  
+
+  
 This community-developed package provides a Python interface for reading tightly packed bits in the `Consultative Committee for Space Data Systems (CCSDS) <https://public.ccsds.org/>`__ format used by many NASA and ESA missions. The library is developed with requirements sourced from the community and extensive automated testing.
 
 Used By
