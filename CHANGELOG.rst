@@ -1,7 +1,9 @@
 Notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`__.
 
-The next version of CCSDSPy will be 2.0.0, which include integration with the logging module.
+Version 2.0.0 - Unreleased
+===========================
+  * Change to use built-in logging module instead of issuing `Warning`'s. See documentation at :doc:`/user-guide/logging`.
 
 Version 1.4.3 - 2025-11-06
 ============================

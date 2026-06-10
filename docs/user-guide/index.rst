@@ -18,3 +18,5 @@ For more details checkout the :ref:`reference`.
    synthetic
    converters
    utils
+   logging
+   customization
