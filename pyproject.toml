@@ -5,7 +5,7 @@ build-backend = 'setuptools.build_meta'
 [project]
 name = "ccsdspy"
 description = "IO Interface for Reading CCSDS Data in Python."
-readme = "README.rst"
+readme = {file = "README.rst", content-type = "text/x-rst"}
 dynamic = ["version"]
 authors = [
   { name = "Daniel da Silva", email = "mail@danieldasilva.org" },
