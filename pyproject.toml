@@ -4,7 +4,7 @@ build-backend = 'setuptools.build_meta'
 
 [project]
 name = "ccsdspy"
-description = "IO Interface for Reading CCSDS Data in Python."
+description = "IO Interface for Reading and Writing CCSDS Data in Python."
 readme = {file = "README.rst", content-type = "text/x-rst"}
 dynamic = ["version"]
 authors = [

@@ -1,5 +1,5 @@
-CCSDSPy - IO Interface for Reading CCSDS Data in Python.
-========================================================
+CCSDSPy - IO Interface for Reading and Writing CCSDS Data in Python.
+====================================================================
 
 
 .. image:: https://github.com/ccsdspy/ccsdspy/actions/workflows/ccsdspy-ci.yml/badge.svg
