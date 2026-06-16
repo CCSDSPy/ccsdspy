@@ -9,6 +9,8 @@ Version 2.0.0 - 2026-06-10
   * Optional fields in packet definitions to supply and acccess metadata such as descriptions of packet fields and APID for packets. 
   * Drop support for Python <3.10.
 
+Coinciding with this release is the release of `SPaC-kit <https://ccsdspy.github.io/SPaC-Kit>`_. Funded through a ROSES High-Priority Open-Source Software award, `SPaC-kit <https://ccsdspy.github.io/SPaC-Kit>`_ extends the capabilities of ccsdspy to streamline CCSDS Space Packet management for flight missions. It provides a GitHub repository template for defining and documenting mission packet formats (see the `Europa Clipper example <https://nasa-jpl.github.io/spac-kit-europa-clipper/>`_). Mission-specific packet definitions are distributed as SPaC-kit plugins and can be used with SPaC-kit utilities to parse and generate test datasets.
+    
 Version 1.4.3 - 2025-11-06
 ============================
   * Add explicit support up to Python 3.13.
