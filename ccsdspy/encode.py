@@ -143,7 +143,7 @@ def _prepare_field_for_encoding(field, data, packet_num):
 
 # Dictionary which maps CCSDSPy data types to a corresponding data type used
 # by the bitstruct module.
-DATA_TYPE_CCSDSPY_TO_BITSTRUCT = {"str": "u", "int": "s", "uint": "u", "float": "f", "fill": "uint"}
+DATA_TYPE_CCSDSPY_TO_BITSTRUCT = {"str": "u", "int": "s", "uint": "u", "float": "f", "fill": "u"}
 
 # The CCSDSPy header specified in terms of a bitstruct format string
 PRIMARY_HEADER_FMT_BITSTRUCT = "u3u1u1u11u2u14u16"

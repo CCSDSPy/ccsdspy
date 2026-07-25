@@ -324,6 +324,35 @@ def test_load_without_moving_file_buffer_pos():
         assert pos == fp.tell()
 
 
+@pytest.mark.parametrize("packet_class", [FixedLength, VariableLength])
+def test_to_file_encodes_fill_fields(packet_class, tmp_path):
+    """Fill fields should encode as zero-valued padding bits."""
+    packet = packet_class(
+        [
+            PacketField(name="DATA", data_type="uint", bit_length=8),
+            PacketField(name="PADDING", data_type="fill", bit_length=512),
+        ]
+    )
+    output_path = tmp_path / "fill-field.bin"
+    data = {
+        "DATA": np.array([0xA5], dtype=np.uint8),
+        "PADDING": np.array([0], dtype=np.uint8),
+    }
+
+    packet.to_file(
+        output_path,
+        pkt_type=0,
+        apid=42,
+        sec_header_flag=0,
+        seq_flag=3,
+        data=data,
+    )
+
+    packet_bytes = output_path.read_bytes()
+    assert packet_bytes[6] == 0xA5
+    assert packet_bytes[7:] == bytes(64)
+
+
 def test_fixed_length_to_file():
     """Save a fixed length packet and then parse it and make sure that the input is the same as the output."""
     pkt = FixedLength(
