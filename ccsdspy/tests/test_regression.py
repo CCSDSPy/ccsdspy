@@ -12,6 +12,38 @@ from .. import FixedLength, VariableLength, PacketField, PacketArray
 from ccsdspy import log
 
 
+@pytest.mark.parametrize("packet_class", [FixedLength, VariableLength])
+def test_to_file_encodes_fill_fields(packet_class, tmp_path):
+    """Fill fields should encode as zero-valued padding bits.
+
+    See: https://github.com/CCSDSPy/ccsdspy/pull/157
+    """
+    packet = packet_class(
+        [
+            PacketField(name="DATA", data_type="uint", bit_length=8),
+            PacketField(name="PADDING", data_type="fill", bit_length=512),
+        ]
+    )
+    output_path = tmp_path / "fill-field.bin"
+    data = {
+        "DATA": np.array([0xA5], dtype=np.uint8),
+        "PADDING": np.array([0], dtype=np.uint8),
+    }
+
+    packet.to_file(
+        output_path,
+        pkt_type=0,
+        apid=42,
+        sec_header_flag=0,
+        seq_flag=3,
+        data=data,
+    )
+
+    packet_bytes = output_path.read_bytes()
+    assert packet_bytes[6] == 0xA5
+    assert packet_bytes[7:] == bytes(64)
+
+
 @pytest.mark.parametrize("pkt_class", [FixedLength, VariableLength])
 def test_odd_length_neg_ints(pkt_class):
     """This fixes an issue with odd-length integers being negative (odd length
