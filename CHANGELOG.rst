@@ -1,6 +1,10 @@
 Notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`__.
 
+Version 2.0.1 - 2026-08-12
+==========================
+  * Changed logging to file setting to False by default, to prevent an import-time crash on machines that don't have a writable home directory (#156)
+  * Fixed encoding issue bug with fill fields (#157)
 
 Version 2.0.0 - 2026-06-10
 ===========================
