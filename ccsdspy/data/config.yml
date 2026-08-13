@@ -15,7 +15,9 @@ logger:
   log_format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
   # Whether to always log messages to a log file
-  log_to_file: true
+  # Defaults to false to match SunPy behavior; logs still go to the
+  # StreamHandler unless the user opts in. See gh-156.
+  log_to_file: false
 
   # Whether the log file should be in JSON format
   log_file_json: false
