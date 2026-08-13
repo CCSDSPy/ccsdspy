@@ -3,8 +3,8 @@ The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`
 
 Version 2.0.1 - 2026-08-12
 ==========================
-  * Changed logging to file setting to False by default, to prevent an import-time crash on machines that don't have a writable home directory (#156)
-  * Fixed encoding issue bug with fill fields (#157)
+  * Changed logging to file setting to False by default, to prevent an import-time crash on machines that don't have a writable home directory (`Issue #156 <https://github.com/CCSDSPy/ccsdspy/issues/156>`_)
+  * Fixed encoding issue bug with fill fields (`Pull Request #157 <https://github.com/CCSDSPy/ccsdspy/pull/157>`_)
 
 Version 2.0.0 - 2026-06-10
 ===========================
