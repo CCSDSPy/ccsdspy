@@ -130,6 +130,51 @@ def test_FixedLength_from_file_not_supported(filename):
         FixedLength.from_file(filename)
 
 
+def test_FixedLength_from_file_sets_apid_name_description():
+    """from_file forwards apid/name/description onto the FixedLength instance."""
+    pkt = FixedLength.from_file(
+        csv_file_3col, apid=42, name="TLM_PKT", description="telemetry packet"
+    )
+    assert pkt.apid == 42
+    assert pkt.name == "TLM_PKT"
+    assert pkt.description == "telemetry packet"
+
+
+def test_FixedLength_from_file_defaults_metadata_to_None():
+    """from_file omits metadata args, properties default to None."""
+    pkt = FixedLength.from_file(csv_file_3col)
+    assert pkt.apid is None
+    assert pkt.name is None
+    assert pkt.description is None
+
+
+def test_VariableLength_from_file_sets_apid_name_description():
+    """from_file forwards apid/name/description onto the VariableLength instance."""
+    pkt = VariableLength.from_file(
+        csv_file_3col_with_expand,
+        apid=99,
+        name="VAR_PKT",
+        description="variable-length packet",
+    )
+    assert pkt.apid == 99
+    assert pkt.name == "VAR_PKT"
+    assert pkt.description == "variable-length packet"
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {"apid": "not an int"},
+        {"name": 1234},
+        {"description": 4567},
+    ],
+)
+def test_from_file_raises_TypeError_on_bad_metadata_types(kwargs):
+    """from_file raises TypeError when metadata args have the wrong type."""
+    with pytest.raises(TypeError):
+        FixedLength.from_file(csv_file_3col, **kwargs)
+
+
 @pytest.mark.parametrize(
     "shape_str, expected_value",
     [
