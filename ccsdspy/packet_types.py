@@ -61,7 +61,7 @@ class _BasePacket:
         self._description = description
 
     @classmethod
-    def from_file(cls, file):
+    def from_file(cls, file, apid=None, name=None, description=None):
         """
         Parameters
         ----------
@@ -70,6 +70,13 @@ class _BasePacket:
            Currently only supports csv files.
            See :download:`basic_csv_3col.csv <../../ccsdspy/tests/data/packet_def/basic_csv_3col.csv>`  # noqa: E501
            and :download:`extended_csv_4col.csv <../../ccsdspy/tests/data/packet_def/extended_csv_4col.csv>`  # noqa: E501
+        apid : int, optional
+            APID of the packet. Acts as a unique identifier for the packet type. Used
+            as metadata.
+        name : str, optional
+            Name of the packet. Used as metadata.
+        description : str, optional
+            Description of the packet. Used as metadata.
 
         Returns
         -------
@@ -86,7 +93,7 @@ class _BasePacket:
         else:
             raise ValueError(f"File type {file_extension[1]} not supported.")
 
-        return cls(fields)
+        return cls(fields, apid=apid, name=name, description=description)
 
     @property
     def apid(self) -> int:
