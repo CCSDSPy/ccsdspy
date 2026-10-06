@@ -718,7 +718,7 @@ def _parse_csv_array_shape(data_type_str):
         array_shape = "expand"
     elif "," in array_shape_str:
         try:
-            array_shape = tuple(map(int, array_shape_str.split(", ")))
+            array_shape = tuple(map(int, array_shape_str.split(",")))
         except ValueError:
             raise ValueError(
                 "Array shape must be `expand`, the name of another field, or a tuple of ints."
