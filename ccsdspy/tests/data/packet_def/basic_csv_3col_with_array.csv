@@ -4,3 +4,4 @@ SHFINE, uint, 20
 OPMODE, uint, 3
 SPACER, fill, 1
 VOLTAGE, "int(12, 24)", 8
+CURRENT, "int(6,12)", 8
