@@ -22,7 +22,7 @@ First define the packet,
 .. code-block:: python
 
    import ccsdspy
-   from ccsdspy import PacketField
+   from ccsdspy import PacketField, PacketArray
 
    pkt = ccsdspy.FixedLength([
         PacketField(name="DATAU", data_type="uint", bit_length=32),
@@ -42,6 +42,8 @@ First define the packet,
 Once you've done that you'll have to define a dictionary whose keys are the packet field names and whose values are your data arrays.
 
 .. code-block:: python
+
+    import numpy as np
 
     num_packets = 1000
     datau = np.arange(0, num_packets, dtype=np.uint32)
