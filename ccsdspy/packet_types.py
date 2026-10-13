@@ -275,9 +275,9 @@ class FixedLength(_BasePacket):
         apid : uint
             For the CCSDS primary header, the Application process identifier (0 to 2047)
         sec_header_flag : uint
-            For the CCSDS primary header, identicates the presence or absence of a secondary header. Set to 1 if present.
+            For the CCSDS primary header, indicates the presence or absence of a secondary header. Set to 1 if present.
         seq_flag : uint
-            For the CCSDS primary header, tet to 1 if the data is a continuation segment, set to 0 if it contains the first or only segment of data.
+            For the CCSDS primary header, set to 1 if the data is a continuation segment, set to 0 if it contains the first or only segment of data.
         seq_count : uint
             For the CCSDS primary header, the start sequence number for the packets
         data : dict
@@ -447,9 +447,9 @@ class VariableLength(_BasePacket):
         apid : uint
             For the CCSDS primary header, the Application process identifier (0 to 2047)
         sec_header_flag : uint
-            For the CCSDS primary header, identicates the presence or absence of a secondary header. Set to 1 if present.
+            For the CCSDS primary header, indicates the presence or absence of a secondary header. Set to 1 if present.
         seq_flag : uint
-            For the CCSDS primary header, tet to 1 if the data is a continuation segment, set to 0 if it contains the first or only segment of data.
+            For the CCSDS primary header, set to 1 if the data is a continuation segment, set to 0 if it contains the first or only segment of data.
         seq_count : uint
             For the CCSDS primary header, the start sequence number for the packets
         data : dict
