@@ -228,6 +228,57 @@ class TestEncodeByteOrderFixedLength:
             if os.path.exists(temp_file):
                 os.remove(temp_file)
 
+    def test_encode_single_bit_data(self):
+        """Test encoding of single-bit packets."""
+    
+        #pkt1 should be 48 + 1 = 49 bits
+        pkt1 = FixedLength([
+            PacketField(name="DATAFLAG", data_type='uint', bit_length=1),
+            ])
+
+        #pkt2 should be 48 + 8 + 1 = 57 bits
+        pkt2 = FixedLength([
+            PacketField(name="DATAS", data_type="str", bit_length=8),
+            PacketField(name="DATAFLAG", data_type='uint', bit_length=1),
+            ])
+        num_packets = 1
+        datas = np.arange(97, num_packets + 97, dtype=np.uint8)
+        dataflag = np.zeros(num_packets, dtype=np.bool)
+
+        data1 = {"DATAFLAG": dataflag}
+        data2 = {
+            "DATAS": datas,
+            "DATAFLAG": dataflag,
+        }
+
+        pkt_type = 0         # For telemetry (or reporting), set to ‘0’
+        apid = 0x084         # the Application process identifier
+        sec_header_flag = 0  # set to 0 if secondary header exists
+        seq_flag = 0         # Set to 0 if not continuation packet
+
+        # Encode to file
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".bin") as f1:
+            temp_file1 = f1.name
+        try:
+            pkt1.to_file(
+                temp_file1, pkt_type, apid, sec_header_flag, seq_flag, data1
+            )
+            pkt1.load(temp_file1)
+        finally:
+            if os.path.exists(temp_file1):
+                os.remove(temp_file1)
+
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".bin") as f2:
+            temp_file2 = f2.name
+        try:
+            pkt2.to_file(
+                temp_file2, pkt_type, apid, sec_header_flag, seq_flag, data2
+            )
+            pkt2.load(temp_file2)
+        finally:
+            if os.path.exists(temp_file2):
+                os.remove(temp_file2)
+
 
 class TestEncodeByteOrderVariableLength:
     """Test byte order encoding with VariableLength packets."""
