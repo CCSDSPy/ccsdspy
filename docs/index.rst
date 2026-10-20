@@ -52,8 +52,10 @@ Used By
     :target: https://elfin.igpp.ucla.edu/
 .. image:: _static/used-by/small/padre.png
     :target: https://padre.ssl.berkeley.edu
-	     
-	     
+.. image:: _static/used-by/small/strive.jpg
+    :target: https://www2.acom.ucar.edu/strive
+
+
 Do you know of other missions that use CCSDSPy? Let us know `through a github issue`_!
 
 .. _through a github issue: https://github.com/ccsdspy/ccsdspy/issues/new
