@@ -29,7 +29,7 @@ First define the packet,
         PacketField(name="DATAI", data_type="int", bit_length=16),
         PacketField(name="DATAF", data_type="float", bit_length=64),
         PacketField(name="DATAS", data_type="str", bit_length=8),
-        PacketField(name="DATAFLAG", data_type='uint', bit_length=1),
+        PacketField(name="DATAFLAG", data_type='uint', bit_length=8),
         PacketArray(
             name="SENSOR_GRID",
             data_type="uint",
