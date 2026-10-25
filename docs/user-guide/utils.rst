@@ -41,6 +41,21 @@ This generates the following output for a sequence of variable length packets:
 These functions perform integrity checks wile iterating through the packets in the given file: 
 - **File Integrity Check**: A `UserWarning` is issued if the total bytes successfully read from packets don't match the file size, e.g., "File appears truncated-- missing X byte (or maybe garbage at end)". This applies to mixed APID files and both packet types.
 
+`utils.iter_packet_bytes()` also accepts blocking binary streams. It combines
+partial reads and yields each packet as soon as it is complete. The caller must
+provide valid packets starting at a packet boundary and handle any recovery after
+data loss. A read returning ``b''`` ends iteration.
+
+For an already connected blocking TCP socket ``sock``:
+
+.. code-block:: python
+
+  from ccsdspy.utils import iter_packet_bytes
+
+  with sock.makefile('rb') as stream:
+      for packet in iter_packet_bytes(stream):
+          print(packet.hex())
+
 Counting Number of Packets in a File
 ====================================
 Sometimes, it is desirable to know  the number of packets in a file. For this, the `utils.count_packets()` function can be used. It's argument is a file-like object or name of a file. It accepts the optional arguments `return_missing_bytes=True` which can be used to determine the number of bytes which would be needed to be added to the file to complete the last packet (computed using the packet length set in the primary header of last packet).

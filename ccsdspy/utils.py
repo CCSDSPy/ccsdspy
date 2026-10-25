@@ -32,18 +32,35 @@ get_packet_total_bytes.__doc__ = decode._get_packet_total_bytes.__doc__
 get_packet_apid.__doc__ = decode._get_packet_apid.__doc__
 
 
+def _read_bytes(file, num_bytes):
+    """Read up to num_bytes, combining short reads until EOF."""
+    data = bytearray()
+    while len(data) < num_bytes:
+        chunk = file.read(num_bytes - len(data))
+        if chunk == b"":
+            break
+        data.extend(chunk)
+    return bytes(data)
+
+
 def iter_packet_bytes(file, include_primary_header=True):
-    """Iterate through packets as raw bytes objects, in the order they appear in a file.
+    """Iterate through packets as raw bytes objects from a file or blocking stream.
 
     This function works with mixed files containing multiple APIDs, which may
     include both fixed length and variable length packets.
 
-    If end of last packet doesn't align with end of file, a warning is issued.
+    The input must start at a packet boundary and contain valid packets. Short
+    reads are combined until a packet is complete. An empty read marks EOF.
+    File-like objects supplied by the caller are left open.
+
+    If the input ends during a packet, a warning is logged. A final packet with
+    a complete primary header is yielded even if its data is truncated.
 
     Parameters
     ----------
     file : str, file-like
-      Path to file on the local file system, or file-like object
+      Path to file on the local file system, or blocking binary file-like object
+      with a read(size) method
     include_primary_header : bool
       If set to False, excludes the primary header bytes (the first six)
 
@@ -52,47 +69,39 @@ def iter_packet_bytes(file, include_primary_header=True):
     packet_bytes : bytes
        Bytes associated with each packet as it appears in the file. When
        include_primary_header=False, the primary header bytes are excluded.
-
-    Warns
-    -----
-    UserWarning
-        If the file appears truncated, or if there is garbage at the end of the file.
     """
-    if hasattr(file, "read"):
-        file_bytes = np.frombuffer(file.read(), "u1")
-    else:
-        file_bytes = np.fromfile(file, "u1")
+    if not hasattr(file, "read"):
+        with open(file, "rb") as stream:
+            yield from iter_packet_bytes(stream, include_primary_header)
+        return
 
-    offset = 0
-
-    if include_primary_header:
-        delta_idx = 0
-    else:
-        delta_idx = PRIMARY_HEADER_NUM_BYTES
-
-    while offset < len(file_bytes):
-        pri_header_bytes = file_bytes[offset : offset + PRIMARY_HEADER_NUM_BYTES].tobytes()
+    while True:
+        pri_header_bytes = _read_bytes(file, PRIMARY_HEADER_NUM_BYTES)
+        if not pri_header_bytes:
+            break
 
         if len(pri_header_bytes) != PRIMARY_HEADER_NUM_BYTES:
             log.warning(
-                "File appears truncated or with garbage bytes. Unable to enough "
+                "File appears truncated or with garbage bytes. Unable to read enough "
                 "bytes for primary header"
             )
             break
 
         packet_nbytes = get_packet_total_bytes(pri_header_bytes)
-        packet_bytes = file_bytes[offset + delta_idx : offset + packet_nbytes].tobytes()
+        data_nbytes = packet_nbytes - PRIMARY_HEADER_NUM_BYTES
+        packet_bytes = _read_bytes(file, data_nbytes)
 
-        yield packet_bytes
+        if include_primary_header:
+            yield pri_header_bytes + packet_bytes
+        else:
+            yield packet_bytes
 
-        offset += packet_nbytes
-
-    if offset != len(file_bytes):
-        missing_bytes = offset - len(file_bytes)
-        message = (
-            f"File appears truncated-- missing {missing_bytes} byte (or " "maybe garbage at end)"
-        )
-        log.warning(message)
+        if len(packet_bytes) != data_nbytes:
+            missing_bytes = data_nbytes - len(packet_bytes)
+            log.warning(
+                f"File appears truncated-- missing {missing_bytes} byte (or maybe garbage at end)"
+            )
+            break
 
 
 def split_packet_bytes(file, include_primary_header=True):
