@@ -6,6 +6,7 @@ Tests for utils.split_by_apid() can be found in test_split.py
 import glob
 import io
 import os
+import socket
 
 import numpy as np
 import pytest
@@ -14,6 +15,57 @@ from .. import utils
 from .test_primary_header import TEST_FILENAME, create_simple_ccsds_packet
 from ccsdspy import log
 from ccsdspy import _test_data_directory
+
+
+STREAM_PACKETS = [
+    bytes.fromhex("0001c0000000") + b"a",
+    bytes.fromhex("0002c0010002") + b"bcd",
+]
+
+
+@pytest.mark.parametrize("read_size", [1, 4, 8])
+@pytest.mark.parametrize("include_primary_header", [True, False])
+def test_iter_packet_bytes_short_reads(read_size, include_primary_header):
+    class ShortReadStream(io.BytesIO):
+        def read(self, size=-1):
+            return super().read(read_size if size < 0 else min(size, read_size))
+
+    stream = ShortReadStream(b"".join(STREAM_PACKETS))
+    packets = list(utils.iter_packet_bytes(stream, include_primary_header))
+    expected = STREAM_PACKETS if include_primary_header else [p[6:] for p in STREAM_PACKETS]
+    assert packets == expected
+    assert not stream.closed
+
+
+@pytest.mark.parametrize("include_primary_header", [True, False])
+def test_iter_packet_bytes_before_eof(include_primary_header):
+    reader, writer = socket.socketpair()
+    with reader, writer, reader.makefile("rb") as stream:
+        reader.settimeout(2)
+        packets = utils.iter_packet_bytes(stream, include_primary_header)
+        for packet in STREAM_PACKETS:
+            writer.sendall(packet)
+            assert next(packets) == (packet if include_primary_header else packet[6:])
+        writer.shutdown(socket.SHUT_WR)
+        assert list(packets) == []
+        assert not stream.closed
+
+
+@pytest.mark.parametrize("tail_size", [0, 3, 6, 8])
+@pytest.mark.parametrize("include_primary_header", [True, False])
+def test_iter_packet_bytes_truncated_tail(tail_size, include_primary_header, caplog):
+    tail = STREAM_PACKETS[1][:tail_size]
+    stream = io.BytesIO(STREAM_PACKETS[0] + tail)
+    packets = list(utils.iter_packet_bytes(stream, include_primary_header))
+    expected = [STREAM_PACKETS[0]]
+    if tail_size >= 6:
+        expected.append(tail)
+    if not include_primary_header:
+        expected = [p[6:] for p in expected]
+    assert packets == expected
+    assert any(
+        record.message.startswith("File appears truncated") for record in caplog.records
+    ) == (tail_size > 0)
 
 
 def test_count_packets_missing_bytes():
