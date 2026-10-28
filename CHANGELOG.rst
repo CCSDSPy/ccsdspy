@@ -1,6 +1,13 @@
 Notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`__.
 
+Version 2.1.0 - 2026-10-28
+==========================
+  * The function `utils.iter_packet_bytes()` now supports reading from blocking binary streams, such as from a socket. The user is responsibile for aligning the stream so that reading starts at the beginning of a packet. See an example at :doc:`/user-guide/utils`.
+  * Fixed missing import in Synthetic Packets Documentation (`Pull Request 163 <https://github.com/CCSDSPy/ccsdspy/pull/163>`_)
+  * When loading array fields from a CSV file, the array dimensions may now include whitespace (`Pull Request #161 <https://github.com/CCSDSPy/ccsdspy/pull/161>`_)
+  * A packet APID, name, and description can now be specified when loading a packet definition from a CSV (`Issue #159 <https://github.com/CCSDSPy/ccsdspy/issues/159>`_)
+
 Version 2.0.1 - 2026-08-12
 ==========================
   * Changed logging to file setting to False by default, to prevent an import-time crash on machines that don't have a writable home directory (`Issue #156 <https://github.com/CCSDSPy/ccsdspy/issues/156>`_)
